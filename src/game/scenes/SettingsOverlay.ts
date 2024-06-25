@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Scene } from "phaser";
 
 export class SettingsOverlay extends Scene {
@@ -8,6 +10,8 @@ export class SettingsOverlay extends Scene {
     volumeBars: Phaser.GameObjects.Image[];
     inputBlock: Phaser.GameObjects.Rectangle;
     config: any;
+    muteBtn: Phaser.GameObjects.Image;
+    muteStateImage: Phaser.GameObjects.Image;
 
     constructor(config) {
         super("SettingsOverlay", { ...config, canGoBack: false });
@@ -179,7 +183,7 @@ export class SettingsOverlay extends Scene {
     }
 
     createMuteButton() {
-        const muteBtn = this.add
+        this.muteBtn = this.add
             .image(
                 this.config.width / 2 + 50,
                 this.config.height / 2 + 150,
@@ -189,37 +193,46 @@ export class SettingsOverlay extends Scene {
             .setScale(1.3, 0.9)
             .setInteractive();
 
-        if (this.toggleMute === false) {
-            this.add
+        this.updateMuteStateImage();
+
+        this.muteBtn.on("pointerup", () => {
+            this.select.play();
+            this.toggleMute();
+        });
+        this.muteBtn.on("pointerover", () => {
+            this.muteBtn.setTint(0xc2c2c2);
+            this.cursorOver.play();
+        });
+        this.muteBtn.on("pointerout", () => {
+            this.muteBtn.clearTint();
+        });
+    }
+
+    updateMuteStateImage() {
+        if (this.muteStateImage) {
+            this.muteStateImage.destroy();
+        }
+
+        const imageKey = this.sound.mute ? "switch-off" : "switch-on";
+        if (imageKey === "switch-off") {
+            this.muteStateImage = this.add
                 .image(
-                    this.config.width / 2 + 100,
+                    this.config.width / 2,
                     this.config.height / 2 + 150,
-                    "switch-on"
+                    imageKey
                 )
                 .setOrigin(0.5)
                 .setScale(0.8);
         } else {
-            this.add
+            this.muteStateImage = this.add
                 .image(
                     this.config.width / 2 + 100,
                     this.config.height / 2 + 150,
-                    "switch-off"
+                    imageKey
                 )
                 .setOrigin(0.5)
                 .setScale(0.8);
         }
-
-        muteBtn.on("pointerup", () => {
-            this.select.play();
-            this.toggleMute();
-        });
-        muteBtn.on("pointerover", () => {
-            muteBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
-        });
-        muteBtn.on("pointerout", () => {
-            muteBtn.clearTint();
-        });
     }
 
     createMusicControl() {
@@ -326,10 +339,7 @@ export class SettingsOverlay extends Scene {
 
     toggleMute() {
         this.sound.mute = !this.sound.mute;
-        console.log(
-            "Mute toggled. Current state:",
-            this.sound.mute ? "Muted" : "Unmuted"
-        );
+        this.updateMuteStateImage();
     }
 }
 
