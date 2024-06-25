@@ -8,12 +8,12 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 // Scene Imports
-import { Boot } from "./scenes/Boot";
-import { BootScene } from "./scenes/BootScene";
-import { MainMenu } from "./scenes/MainMenu";
-import { Preloader } from "./scenes/Preloader";
-import { SettingsOverlay } from "./scenes/SettingsOverlay";
-import { Signup } from "./scenes/Signup";
+import Boot from "./scenes/Boot";
+import BootScene from "./scenes/BootScene";
+import MainMenu from "./scenes/MainMenu";
+import Preloader from "./scenes/Preloader";
+import SettingsOverlay from "./scenes/SettingsOverlay";
+import Signup from "./scenes/Signup";
 
 // Custom configurations
 const MAP_WIDTH = 16000;
