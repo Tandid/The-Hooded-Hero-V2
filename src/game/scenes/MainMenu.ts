@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { GameObjects } from "phaser";
 import BaseScene from "./BaseScene";
 

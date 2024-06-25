@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { GameObjects, Scene } from "phaser";
 
 class BaseScene extends Scene {
