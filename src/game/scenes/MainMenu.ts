@@ -1,76 +1,96 @@
-import { GameObjects, Scene } from 'phaser';
+import { GameObjects, Scene } from "phaser";
 
-import { EventBus } from '../EventBus';
-
-export class MainMenu extends Scene
-{
+export class MainMenu extends Scene {
     background: GameObjects.Image;
+    config: any;
     logo: GameObjects.Image;
     title: GameObjects.Text;
-    logoTween: Phaser.Tweens.Tween | null;
+    arrow: GameObjects.Image;
+    start: integer;
+    fontFamily: string;
 
-    constructor ()
-    {
-        super('MainMenu');
+    constructor() {
+        super("MainMenu");
+        this.config = {
+            width: 1280,
+            height: 720,
+        };
+        this.fontFamily = "customFont";
+        this.start = this.config.width / 10;
     }
 
-    create ()
-    {
-        this.background = this.add.image(512, 384, 'background');
+    create() {
+        this.add
+            .image(this.config.width / 2, this.config.height / 2, "logo")
+            .setOrigin(0.5)
+            .setScale(0.6);
 
-        this.logo = this.add.image(512, 300, 'logo').setDepth(100);
-
-        this.title = this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
-
-        EventBus.emit('current-scene-ready', this);
-    }
-    
-    changeScene ()
-    {
-        if (this.logoTween)
-        {
-            this.logoTween.stop();
-            this.logoTween = null;
-        }
-
-        this.scene.start('Game');
-    }
-
-    moveLogo (vueCallback: ({ x, y }: { x: number, y: number }) => void)
-    {
-        if (this.logoTween)
-        {
-            if (this.logoTween.isPlaying())
-            {
-                this.logoTween.pause();
-            }
-            else
-            {
-                this.logoTween.play();
-            }
-        } 
-        else
-        {
-            this.logoTween = this.tweens.add({
-                targets: this.logo,
-                x: { value: 750, duration: 3000, ease: 'Back.easeInOut' },
-                y: { value: 80, duration: 1500, ease: 'Sine.easeOut' },
-                yoyo: true,
-                repeat: -1,
-                onUpdate: () => {
-                    if (vueCallback)
-                    {
-                        vueCallback({
-                            x: Math.floor(this.logo.x),
-                            y: Math.floor(this.logo.y)
-                        });
-                    }
+        this.add
+            .text(
+                this.config.width / 2,
+                this.config.height / 2,
+                `Loading Assets and Textures ...`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "30px",
+                    // fontWeight: "larger",
                 }
-            });
+            )
+            .setOrigin(0.5, 0.5)
+            .setColor("#FFF");
+
+        this.add
+            .image(
+                this.config.width / 1.1 + 50,
+                this.config.height / 1.3,
+                "dummy"
+            )
+            .setScale(1);
+
+        const x = this.start;
+        this.arrow = this.physics.add
+            .image(x, this.config.height / 1.6, "arrow")
+            .setScale(1.1)
+            .setDepth(2);
+
+        this.generateRandomHint();
+
+        // setTimeout(() => {
+        //     this.scene.stop("MainMenu");
+        //     this.scene.start("MainMenu");
+        // }, 8000);
+    }
+
+    generateRandomHint() {
+        const messages = [
+            "Not all heroes wear capes, some wear hoods..",
+            "Hint: Yes, you can double jump!",
+            "The Hooded Hero's favorite show is Arrow, who would've guess right??",
+            "Hint: A little birdy said to stay away from Level 3, unless...",
+            "Hint: You can spam arrows!",
+            "Hint: Sword attacks do double the damage of arrows. You're welcome. ",
+        ];
+        const randomIndex = Math.floor(Math.random() * messages.length);
+
+        this.add
+            .text(
+                this.config.width / 2,
+                this.config.height / 1.1,
+                `${messages[randomIndex]}`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "15px",
+                }
+            )
+            .setOrigin(0.5, 0.5)
+            .setColor("#FFF");
+    }
+
+    update() {
+        this.arrow.x += 3;
+        if (this.arrow.x > 1000) {
+            this.arrow.x = 1000;
         }
     }
 }
+
