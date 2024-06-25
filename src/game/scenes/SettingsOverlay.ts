@@ -56,7 +56,6 @@ export class SettingsOverlay extends Scene {
     }
 
     createPage() {
-        console.log(this.sound.volume);
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)
