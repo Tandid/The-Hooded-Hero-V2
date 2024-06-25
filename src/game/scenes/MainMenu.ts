@@ -55,6 +55,22 @@ export class MainMenu extends BaseScene {
             .setOrigin(0.5)
             .setScale(0.5)
             .setDepth(2);
+
+        this.tooltipText = this.add
+            .text(0, 0, "", {
+                fontFamily: "customFont",
+                fontSize: "16px",
+
+                padding: {
+                    x: 8,
+                    y: 6,
+                },
+                alpha: 0, // Initially invisible
+                wordWrap: { width: 100, useAdvancedWrap: true },
+            })
+            .setOrigin(0.5)
+            .setDepth(3)
+            .setVisible(false); // Initially hidden
     }
 
     create() {
@@ -100,9 +116,11 @@ export class MainMenu extends BaseScene {
         settingsBtn.on("pointerover", () => {
             settingsBtn.setTint(0xc2c2c2);
             this.cursorOver.play();
+            this.showTooltip(settingsBtn.x, settingsBtn.y - 50, "Settings");
         });
         settingsBtn.on("pointerout", () => {
             settingsBtn.clearTint();
+            this.hideTooltip();
         });
     }
 
@@ -127,10 +145,16 @@ export class MainMenu extends BaseScene {
         controlsBtn.on("pointerover", () => {
             controlsBtn.setTint(0xc2c2c2);
             this.cursorOver.play();
+            this.showTooltip(
+                controlsBtn.x,
+                controlsBtn.y - 50,
+                "Keyboard Controls"
+            );
         });
 
         controlsBtn.on("pointerout", () => {
             controlsBtn.clearTint();
+            this.hideTooltip();
         });
     }
 
@@ -151,10 +175,12 @@ export class MainMenu extends BaseScene {
         contactsBtn.on("pointerover", () => {
             contactsBtn.setTint(0xc2c2c2);
             this.cursorOver.play();
+            this.showTooltip(contactsBtn.x, contactsBtn.y + 50, "Contact");
         });
 
         contactsBtn.on("pointerout", () => {
             contactsBtn.clearTint();
+            this.hideTooltip();
         });
     }
 
@@ -204,6 +230,18 @@ export class MainMenu extends BaseScene {
                 // });
             }
         });
+    }
+
+    showTooltip(x, y, text) {
+        this.tooltipText.setText(text);
+        this.tooltipText.setPosition(x, y); // Adjust position as needed
+        this.tooltipText.setAlpha(1);
+        this.tooltipText.setVisible(true);
+    }
+
+    hideTooltip() {
+        this.tooltipText.setVisible(false);
+        this.tooltipText.setAlpha(0);
     }
 }
 
