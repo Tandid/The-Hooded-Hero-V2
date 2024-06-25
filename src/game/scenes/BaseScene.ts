@@ -2,7 +2,7 @@
 
 import { GameObjects, Scene } from "phaser";
 
-class BaseScene extends Scene {
+export default class BaseScene extends Scene {
     config: any;
     screenCenter: Array<number>;
     fontSize: number;
@@ -34,7 +34,16 @@ class BaseScene extends Scene {
     // }
 
     create() {
+        this.playBgMusic();
+
+        this.createBackground();
+        this.createArrows();
+        this.createLeaves();
+    }
+
+    createBackground() {
         this.add.image(0, 0, "sky-bg").setOrigin(0).setScale(1).setDepth(-1);
+
         this.add
             .image(0, 0, "mountain-bg")
             .setOrigin(0)
@@ -46,7 +55,9 @@ class BaseScene extends Scene {
             .setOrigin(0.5)
             .setScale(2)
             .setDepth(-1);
+    }
 
+    createLeaves() {
         const totalLeavesNum = 20;
         this.leaves = [];
         for (let i = 0; i < totalLeavesNum; i++) {
@@ -66,7 +77,9 @@ class BaseScene extends Scene {
             });
             this.leaves.push(leaf);
         }
+    }
 
+    createArrows() {
         const totalArrowsNum = 5;
         this.arrows = [];
         for (let i = 0; i < totalArrowsNum; i++) {
@@ -104,6 +117,16 @@ class BaseScene extends Scene {
         });
     }
 
+    playBgMusic() {
+        this.sound.stopAll();
+
+        if (this.sound.get("menu-theme")) {
+            this.sound.get("menu-theme", { loop: true, volume: 0.04 }).play();
+            return;
+        }
+        this.sound.add("menu-theme", { loop: true, volume: 0.04 }).play();
+    }
+
     update() {
         this.leaves.forEach((leaf) => {
             leaf.y += 0.4;
@@ -123,6 +146,4 @@ class BaseScene extends Scene {
         });
     }
 }
-
-export default BaseScene;
 

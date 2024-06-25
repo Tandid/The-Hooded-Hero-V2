@@ -2,7 +2,7 @@
 
 import { Scene } from "phaser";
 
-export class SettingsOverlay extends Scene {
+export default class SettingsOverlay extends Scene {
     menu: any[];
     currentMusicBars: number;
     maxVolumeBars: number;
@@ -15,7 +15,7 @@ export class SettingsOverlay extends Scene {
 
     constructor(config) {
         super("SettingsOverlay", { ...config, canGoBack: false });
-        this.config = { width: 1280, height: 720 };
+        this.config = config;
         this.volumeBars = [];
     }
 
@@ -27,11 +27,12 @@ export class SettingsOverlay extends Scene {
 
     create() {
         this.createInputBlock(); // Prevents click events behind the overlay from happening
-        this.createPage();
-        this.addSoundEffects();
-        this.createCloseButton();
 
-        this.createMusicControl();
+        this.addSoundEffects();
+
+        this.createPage();
+        this.createCloseButton();
+        this.createMusicController();
         this.createMuteButton();
         this.createMusicBars();
     }
@@ -56,7 +57,6 @@ export class SettingsOverlay extends Scene {
     }
 
     createPage() {
-        console.log(this.sound.volume);
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)
@@ -235,7 +235,7 @@ export class SettingsOverlay extends Scene {
         }
     }
 
-    createMusicControl() {
+    createMusicController() {
         this.createIncrementBtn(
             this.config.width / 2 + 200,
             this.config.height / 2 - 50
@@ -319,7 +319,6 @@ export class SettingsOverlay extends Scene {
                 0,
                 1
             );
-            console.log("Volume increased to:", this.sound.volume);
             this.createMusicBars();
         }
     }
@@ -332,7 +331,6 @@ export class SettingsOverlay extends Scene {
                 0,
                 1
             );
-            console.log("Volume decreased to:", this.sound.volume);
             this.createMusicBars();
         }
     }

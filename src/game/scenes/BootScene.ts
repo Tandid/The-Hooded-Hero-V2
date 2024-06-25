@@ -11,7 +11,7 @@ import { preloadSpriteSheets } from "../preloaders/preloadSpriteSheets";
 import { preloadTiles } from "../preloaders/preloadTiles";
 import { preloadUI } from "../preloaders/preloadUI";
 
-export class BootScene extends Scene {
+export default class BootScene extends Scene {
     config: any;
     arrow: GameObjects.Image;
     dummy: GameObjects.Image;
