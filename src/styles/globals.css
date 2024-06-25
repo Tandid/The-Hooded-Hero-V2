@@ -50,3 +50,10 @@ body {
         color: rgba(255, 255, 255, 0.3);
     }
 }
+
+@font-face {
+    font-family: customFont;
+    src: url("../../public/assets/text/Acme-Regular.ttf");
+    font-weight: 300;
+}
+

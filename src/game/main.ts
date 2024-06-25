@@ -1,4 +1,12 @@
-import { AUTO, Game } from "phaser";
+import Phaser from "phaser"; // This needs to be in the top level for RexUI to work properly
+
+// REX UI Plugin Imports
+import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
+import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
+import TextEditPlugin from "phaser3-rex-plugins/plugins/textedit-plugin.js";
+import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
+
+// Scene Imports
 import { Boot } from "./scenes/Boot";
 import { BootScene } from "./scenes/BootScene";
 import { Game as MainGame } from "./scenes/Game";
@@ -7,6 +15,7 @@ import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
 import { SettingsOverlay } from "./scenes/SettingsOverlay";
 
+// Custom configurations
 const MAP_WIDTH = 16000;
 
 const WIDTH = 1280;
@@ -34,10 +43,22 @@ const SHARED_CONFIG = {
     lastLevel: 3,
 };
 
-//  Find out more information about the Game Config at:
-//  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
+const Scenes = [
+    Boot,
+    BootScene,
+    Preloader,
+    MainMenu,
+    MainGame,
+    GameOver,
+    SettingsOverlay,
+];
+
+const createScene = (Scene) => new Scene(SHARED_CONFIG);
+const initScenes = () => Scenes.map(createScene);
+
+// Main Configuration
 const config: Phaser.Types.Core.GameConfig = {
-    type: AUTO,
+    type: Phaser.AUTO,
     ...SHARED_CONFIG,
     pixelArt: true,
     physics: {
@@ -54,23 +75,41 @@ const config: Phaser.Types.Core.GameConfig = {
     dom: {
         createContainer: true,
     },
+    plugins: {
+        scene: [
+            {
+                key: "rexUI",
+                plugin: UIPlugin,
+                mapping: "rexUI",
+            },
+        ],
+        global: [
+            {
+                key: "rexInputTextPlugin",
+                plugin: InputTextPlugin,
+                start: true,
+            },
+            {
+                key: "rexBBCodeTextPlugin",
+                plugin: BBCodeTextPlugin,
+                start: true,
+            },
+            {
+                key: "rexTextEdit",
+                plugin: TextEditPlugin,
+                start: true,
+            },
+        ],
+    },
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     // backgroundColor: "#000",
-    scene: [
-        Boot,
-        BootScene,
-        Preloader,
-        MainMenu,
-        MainGame,
-        GameOver,
-        SettingsOverlay,
-    ],
+    scene: initScenes(),
 };
 
-const StartGame = (parent: string) => {
-    return new Game({ ...config, parent });
+const StartGame = () => {
+    return new Phaser.Game(config);
 };
 
 export default StartGame;

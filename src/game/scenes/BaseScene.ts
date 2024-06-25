@@ -14,10 +14,7 @@ class BaseScene extends Scene {
 
     constructor(key: any, config: any) {
         super(key);
-        this.config = {
-            width: 1280,
-            height: 720,
-        };
+        this.config = config;
         this.screenCenter = [this.config.width / 2, this.config.height / 2];
         this.fontSize = 60;
         this.fontFamily = "customFont";
@@ -37,7 +34,6 @@ class BaseScene extends Scene {
     // }
 
     create() {
-        console.log("Hello");
         this.add.image(0, 0, "sky-bg").setOrigin(0).setScale(1).setDepth(-1);
         this.add
             .image(0, 0, "mountain-bg")

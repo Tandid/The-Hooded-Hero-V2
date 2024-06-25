@@ -1,4 +1,6 @@
 import { GameObjects, Scene } from "phaser";
+
+// Preloader Assets
 import { preloadAudio } from "../preloaders/preloadAudio";
 import { preloadCaveBg } from "../preloaders/preloadCaveBg";
 import { preloadCollectibles } from "../preloaders/preloadCollectibles";
@@ -10,36 +12,32 @@ import { preloadTiles } from "../preloaders/preloadTiles";
 import { preloadUI } from "../preloaders/preloadUI";
 
 export class BootScene extends Scene {
-    background: GameObjects.Image;
     config: any;
-    logo: GameObjects.Image;
-    title: GameObjects.Text;
     arrow: GameObjects.Image;
     dummy: GameObjects.Image;
     start: number;
     fontFamily: string;
+    loadingText: GameObjects.Text;
 
-    constructor() {
+    constructor(config: any) {
         super("BootScene");
-        this.config = {
-            width: 1280,
-            height: 720,
-        };
+        this.config = config;
         this.fontFamily = "customFont";
         this.start = this.config.width / 10;
     }
 
+    // Init and create are similar, init starts before preload, while create starts after
     init() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "logo")
             .setOrigin(0.5)
             .setScale(0.6);
 
-        this.add
+        this.loadingText = this.add
             .text(
                 this.config.width / 2,
                 this.config.height / 2,
-                `Loading Assets and Textures ...`,
+                `Loading Assets and Textures ... (0%)`,
                 {
                     fontFamily: this.fontFamily,
                     fontSize: "30px",
@@ -64,10 +62,10 @@ export class BootScene extends Scene {
         this.generateRandomHint();
     }
 
+    // Preload all assets here
     preload() {
         this.load.setPath("assets");
 
-        // Load your assets here
         this.load.image("logo", "logo.png");
         this.load.image("github", "github.png");
         this.load.image("linkedin", "linkedin.png");
@@ -87,11 +85,15 @@ export class BootScene extends Scene {
         this.load.on("complete", this.loadingComplete, this);
     }
 
+    // Loading bar updates
     updateLoadingBar(progress: number) {
-        console.log(`Loading progress: ${progress * 100}%`);
-        const end = this.dummy.x; // Set the end position of the loading bar
+        const end = this.dummy.x - 200; // This is so that the arrow ends where the dummy is
         const x = this.start + progress * (end - this.start);
         this.arrow.setX(x);
+
+        this.loadingText.setText(
+            `Loading Assets and Textures ... (${Math.round(progress * 100)}%)`
+        );
     }
 
     loadingComplete() {
@@ -99,6 +101,7 @@ export class BootScene extends Scene {
         this.scene.start("MainMenu");
     }
 
+    // Random hint generator
     generateRandomHint() {
         const messages = [
             "Not all heroes wear capes, some wear hoods..",
