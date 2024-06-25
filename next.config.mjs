@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
-    distDir: 'dist'
+    // I commented out this because it was causing an issue with API folders
+    // output: 'export',
+    distDir: "dist",
 };
 
 export default nextConfig;
+
