@@ -1,9 +1,10 @@
 // @ts-nocheck
 
 import { GameObjects } from "phaser";
+import { EventBus } from "../EventBus";
 import BaseScene from "./BaseScene";
 
-export class MainMenu extends BaseScene {
+export default class MainMenu extends BaseScene {
     background: GameObjects.Image;
     config: any;
     cursorOver: any;
@@ -21,20 +22,23 @@ export class MainMenu extends BaseScene {
         ];
     }
 
-    init() {
+    create() {
+        super.create(); // This uses the create function from the BaseScene
+
         this.cameras.main.fadeIn(500, 0, 0, 0);
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
 
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
+        this.addSoundEffects();
 
-        this.pageFlip = this.sound.add("page-flip");
-        this.pageFlip.volume = 0.4;
+        this.createPage();
+        this.createControlsButton();
+        this.createContactsButton();
+        this.createSettingsButton();
+        this.createMenu(this.menu, this.setupMenuEvents.bind(this));
 
-        this.flute = this.sound.add("flute");
-        this.flute.volume = 0.4;
+        EventBus.emit("current-scene-ready", this); // Essential for changing scenes
+    }
 
+    createPage() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-1")
             .setOrigin(0.5)
@@ -73,29 +77,18 @@ export class MainMenu extends BaseScene {
             .setVisible(false); // Initially hidden
     }
 
-    create() {
-        super.create(); // This uses the create function from the BaseScene
+    addSoundEffects() {
+        this.cursorOver = this.sound.add("cursorOver");
+        this.cursorOver.volume = 0.4;
 
-        // this.add
-        //   .text(
-        //     this.config.width / 10 - 10,
-        //     this.config.height - 45,
-        //     `${this.username}`,
-        //     {
-        //       fontFamily: "customFont",
-        //       fontSize: "30px",
-        //       fontWeight: "larger",
-        //     }
-        //   )
-        //   .setOrigin(0)
-        //   .setColor("#000")
-        //   .setDepth(2);
+        this.select = this.sound.add("select");
+        this.select.volume = 0.4;
 
-        this.createControlsButton();
-        this.createContactsButton();
-        this.createSettingsButton();
-        this.createMenu(this.menu, this.setupMenuEvents.bind(this));
-        this.playBgMusic();
+        this.pageFlip = this.sound.add("page-flip");
+        this.pageFlip.volume = 0.4;
+
+        this.flute = this.sound.add("flute");
+        this.flute.volume = 0.4;
     }
 
     createSettingsButton() {
@@ -184,16 +177,6 @@ export class MainMenu extends BaseScene {
         });
     }
 
-    playBgMusic() {
-        this.sound.stopAll();
-
-        if (this.sound.get("menu-theme")) {
-            this.sound.get("menu-theme", { loop: true, volume: 0.04 }).play();
-            return;
-        }
-        this.sound.add("menu-theme", { loop: true, volume: 0.04 }).play();
-    }
-
     setupMenuEvents(menuItem: any) {
         const textGO = menuItem.textGO;
         textGO.setInteractive();
@@ -242,6 +225,10 @@ export class MainMenu extends BaseScene {
     hideTooltip() {
         this.tooltipText.setVisible(false);
         this.tooltipText.setAlpha(0);
+    }
+
+    changeScene() {
+        this.scene.start("Signup");
     }
 }
 
