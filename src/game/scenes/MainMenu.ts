@@ -13,10 +13,7 @@ export class MainMenu extends BaseScene {
 
     constructor(config: any) {
         super("MainMenu", config);
-        this.config = {
-            width: 1280,
-            height: 720,
-        };
+        this.config = config;
         this.menu = [
             { scene: "PlayScene", text: "Story Mode" },
             { scene: "CharSelection", text: "Multiplayer" },
@@ -172,9 +169,6 @@ export class MainMenu extends BaseScene {
     }
 
     setupMenuEvents(menuItem: any) {
-        // if (this.scene.isActive("SettingsOverlayScene") === false) {
-        //   return;
-        // }
         const textGO = menuItem.textGO;
         textGO.setInteractive();
 
