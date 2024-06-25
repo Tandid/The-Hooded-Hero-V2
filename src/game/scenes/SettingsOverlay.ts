@@ -1,13 +1,16 @@
-// @ts-nocheck
-
 import { Scene } from "phaser";
 
 export class SettingsOverlay extends Scene {
     menu: any[];
+    currentMusicBars: number;
+    maxVolumeBars: number;
+    minVolumeBars: number;
+    volumeBars: Phaser.GameObjects.Image[];
 
     constructor(config) {
         super("SettingsOverlay", { ...config, canGoBack: false });
         this.config = { width: 1280, height: 720 };
+        this.volumeBars = [];
     }
 
     init() {
@@ -165,7 +168,7 @@ export class SettingsOverlay extends Scene {
             .setInteractive();
 
         if (this.toggleMute === false) {
-            const switchOn = this.add
+            this.add
                 .image(
                     this.config.width / 2 + 100,
                     this.config.height / 2 + 150,
@@ -174,7 +177,7 @@ export class SettingsOverlay extends Scene {
                 .setOrigin(0.5)
                 .setScale(0.8);
         } else {
-            const switchOn = this.add
+            this.add
                 .image(
                     this.config.width / 2 + 100,
                     this.config.height / 2 + 150,
@@ -187,7 +190,6 @@ export class SettingsOverlay extends Scene {
         muteBtn.on("pointerup", () => {
             this.select.play();
             this.toggleMute();
-            // this.toggleMute(!this.toggleMute);
         });
         muteBtn.on("pointerover", () => {
             muteBtn.setTint(0xc2c2c2);
@@ -219,9 +221,6 @@ export class SettingsOverlay extends Scene {
         volumeDownBtn.on("pointerup", () => {
             this.select.play();
             this.decreaseVolume();
-            if (this.currentMusicBars > this.minVolumeBars) {
-                this.currentMusicBars -= 1;
-            }
         });
         volumeDownBtn.on("pointerover", () => {
             volumeDownBtn.setTintFill(0xc2c2c2);
@@ -233,8 +232,6 @@ export class SettingsOverlay extends Scene {
     }
 
     createIncrementBtn(width, height) {
-        let barWidth = 25;
-
         const volumeUpBtn = this.add
             .image(width, height, "next-btn")
             .setOrigin(0.5)
@@ -244,9 +241,6 @@ export class SettingsOverlay extends Scene {
         volumeUpBtn.on("pointerup", () => {
             this.select.play();
             this.increaseVolume();
-            if (this.currentMusicBars < this.maxVolumeBars) {
-                this.currentMusicBars += 1;
-            }
         });
 
         volumeUpBtn.on("pointerover", () => {
@@ -261,17 +255,21 @@ export class SettingsOverlay extends Scene {
 
     // Volume bar creation
     createMusicBars() {
+        // Clear existing bars
+        this.volumeBars.forEach((bar) => bar.destroy());
+        this.volumeBars = [];
+
         const barWidth = 25;
         let width = this.config.width / 2 - 65;
         let height = this.config.height / 2 - 50;
         for (let i = 0; i < this.currentMusicBars; i++) {
-            this.createVolumeBar(width, height);
+            this.volumeBars.push(this.createVolumeBar(width, height));
             width += barWidth;
         }
     }
 
     createVolumeBar(width, height) {
-        this.add
+        return this.add
             .image(width, height, "yellow-bar")
             .setOrigin(0.5)
             .setScale(0.7);
@@ -279,13 +277,29 @@ export class SettingsOverlay extends Scene {
 
     // Volume control methods
     increaseVolume() {
-        this.sound.volume = Phaser.Math.Clamp(this.sound.volume + 0.1, 0, 1);
-        console.log("Volume increased to:", this.sound.volume);
+        if (this.currentMusicBars < this.maxVolumeBars) {
+            this.currentMusicBars += 1;
+            this.sound.volume = Phaser.Math.Clamp(
+                this.sound.volume + 0.1,
+                0,
+                1
+            );
+            console.log("Volume increased to:", this.sound.volume);
+            this.createMusicBars();
+        }
     }
 
     decreaseVolume() {
-        this.sound.volume = Phaser.Math.Clamp(this.sound.volume - 0.1, 0, 1);
-        console.log("Volume decreased to:", this.sound.volume);
+        if (this.currentMusicBars > this.minVolumeBars) {
+            this.currentMusicBars -= 1;
+            this.sound.volume = Phaser.Math.Clamp(
+                this.sound.volume - 0.1,
+                0,
+                1
+            );
+            console.log("Volume decreased to:", this.sound.volume);
+            this.createMusicBars();
+        }
     }
 
     toggleMute() {
@@ -294,10 +308,6 @@ export class SettingsOverlay extends Scene {
             "Mute toggled. Current state:",
             this.sound.mute ? "Muted" : "Unmuted"
         );
-    }
-
-    update() {
-        this.createMusicBars();
     }
 }
 
