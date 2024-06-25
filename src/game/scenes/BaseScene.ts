@@ -28,11 +28,6 @@ export default class BaseScene extends Scene {
         };
     }
 
-    // init(data) {
-    //     this.socket = data.socket;
-    //     this.username = data.username;
-    // }
-
     create() {
         this.playBgMusic();
 
@@ -91,12 +86,12 @@ export default class BaseScene extends Scene {
                 .setScale(1.5)
                 .setAngle(angle)
                 .setDepth(-1);
-            this.tweens.add({
-                targets: arrow,
-                delay: i * 100,
-                repeat: -1,
-                yoyo: true,
+
+            arrow.setData({
+                speed: Phaser.Math.Between(5, 10), // Random horizontal speed between 5 and 10
+                gravity: Phaser.Math.FloatBetween(0.1, 0.5), // Random gravity value between 0.1 and 0.5
             });
+
             this.arrows.push(arrow);
         }
     }
@@ -138,10 +133,17 @@ export default class BaseScene extends Scene {
         });
 
         this.arrows.forEach((arrow) => {
-            arrow.x += 5;
+            const speed = arrow.getData("speed");
+            const gravity = arrow.getData("gravity");
+
+            arrow.x += speed;
+            arrow.y += gravity * 10; // Apply gravity (multiplied by 10 for smoother effect)
+
             if (arrow.x > 1600) {
                 arrow.x = this.scale.width - 1600;
                 arrow.y = Math.floor(Math.random() * this.scale.height);
+                arrow.setData("speed", Phaser.Math.Between(5, 10)); // Reset horizontal speed
+                arrow.setData("gravity", Phaser.Math.FloatBetween(0.1, 0.5)); // Reset gravity
             }
         });
     }
