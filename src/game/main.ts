@@ -1,5 +1,6 @@
 import { AUTO, Game } from "phaser";
 import { Boot } from "./scenes/Boot";
+import { BootScene } from "./scenes/BootScene";
 import { Game as MainGame } from "./scenes/Game";
 import { GameOver } from "./scenes/GameOver";
 import { MainMenu } from "./scenes/MainMenu";
@@ -56,7 +57,7 @@ const config: Phaser.Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     backgroundColor: "#000",
-    scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
+    scene: [Boot, BootScene, Preloader, MainMenu, MainGame, GameOver],
 };
 
 const StartGame = (parent: string) => {
