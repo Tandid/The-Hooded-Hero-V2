@@ -6,6 +6,8 @@ export class SettingsOverlay extends Scene {
     maxVolumeBars: number;
     minVolumeBars: number;
     volumeBars: Phaser.GameObjects.Image[];
+    inputBlock: Phaser.GameObjects.Rectangle;
+    config: any;
 
     constructor(config) {
         super("SettingsOverlay", { ...config, canGoBack: false });
@@ -20,6 +22,7 @@ export class SettingsOverlay extends Scene {
     }
 
     create() {
+        this.createInputBlock(); // Prevents click events behind the overlay from happening
         this.createPage();
         this.addSoundEffects();
         this.createCloseButton();
@@ -27,6 +30,25 @@ export class SettingsOverlay extends Scene {
         this.createMusicControl();
         this.createMuteButton();
         this.createMusicBars();
+    }
+
+    createInputBlock() {
+        this.inputBlock = this.add
+            .rectangle(
+                this.config.width / 2,
+                this.config.height / 2,
+                this.config.width,
+                this.config.height,
+                0x000000,
+                0 // fully transparent
+            )
+            .setOrigin(0.5)
+            .setInteractive()
+            .setDepth(-1);
+
+        this.inputBlock.on("pointerdown", (pointer, localX, localY, event) => {
+            event.stopPropagation();
+        });
     }
 
     createPage() {
