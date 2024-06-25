@@ -12,8 +12,6 @@ import { preloadUI } from "../preloaders/preloadUI";
 export class BootScene extends Scene {
     background: GameObjects.Image;
     config: any;
-    logo: GameObjects.Image;
-    title: GameObjects.Text;
     arrow: GameObjects.Image;
     dummy: GameObjects.Image;
     start: number;
