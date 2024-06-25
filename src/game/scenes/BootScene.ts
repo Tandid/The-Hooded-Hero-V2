@@ -1,4 +1,6 @@
 import { GameObjects, Scene } from "phaser";
+
+// Preloader Assets
 import { preloadAudio } from "../preloaders/preloadAudio";
 import { preloadCaveBg } from "../preloaders/preloadCaveBg";
 import { preloadCollectibles } from "../preloaders/preloadCollectibles";
@@ -10,7 +12,6 @@ import { preloadTiles } from "../preloaders/preloadTiles";
 import { preloadUI } from "../preloaders/preloadUI";
 
 export class BootScene extends Scene {
-    background: GameObjects.Image;
     config: any;
     arrow: GameObjects.Image;
     dummy: GameObjects.Image;
@@ -25,6 +26,7 @@ export class BootScene extends Scene {
         this.start = this.config.width / 10;
     }
 
+    // Init and create are similar, init starts before preload, while create starts after
     init() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "logo")
@@ -60,6 +62,7 @@ export class BootScene extends Scene {
         this.generateRandomHint();
     }
 
+    // Preload all assets here
     preload() {
         this.load.setPath("assets");
 
@@ -82,8 +85,9 @@ export class BootScene extends Scene {
         this.load.on("complete", this.loadingComplete, this);
     }
 
+    // Loading bar updates
     updateLoadingBar(progress: number) {
-        const end = this.dummy.x - 200; // Set the end position of the loading bar to dummy
+        const end = this.dummy.x - 200; // This is so that the arrow ends where the dummy is
         const x = this.start + progress * (end - this.start);
         this.arrow.setX(x);
 
@@ -97,6 +101,7 @@ export class BootScene extends Scene {
         this.scene.start("MainMenu");
     }
 
+    // Random hint generator
     generateRandomHint() {
         const messages = [
             "Not all heroes wear capes, some wear hoods..",
