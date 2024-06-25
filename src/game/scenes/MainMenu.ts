@@ -1,21 +1,25 @@
-import { GameObjects, Scene } from "phaser";
+import { GameObjects } from "phaser";
+import BaseScene from "./BaseScene";
 
-export class MainMenu extends Scene {
+export class MainMenu extends BaseScene {
     background: GameObjects.Image;
     config: any;
-    logo: GameObjects.Image;
-    title: GameObjects.Text;
-    start: number;
-    fontFamily: string;
+    cursorOver: any;
+    select: any;
+    pageFlip: any;
+    flute: any;
 
-    constructor() {
-        super("MainMenu");
+    constructor(config: any) {
+        super("MainMenu", config);
         this.config = {
             width: 1280,
             height: 720,
         };
-        this.fontFamily = "customFont";
-        this.start = this.config.width / 10;
+        this.menu = [
+            { scene: "PlayScene", text: "Story Mode" },
+            { scene: "CharSelection", text: "Multiplayer" },
+            { scene: "LevelScene", text: "Levels" },
+        ];
     }
 
     init() {
@@ -55,7 +59,7 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        // super.create();
+        super.create(); // This uses the create function from the BaseScene
 
         // this.add
         //   .text(
@@ -75,7 +79,7 @@ export class MainMenu extends Scene {
         this.createControlsButton();
         this.createContactsButton();
         this.createSettingsButton();
-        // this.createMenu(this.menu, this.setupMenuEvents.bind(this));
+        this.createMenu(this.menu, this.setupMenuEvents.bind(this));
         this.playBgMusic();
     }
 
@@ -165,7 +169,7 @@ export class MainMenu extends Scene {
         this.sound.add("menu-theme", { loop: true, volume: 0.04 }).play();
     }
 
-    setupMenuEvents(menuItem) {
+    setupMenuEvents(menuItem: any) {
         // if (this.scene.isActive("SettingsOverlayScene") === false) {
         //   return;
         // }
