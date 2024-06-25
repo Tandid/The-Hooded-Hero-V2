@@ -98,7 +98,7 @@ export class MainMenu extends BaseScene {
 
         settingsBtn.on("pointerup", () => {
             this.select.play();
-            this.scene.launch("SettingsOverlayScene");
+            this.scene.launch("SettingsOverlay");
         });
         settingsBtn.on("pointerover", () => {
             settingsBtn.setTint(0xc2c2c2);

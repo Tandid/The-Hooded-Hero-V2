@@ -5,6 +5,7 @@ import { Game as MainGame } from "./scenes/Game";
 import { GameOver } from "./scenes/GameOver";
 import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
+import { SettingsOverlay } from "./scenes/SettingsOverlay";
 
 const MAP_WIDTH = 16000;
 
@@ -57,7 +58,15 @@ const config: Phaser.Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     // backgroundColor: "#000",
-    scene: [Boot, BootScene, Preloader, MainMenu, MainGame, GameOver],
+    scene: [
+        Boot,
+        BootScene,
+        Preloader,
+        MainMenu,
+        MainGame,
+        GameOver,
+        SettingsOverlay,
+    ],
 };
 
 const StartGame = (parent: string) => {
