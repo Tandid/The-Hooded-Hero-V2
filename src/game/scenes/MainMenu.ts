@@ -20,17 +20,17 @@ export class MainMenu extends Scene {
 
     init() {
         this.cameras.main.fadeIn(500, 0, 0, 0);
-        // this.cursorOver = this.sound.add("cursorOver");
-        // this.cursorOver.volume = 0.4;
+        this.cursorOver = this.sound.add("cursorOver");
+        this.cursorOver.volume = 0.4;
 
-        // this.select = this.sound.add("select");
-        // this.select.volume = 0.4;
+        this.select = this.sound.add("select");
+        this.select.volume = 0.4;
 
-        // this.pageFlip = this.sound.add("page-flip");
-        // this.pageFlip.volume = 0.4;
+        this.pageFlip = this.sound.add("page-flip");
+        this.pageFlip.volume = 0.4;
 
-        // this.flute = this.sound.add("flute");
-        // this.flute.volume = 0.4;
+        this.flute = this.sound.add("flute");
+        this.flute.volume = 0.4;
 
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-1")

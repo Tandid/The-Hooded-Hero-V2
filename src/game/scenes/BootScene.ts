@@ -1,4 +1,12 @@
 import { GameObjects, Scene } from "phaser";
+import { preloadAudio } from "../preloaders/preloadAudio";
+import { preloadCaveBg } from "../preloaders/preloadCaveBg";
+import { preloadCollectibles } from "../preloaders/preloadCollectibles";
+import { preloadForestBg } from "../preloaders/preloadForestBg";
+import { preloadLevelMaps } from "../preloaders/preloadLevelMaps";
+import { preloadProjectiles } from "../preloaders/preloadProjectiles";
+import { preloadSpriteSheets } from "../preloaders/preloadSpriteSheets";
+import { preloadTiles } from "../preloaders/preloadTiles";
 import { preloadUI } from "../preloaders/preloadUI";
 
 export class BootScene extends Scene {
@@ -65,7 +73,14 @@ export class BootScene extends Scene {
         this.load.image("linkedin", "linkedin.png");
         this.load.image("gmail", "gmail.png");
 
-        // preloadAudio(this);
+        preloadAudio(this);
+        preloadCaveBg(this);
+        preloadCollectibles(this);
+        preloadForestBg(this);
+        preloadLevelMaps(this);
+        preloadProjectiles(this);
+        preloadSpriteSheets(this);
+        preloadTiles(this);
         preloadUI(this);
 
         this.load.on("progress", this.updateLoadingBar, this);
