@@ -4,7 +4,7 @@ import { GameObjects } from "phaser";
 import { EventBus } from "../EventBus";
 import BaseScene from "./BaseScene";
 
-export class MainMenu extends BaseScene {
+export default class MainMenu extends BaseScene {
     background: GameObjects.Image;
     config: any;
     cursorOver: any;
@@ -28,7 +28,6 @@ export class MainMenu extends BaseScene {
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
         this.addSoundEffects();
-        this.playBgMusic();
 
         this.createPage();
         this.createControlsButton();
@@ -165,16 +164,6 @@ export class MainMenu extends BaseScene {
         contactsBtn.on("pointerout", () => {
             contactsBtn.clearTint();
         });
-    }
-
-    playBgMusic() {
-        this.sound.stopAll();
-
-        if (this.sound.get("menu-theme")) {
-            this.sound.get("menu-theme", { loop: true, volume: 0.04 }).play();
-            return;
-        }
-        this.sound.add("menu-theme", { loop: true, volume: 0.04 }).play();
     }
 
     setupMenuEvents(menuItem: any) {

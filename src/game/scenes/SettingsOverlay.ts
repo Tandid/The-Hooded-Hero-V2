@@ -15,7 +15,7 @@ export class SettingsOverlay extends Scene {
 
     constructor(config) {
         super("SettingsOverlay", { ...config, canGoBack: false });
-        this.config = { width: 1280, height: 720 };
+        this.config = config;
         this.volumeBars = [];
     }
 
@@ -27,11 +27,12 @@ export class SettingsOverlay extends Scene {
 
     create() {
         this.createInputBlock(); // Prevents click events behind the overlay from happening
-        this.createPage();
-        this.addSoundEffects();
-        this.createCloseButton();
 
-        this.createMusicControl();
+        this.addSoundEffects();
+
+        this.createPage();
+        this.createCloseButton();
+        this.createMusicController();
         this.createMuteButton();
         this.createMusicBars();
     }
@@ -234,7 +235,7 @@ export class SettingsOverlay extends Scene {
         }
     }
 
-    createMusicControl() {
+    createMusicController() {
         this.createIncrementBtn(
             this.config.width / 2 + 200,
             this.config.height / 2 - 50
@@ -318,7 +319,6 @@ export class SettingsOverlay extends Scene {
                 0,
                 1
             );
-            console.log("Volume increased to:", this.sound.volume);
             this.createMusicBars();
         }
     }
@@ -331,7 +331,6 @@ export class SettingsOverlay extends Scene {
                 0,
                 1
             );
-            console.log("Volume decreased to:", this.sound.volume);
             this.createMusicBars();
         }
     }
