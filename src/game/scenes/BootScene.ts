@@ -19,12 +19,9 @@ export class BootScene extends Scene {
     start: number;
     fontFamily: string;
 
-    constructor() {
+    constructor(config) {
         super("BootScene");
-        this.config = {
-            width: 1280,
-            height: 720,
-        };
+        this.config = config;
         this.fontFamily = "customFont";
         this.start = this.config.width / 10;
     }
