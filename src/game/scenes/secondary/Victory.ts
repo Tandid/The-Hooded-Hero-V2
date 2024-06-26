@@ -78,8 +78,16 @@ class VictoryScene extends BaseUIScene {
             .setOrigin(0.5, 0.5)
             .setColor("#D9B48FFF");
 
-        this.createHomeButton();
-        this.createRestartButton("VictoryScene");
+        this.createHomeButton(
+            this.config.width / 2 - 150,
+            this.config.height / 2 + 150
+        );
+
+        this.createRestartButton(
+            this.config.width / 2,
+            this.config.height / 2 + 150,
+            "VictoryScene"
+        );
         this.createPlayButton();
     }
 

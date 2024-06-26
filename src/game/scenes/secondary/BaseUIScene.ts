@@ -55,28 +55,18 @@ class BaseUIScene extends Phaser.Scene {
         return button;
     }
 
-    createHomeButton() {
-        return this.createButton(
-            this.config.width / 2 - 150,
-            this.config.height / 2 + 150,
-            "home-btn-big",
-            () => {
-                this.scene.stop("PlayScene");
-                this.scene.start("MainMenu");
-            }
-        );
+    createHomeButton(x: number, y: number) {
+        return this.createButton(x, y, "home-btn-big", () => {
+            this.scene.stop("PlayScene");
+            this.scene.start("MainMenu");
+        });
     }
 
-    createRestartButton(sceneKey: string) {
-        return this.createButton(
-            this.config.width / 2,
-            this.config.height / 2 + 150,
-            "restart-btn-big",
-            () => {
-                this.scene.stop(sceneKey);
-                EventEmitter.emit("RESTART_GAME");
-            }
-        );
+    createRestartButton(x: number, y: number, sceneKey: string) {
+        return this.createButton(x, y, "restart-btn-big", () => {
+            this.scene.stop(sceneKey);
+            EventEmitter.emit("RESTART_GAME");
+        });
     }
 }
 
