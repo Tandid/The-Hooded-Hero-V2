@@ -4,11 +4,6 @@ import { Socket } from "socket.io-client";
 import BaseScene from "../BaseScene";
 
 export default class LobbyScene extends BaseScene {
-    config: any;
-    cursorOver: any;
-    select: any;
-    pageFlip: any;
-    flute: any;
     socket: Socket;
     username: string;
     charSpriteKey: string;

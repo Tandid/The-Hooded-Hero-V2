@@ -3,7 +3,6 @@
 import { Scene } from "phaser";
 
 export default class SettingsOverlay extends Scene {
-    menu: any[];
     currentMusicBars: number;
     maxVolumeBars: number;
     minVolumeBars: number;

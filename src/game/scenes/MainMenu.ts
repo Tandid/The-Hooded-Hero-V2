@@ -1,22 +1,16 @@
 // @ts-nocheck
 
-import { GameObjects } from "phaser";
 import { Socket } from "socket.io-client";
 import { EventBus } from "../EventBus";
 import BaseScene from "./BaseScene";
 
 export default class MainMenu extends BaseScene {
-    background: GameObjects.Image;
-    config: any;
-    cursorOver: any;
-    select: any;
-    pageFlip: any;
-    flute: any;
     socket: Socket;
+    menu: { scene: string; text: string }[];
+    tooltipText: any;
 
     constructor(config: any) {
         super("MainMenu", config);
-        this.config = config;
         this.menu = [
             { scene: "PlayScene", text: "Story Mode" },
             { scene: "CharSelection", text: "Multiplayer" },
@@ -218,7 +212,7 @@ export default class MainMenu extends BaseScene {
         });
     }
 
-    showTooltip(x, y, text) {
+    showTooltip(x: number, y: number, text: string) {
         this.tooltipText.setText(text);
         this.tooltipText.setPosition(x, y); // Adjust position as needed
         this.tooltipText.setAlpha(1);

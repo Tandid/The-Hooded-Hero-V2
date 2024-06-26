@@ -4,6 +4,10 @@ import { GameObjects, Scene } from "phaser";
 
 export default class BaseScene extends Scene {
     config: any;
+    cursorOver: any;
+    select: any;
+    pageFlip: any;
+    flute: any;
     screenCenter: Array<number>;
     fontSize: number;
     fontFamily: string;

@@ -5,11 +5,6 @@ import PlayerConfig from "../../../utils/PlayerConfig";
 import BaseScene from "../BaseScene";
 
 class CharSelection extends BaseScene {
-    config: any;
-    cursorOver: any;
-    select: any;
-    pageFlip: any;
-    flute: any;
     socket: Socket;
     username: string;
 
