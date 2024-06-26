@@ -3,7 +3,7 @@ import EventEmitter from "../../../events/Emitter";
 
 class Victory extends Phaser.Scene {
     config: any;
-    gameOver: any;
+    victory: any;
     cursorOver: any;
     select: any;
 
@@ -21,7 +21,7 @@ class Victory extends Phaser.Scene {
     }
 
     addSoundEffects() {
-        this.gameOver = this.sound.add("win", { volume: 0.1 }).play();
+        this.victory = this.sound.add("win", { volume: 0.1 }).play();
 
         this.cursorOver = this.sound.add("cursorOver");
         this.cursorOver.volume = 0.4;

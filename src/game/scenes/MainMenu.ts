@@ -240,7 +240,7 @@ export default class MainMenu extends BaseScene {
     }
 
     changeScene() {
-        this.scene.start("Victory");
+        this.scene.start("Pause");
     }
 }
 

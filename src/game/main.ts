@@ -21,6 +21,7 @@ import Controls from "./scenes/secondary/Controls";
 import Credits from "./scenes/secondary/Credits";
 import GameOver from "./scenes/secondary/GameOver";
 import Loading from "./scenes/secondary/Loading";
+import Pause from "./scenes/secondary/Pause";
 import SettingsOverlay from "./scenes/secondary/SettingsOverlay";
 import Victory from "./scenes/secondary/Victory";
 
@@ -68,6 +69,7 @@ const Scenes = [
     Loading,
     GameOver,
     Victory,
+    Pause,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
