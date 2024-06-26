@@ -14,6 +14,7 @@ import Preloader from "./scenes/Preloader";
 import SettingsOverlay from "./scenes/SettingsOverlay";
 import Signup from "./scenes/Signup";
 import CharSelection from "./scenes/multiplayer/CharSelection";
+import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
 
 // Custom configurations
@@ -52,6 +53,7 @@ const Scenes = [
     LobbyScene,
     Signup,
     SettingsOverlay,
+    JoinRoomScene,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
