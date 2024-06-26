@@ -240,7 +240,7 @@ export default class MainMenu extends BaseScene {
     }
 
     changeScene() {
-        this.scene.start("Credits");
+        this.scene.start("GameOver");
     }
 }
 

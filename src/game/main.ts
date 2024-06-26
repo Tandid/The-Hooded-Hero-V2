@@ -19,6 +19,7 @@ import LobbyScene from "./scenes/multiplayer/Lobby";
 import Contact from "./scenes/secondary/Contact";
 import Controls from "./scenes/secondary/Controls";
 import Credits from "./scenes/secondary/Credits";
+import GameOver from "./scenes/secondary/GameOver";
 import Loading from "./scenes/secondary/Loading";
 import SettingsOverlay from "./scenes/secondary/SettingsOverlay";
 
@@ -64,6 +65,7 @@ const Scenes = [
     Credits,
     LevelSelect,
     Loading,
+    GameOver,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
