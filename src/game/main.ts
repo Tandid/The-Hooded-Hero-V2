@@ -22,6 +22,7 @@ import Credits from "./scenes/secondary/Credits";
 import GameOver from "./scenes/secondary/GameOver";
 import Loading from "./scenes/secondary/Loading";
 import SettingsOverlay from "./scenes/secondary/SettingsOverlay";
+import Victory from "./scenes/secondary/Victory";
 
 // Custom configurations
 const MAP_WIDTH = 16000;
@@ -66,6 +67,7 @@ const Scenes = [
     LevelSelect,
     Loading,
     GameOver,
+    Victory,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
