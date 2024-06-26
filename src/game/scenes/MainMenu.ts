@@ -203,6 +203,7 @@ export default class MainMenu extends BaseScene {
         });
 
         textGO.on("pointerup", () => {
+            this.game.canvas.classList.remove("custom-cursor");
             if (menuItem.text === "Story Mode") {
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
