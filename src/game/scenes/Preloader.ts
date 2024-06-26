@@ -1,8 +1,17 @@
 import { Scene } from "phaser";
+import { Socket } from "socket.io-client";
 
 export default class Preloader extends Scene {
+    socket: Socket;
+
     constructor() {
         super("Preloader");
+    }
+
+    init(data: any) {
+        this.socket = data.socket;
+        console.log("Initialized", this.socket);
+        console.log({ Loading: data });
     }
 
     preload() {

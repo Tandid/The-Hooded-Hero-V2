@@ -97,7 +97,6 @@ export default class BootScene extends Scene {
     }
 
     loadingComplete() {
-        console.log("Loading complete");
         this.scene.start("MainMenu");
     }
 
