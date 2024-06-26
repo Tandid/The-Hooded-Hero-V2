@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { GameObjects } from "phaser";
+import { Socket } from "socket.io-client";
 import { EventBus } from "../EventBus";
 import BaseScene from "./BaseScene";
 
@@ -11,6 +12,7 @@ export default class MainMenu extends BaseScene {
     select: any;
     pageFlip: any;
     flute: any;
+    socket: Socket;
 
     constructor(config: any) {
         super("MainMenu", config);
@@ -20,6 +22,11 @@ export default class MainMenu extends BaseScene {
             { scene: "CharSelection", text: "Multiplayer" },
             { scene: "LevelScene", text: "Levels" },
         ];
+    }
+
+    init(data: any) {
+        this.socket = data.socket;
+        console.log({ MainMenu: data });
     }
 
     create() {
