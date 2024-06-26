@@ -97,15 +97,18 @@ export default class Contact extends BaseScene {
             this.select.play();
             this.scene.wake("MainMenu");
             this.scene.stop("Contact");
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         closeBtn.on("pointerover", () => {
             this.cursorOver.play();
             closeBtn.setTint(0xff6666);
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         closeBtn.on("pointerout", () => {
             closeBtn.clearTint();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -119,15 +122,18 @@ export default class Contact extends BaseScene {
 
         githubBtn.on("pointerup", () => {
             this.openLink("https://github.com/tandid"), this;
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         githubBtn.on("pointerover", () => {
             this.cursorOver.play();
             githubBtn.setScale(0.17);
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         githubBtn.on("pointerout", () => {
             githubBtn.setScale(0.15);
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -141,15 +147,18 @@ export default class Contact extends BaseScene {
 
         linkedinBtn.on("pointerup", () => {
             this.openLink("https://www.linkedin.com/in/tandidalam/"), this;
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         linkedinBtn.on("pointerover", () => {
             this.cursorOver.play();
             linkedinBtn.setScale(0.17);
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         linkedinBtn.on("pointerout", () => {
             linkedinBtn.setScale(0.15);
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -161,13 +170,20 @@ export default class Contact extends BaseScene {
             .setDepth(2)
             .setInteractive();
 
+        emailBtn.on("pointerup", () => {
+            this.openLink("https://www.tandidalam.com/"), this;
+            this.game.canvas.classList.remove("custom-cursor");
+        });
+
         emailBtn.on("pointerover", () => {
             this.cursorOver.play();
             emailBtn.setScale(0.17);
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         emailBtn.on("pointerout", () => {
             emailBtn.setScale(0.15);
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 }

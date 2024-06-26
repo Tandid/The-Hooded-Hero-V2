@@ -121,15 +121,18 @@ class Controls extends BaseScene {
             this.select.play();
             this.scene.wake("MainMenu");
             this.scene.stop("Controls");
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         closeBtn.on("pointerover", () => {
             this.cursorOver.play();
             closeBtn.setTint(0xff6666);
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         closeBtn.on("pointerout", () => {
             closeBtn.clearTint();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 }
