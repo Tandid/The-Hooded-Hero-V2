@@ -132,7 +132,7 @@ export default class MainMenu extends BaseScene {
 
         controlsBtn.on("pointerup", () => {
             this.pageFlip.play();
-            this.scene.sleep("MenuScene");
+            this.scene.sleep("MainMenu");
             this.scene.launch("ControlsScene");
             this.hideTooltip();
             this.game.canvas.classList.remove("custom-cursor");
@@ -166,8 +166,8 @@ export default class MainMenu extends BaseScene {
 
         contactsBtn.on("pointerup", () => {
             this.pageFlip.play();
-            this.scene.sleep("MenuScene");
-            this.scene.launch("ContactScene");
+            this.scene.sleep("MainMenu");
+            this.scene.launch("Contact");
             this.hideTooltip();
             this.game.canvas.classList.remove("custom-cursor");
         });
