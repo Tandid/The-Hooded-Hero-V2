@@ -9,7 +9,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 // Scene Imports
 import Boot from "./scenes/Boot";
-import BootScene from "./scenes/BootScene";
+import CharSelection from "./scenes/CharSelection";
 import MainMenu from "./scenes/MainMenu";
 import Preloader from "./scenes/Preloader";
 import SettingsOverlay from "./scenes/SettingsOverlay";
@@ -43,7 +43,14 @@ const SHARED_CONFIG = {
     lastLevel: 3,
 };
 
-const Scenes = [Boot, BootScene, Preloader, MainMenu, Signup, SettingsOverlay];
+const Scenes = [
+    Boot,
+    Preloader,
+    MainMenu,
+    CharSelection,
+    Signup,
+    SettingsOverlay,
+];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
 const initScenes = () => Scenes.map(createScene);
