@@ -4,6 +4,10 @@ import { GameObjects, Scene } from "phaser";
 
 export default class BaseScene extends Scene {
     config: any;
+    cursorOver: any;
+    select: any;
+    pageFlip: any;
+    flute: any;
     screenCenter: Array<number>;
     fontSize: number;
     fontFamily: string;
@@ -32,6 +36,22 @@ export default class BaseScene extends Scene {
         this.createBackground();
         this.createArrows();
         this.createLeaves();
+
+        this.addSoundEffects();
+    }
+
+    addSoundEffects() {
+        this.cursorOver = this.sound.add("cursorOver");
+        this.cursorOver.volume = 0.4;
+
+        this.select = this.sound.add("select");
+        this.select.volume = 0.4;
+
+        this.pageFlip = this.sound.add("page-flip");
+        this.pageFlip.volume = 0.4;
+
+        this.flute = this.sound.add("flute");
+        this.flute.volume = 0.4;
     }
 
     createBackground() {

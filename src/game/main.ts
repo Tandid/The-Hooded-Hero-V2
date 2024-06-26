@@ -9,11 +9,13 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 // Scene Imports
 import Boot from "./scenes/Boot";
-import CharSelection from "./scenes/CharSelection";
 import MainMenu from "./scenes/MainMenu";
 import Preloader from "./scenes/Preloader";
 import SettingsOverlay from "./scenes/SettingsOverlay";
 import Signup from "./scenes/Signup";
+import CharSelection from "./scenes/multiplayer/CharSelection";
+import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
+import LobbyScene from "./scenes/multiplayer/Lobby";
 
 // Custom configurations
 const MAP_WIDTH = 16000;
@@ -48,8 +50,10 @@ const Scenes = [
     Preloader,
     MainMenu,
     CharSelection,
+    LobbyScene,
     Signup,
     SettingsOverlay,
+    JoinRoomScene,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);

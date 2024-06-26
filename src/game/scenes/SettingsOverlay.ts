@@ -3,7 +3,6 @@
 import { Scene } from "phaser";
 
 export default class SettingsOverlay extends Scene {
-    menu: any[];
     currentMusicBars: number;
     maxVolumeBars: number;
     minVolumeBars: number;
@@ -31,7 +30,7 @@ export default class SettingsOverlay extends Scene {
         this.addSoundEffects();
 
         this.createPage();
-        this.createCloseButton();
+
         this.createMusicController();
         this.createMuteButton();
         this.createMusicBars();
@@ -45,7 +44,7 @@ export default class SettingsOverlay extends Scene {
                 this.config.width,
                 this.config.height,
                 0x000000,
-                0 // fully transparent
+                50 // fully transparent
             )
             .setOrigin(0.5)
             .setInteractive()
@@ -136,6 +135,8 @@ export default class SettingsOverlay extends Scene {
             )
             .setOrigin(0.5)
             .setScale(0.8);
+
+        this.createCloseButton();
     }
 
     addSoundEffects() {

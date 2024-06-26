@@ -1,22 +1,16 @@
 // @ts-nocheck
 
-import { GameObjects } from "phaser";
 import { Socket } from "socket.io-client";
 import { EventBus } from "../EventBus";
 import BaseScene from "./BaseScene";
 
 export default class MainMenu extends BaseScene {
-    background: GameObjects.Image;
-    config: any;
-    cursorOver: any;
-    select: any;
-    pageFlip: any;
-    flute: any;
     socket: Socket;
+    menu: { scene: string; text: string }[];
+    tooltipText: any;
 
     constructor(config: any) {
         super("MainMenu", config);
-        this.config = config;
         this.menu = [
             { scene: "PlayScene", text: "Story Mode" },
             { scene: "CharSelection", text: "Multiplayer" },
@@ -34,7 +28,6 @@ export default class MainMenu extends BaseScene {
 
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
-        this.addSoundEffects();
         this.playBgMusic();
 
         this.createPage();
@@ -85,20 +78,6 @@ export default class MainMenu extends BaseScene {
             .setVisible(false); // Initially hidden
     }
 
-    addSoundEffects() {
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
-
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
-
-        this.pageFlip = this.sound.add("page-flip");
-        this.pageFlip.volume = 0.4;
-
-        this.flute = this.sound.add("flute");
-        this.flute.volume = 0.4;
-    }
-
     playBgMusic() {
         this.sound.stopAll();
 
@@ -123,15 +102,19 @@ export default class MainMenu extends BaseScene {
         settingsBtn.on("pointerup", () => {
             this.select.play();
             this.scene.launch("SettingsOverlay");
+            this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
         settingsBtn.on("pointerover", () => {
             settingsBtn.setTint(0xc2c2c2);
             this.cursorOver.play();
             this.showTooltip(settingsBtn.x, settingsBtn.y - 50, "Settings");
+            this.game.canvas.classList.add("custom-cursor");
         });
         settingsBtn.on("pointerout", () => {
             settingsBtn.clearTint();
             this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -151,6 +134,8 @@ export default class MainMenu extends BaseScene {
             this.pageFlip.play();
             this.scene.sleep("MenuScene");
             this.scene.launch("ControlsScene");
+            this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         controlsBtn.on("pointerover", () => {
@@ -161,11 +146,13 @@ export default class MainMenu extends BaseScene {
                 controlsBtn.y - 50,
                 "Keyboard Controls"
             );
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         controlsBtn.on("pointerout", () => {
             controlsBtn.clearTint();
             this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -181,17 +168,21 @@ export default class MainMenu extends BaseScene {
             this.pageFlip.play();
             this.scene.sleep("MenuScene");
             this.scene.launch("ContactScene");
+            this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         contactsBtn.on("pointerover", () => {
             contactsBtn.setTint(0xc2c2c2);
             this.cursorOver.play();
             this.showTooltip(contactsBtn.x, contactsBtn.y + 50, "Contact");
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         contactsBtn.on("pointerout", () => {
             contactsBtn.clearTint();
             this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -203,13 +194,16 @@ export default class MainMenu extends BaseScene {
             this.scene.is;
             this.cursorOver.play();
             textGO.setStyle({ fill: "#fff" });
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         textGO.on("pointerout", () => {
             textGO.setStyle({ fill: "#000" });
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         textGO.on("pointerup", () => {
+            this.game.canvas.classList.remove("custom-cursor");
             if (menuItem.text === "Story Mode") {
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
@@ -233,7 +227,7 @@ export default class MainMenu extends BaseScene {
         });
     }
 
-    showTooltip(x, y, text) {
+    showTooltip(x: number, y: number, text: string) {
         this.tooltipText.setText(text);
         this.tooltipText.setPosition(x, y); // Adjust position as needed
         this.tooltipText.setAlpha(1);

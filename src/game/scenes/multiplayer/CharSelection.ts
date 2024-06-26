@@ -1,15 +1,10 @@
 // @ts-nocheck
 
 import { Socket } from "socket.io-client";
-import PlayerConfig from "../../utils/PlayerConfig";
-import BaseScene from "./BaseScene";
+import PlayerConfig from "../../../utils/PlayerConfig";
+import BaseScene from "../BaseScene";
 
 class CharSelection extends BaseScene {
-    config: any;
-    cursorOver: any;
-    select: any;
-    pageFlip: any;
-    flute: any;
     socket: Socket;
     username: string;
 
@@ -26,22 +21,9 @@ class CharSelection extends BaseScene {
     create() {
         super.create();
 
-        this.addSoundEffects();
         this.createPage();
-        this.createCloseButton();
 
         this.createSprite();
-    }
-
-    addSoundEffects() {
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
-
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
-
-        this.pageFlip = this.sound.add("page-flip");
-        this.pageFlip.volume = 0.4;
     }
 
     createPage() {
@@ -67,6 +49,8 @@ class CharSelection extends BaseScene {
             )
             .setOrigin(0.5, 0.5)
             .setColor("#D9B48FFF");
+
+        this.createCloseButton();
     }
 
     createCloseButton() {
