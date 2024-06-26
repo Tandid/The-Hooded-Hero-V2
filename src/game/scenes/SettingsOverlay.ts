@@ -44,7 +44,7 @@ export default class SettingsOverlay extends Scene {
                 this.config.width,
                 this.config.height,
                 0x000000,
-                0 // fully transparent
+                50 // fully transparent
             )
             .setOrigin(0.5)
             .setInteractive()

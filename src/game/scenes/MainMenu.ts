@@ -102,15 +102,19 @@ export default class MainMenu extends BaseScene {
         settingsBtn.on("pointerup", () => {
             this.select.play();
             this.scene.launch("SettingsOverlay");
+            this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
         settingsBtn.on("pointerover", () => {
             settingsBtn.setTint(0xc2c2c2);
             this.cursorOver.play();
             this.showTooltip(settingsBtn.x, settingsBtn.y - 50, "Settings");
+            this.game.canvas.classList.add("custom-cursor");
         });
         settingsBtn.on("pointerout", () => {
             settingsBtn.clearTint();
             this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -130,6 +134,8 @@ export default class MainMenu extends BaseScene {
             this.pageFlip.play();
             this.scene.sleep("MenuScene");
             this.scene.launch("ControlsScene");
+            this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         controlsBtn.on("pointerover", () => {
@@ -140,11 +146,13 @@ export default class MainMenu extends BaseScene {
                 controlsBtn.y - 50,
                 "Keyboard Controls"
             );
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         controlsBtn.on("pointerout", () => {
             controlsBtn.clearTint();
             this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -160,17 +168,21 @@ export default class MainMenu extends BaseScene {
             this.pageFlip.play();
             this.scene.sleep("MenuScene");
             this.scene.launch("ContactScene");
+            this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         contactsBtn.on("pointerover", () => {
             contactsBtn.setTint(0xc2c2c2);
             this.cursorOver.play();
             this.showTooltip(contactsBtn.x, contactsBtn.y + 50, "Contact");
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         contactsBtn.on("pointerout", () => {
             contactsBtn.clearTint();
             this.hideTooltip();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -182,10 +194,12 @@ export default class MainMenu extends BaseScene {
             this.scene.is;
             this.cursorOver.play();
             textGO.setStyle({ fill: "#fff" });
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         textGO.on("pointerout", () => {
             textGO.setStyle({ fill: "#000" });
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         textGO.on("pointerup", () => {
