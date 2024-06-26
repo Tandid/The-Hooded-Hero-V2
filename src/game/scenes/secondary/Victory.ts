@@ -1,29 +1,16 @@
-import Phaser from "phaser";
 import EventEmitter from "../../../events/Emitter";
+import BaseUIScene from "./BaseUIScene";
 
-class Victory extends Phaser.Scene {
-    config: any;
-    victory: any;
-    cursorOver: any;
-    select: any;
+class VictoryScene extends BaseUIScene {
+    VictoryScene: any;
 
     constructor(config: any) {
-        super("Victory");
-        this.config = config;
+        super("VictoryScene", config);
     }
 
     create({ gameStatus }: any) {
-        console.log(gameStatus);
-        this.cameras.main.fadeIn(500, 0, 0, 0);
-
-        this.createPage();
-        this.addSoundEffects();
-    }
-
-    addSoundEffects() {
-        this.victory = this.sound.add("win", { volume: 0.1 }).play();
-        this.cursorOver = this.sound.add("cursorOver", { volume: 0.4 });
-        this.select = this.sound.add("select", { volume: 0.4 });
+        this.VictoryScene = this.sound.add("win", { volume: 0.1 }).play();
+        super.create({ gameStatus });
     }
 
     createPage() {
@@ -92,105 +79,24 @@ class Victory extends Phaser.Scene {
             .setColor("#D9B48FFF");
 
         this.createHomeButton();
-        this.createRestartButton();
+        this.createRestartButton("VictoryScene");
         this.createPlayButton();
     }
 
-    createHomeButton() {
-        const homeBtn = this.add
-            .image(
-                this.config.width / 2 - 150,
-                this.config.height / 2 + 150,
-                "home-btn-big"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
-
-        homeBtn.on("pointerup", () => {
-            this.select.play();
-            this.scene.stop("PlayScene");
-            this.scene.start("MainMenu");
-            this.game.canvas.classList.remove("custom-cursor");
-        });
-
-        homeBtn.on("pointerover", () => {
-            this.cursorOver.play();
-            homeBtn.setTint(0xc2c2c2);
-            this.game.canvas.classList.add("custom-cursor");
-        });
-
-        homeBtn.on("pointerout", () => {
-            homeBtn.clearTint();
-            this.game.canvas.classList.remove("custom-cursor");
-        });
-    }
-
-    createRestartButton() {
-        const restartBtn = this.add
-            .image(
-                this.config.width / 2,
-                this.config.height / 2 + 150,
-                "restart-btn-big"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
-
-        restartBtn.on("pointerup", () => {
-            this.select.play();
-            this.scene.stop("Victory");
-            EventEmitter.emit("RESTART_GAME");
-            this.game.canvas.classList.remove("custom-cursor");
-        });
-
-        restartBtn.on("pointerover", () => {
-            this.cursorOver.play();
-            restartBtn.setTint(0xc2c2c2);
-            this.game.canvas.classList.add("custom-cursor");
-        });
-
-        restartBtn.on("pointerout", () => {
-            restartBtn.clearTint();
-            this.game.canvas.classList.remove("custom-cursor");
-        });
-    }
-
     createPlayButton() {
-        const playBtn = this.add
-            .image(
-                this.config.width / 2 + 150,
-                this.config.height / 2 + 150,
-                "play-btn"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
-
-        playBtn.on("pointerup", () => {
-            this.select.play();
-            this.scene.stop("Victory");
-            this.registry.inc("level", 1);
-            this.registry.inc("unlocked-levels", 1);
-            EventEmitter.emit("RESTART_GAME");
-            this.game.canvas.classList.remove("custom-cursor");
-        });
-
-        playBtn.on("pointerover", () => {
-            this.cursorOver.play();
-            playBtn.setTint(0xc2c2c2);
-            this.game.canvas.classList.add("custom-cursor");
-        });
-
-        playBtn.on("pointerout", () => {
-            playBtn.clearTint();
-            this.game.canvas.classList.remove("custom-cursor");
-        });
+        return this.createButton(
+            this.config.width / 2 + 150,
+            this.config.height / 2 + 150,
+            "play-btn",
+            () => {
+                this.scene.stop("VictoryScene");
+                this.registry.inc("level", 1);
+                this.registry.inc("unlocked-levels", 1);
+                EventEmitter.emit("RESTART_GAME");
+            }
+        );
     }
 }
 
-export default Victory;
+export default VictoryScene;
 

@@ -23,7 +23,7 @@ import GameOver from "./scenes/secondary/GameOver";
 import Loading from "./scenes/secondary/Loading";
 import Pause from "./scenes/secondary/Pause";
 import SettingsOverlay from "./scenes/secondary/SettingsOverlay";
-import Victory from "./scenes/secondary/Victory";
+import VictoryScene from "./scenes/secondary/Victory";
 
 // Custom configurations
 const MAP_WIDTH = 16000;
@@ -68,7 +68,7 @@ const Scenes = [
     LevelSelect,
     Loading,
     GameOver,
-    Victory,
+    VictoryScene,
     Pause,
 ];
 
