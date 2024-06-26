@@ -1,3 +1,4 @@
+import EventEmitter from "../../../events/Emitter";
 import BaseUIScene from "./BaseUIScene";
 
 class GameOverScene extends BaseUIScene {
@@ -8,8 +9,9 @@ class GameOverScene extends BaseUIScene {
     }
 
     create({ gameStatus }: any) {
-        this.gameOver = this.sound.add("lose", { volume: 0.1 }).play();
         super.create({ gameStatus });
+        this.gameOver = this.sound.add("lose", { volume: 0.1 }).play();
+        this.createPage();
     }
 
     createPage() {
@@ -45,15 +47,31 @@ class GameOverScene extends BaseUIScene {
             .setOrigin(0.5, 0.5)
             .setColor("#D9B48FFF");
 
-        this.createHomeButton(
-            this.config.width / 2 - 75,
-            this.config.height / 2 + 150
-        );
+        this.createHomeButton();
+        this.createRestartButton();
+    }
 
-        this.createRestartButton(
+    createHomeButton() {
+        return this.createButton(
+            this.config.width / 2 - 75,
+            this.config.height / 2 + 150,
+            "home-btn-big",
+            () => {
+                this.scene.stop("PlayScene");
+                this.scene.start("MainMenu");
+            }
+        );
+    }
+
+    createRestartButton() {
+        return this.createButton(
             this.config.width / 2 + 75,
             this.config.height / 2 + 150,
-            "GameOverScene"
+            "restart-btn-big",
+            () => {
+                this.scene.stop("GameOverScene");
+                EventEmitter.emit("RESTART_GAME");
+            }
         );
     }
 }

@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import EventEmitter from "../../../events/Emitter";
 
 class BaseUIScene extends Phaser.Scene {
     config: any;
@@ -13,8 +12,8 @@ class BaseUIScene extends Phaser.Scene {
 
     create({ gameStatus }: any) {
         this.cameras.main.fadeIn(500, 0, 0, 0);
-
         this.createPage();
+
         this.addSoundEffects();
     }
 
@@ -24,7 +23,7 @@ class BaseUIScene extends Phaser.Scene {
     }
 
     createPage() {
-        // This method should be overridden in the derived classes
+        // This gets overriden by Scenes that extend from this one
     }
 
     createButton(x: number, y: number, texture: string, callback: () => void) {
@@ -53,20 +52,6 @@ class BaseUIScene extends Phaser.Scene {
         });
 
         return button;
-    }
-
-    createHomeButton(x: number, y: number) {
-        return this.createButton(x, y, "home-btn-big", () => {
-            this.scene.stop("PlayScene");
-            this.scene.start("MainMenu");
-        });
-    }
-
-    createRestartButton(x: number, y: number, sceneKey: string) {
-        return this.createButton(x, y, "restart-btn-big", () => {
-            this.scene.stop(sceneKey);
-            EventEmitter.emit("RESTART_GAME");
-        });
     }
 }
 

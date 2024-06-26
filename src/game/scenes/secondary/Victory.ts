@@ -2,15 +2,18 @@ import EventEmitter from "../../../events/Emitter";
 import BaseUIScene from "./BaseUIScene";
 
 class VictoryScene extends BaseUIScene {
-    VictoryScene: any;
+    victory: any;
 
     constructor(config: any) {
         super("VictoryScene", config);
     }
 
     create({ gameStatus }: any) {
-        this.VictoryScene = this.sound.add("win", { volume: 0.1 }).play();
         super.create({ gameStatus });
+
+        this.victory = this.sound.add("win", { volume: 0.1 }).play();
+
+        this.createPage();
     }
 
     createPage() {
@@ -78,17 +81,33 @@ class VictoryScene extends BaseUIScene {
             .setOrigin(0.5, 0.5)
             .setColor("#D9B48FFF");
 
-        this.createHomeButton(
-            this.config.width / 2 - 150,
-            this.config.height / 2 + 150
-        );
+        this.createHomeButton();
+        this.createRestartButton();
+        this.createPlayButton();
+    }
 
-        this.createRestartButton(
+    createHomeButton() {
+        return this.createButton(
+            this.config.width / 2 - 150,
+            this.config.height / 2 + 150,
+            "home-btn-big",
+            () => {
+                this.scene.stop("PlayScene");
+                this.scene.start("MainMenu");
+            }
+        );
+    }
+
+    createRestartButton() {
+        return this.createButton(
             this.config.width / 2,
             this.config.height / 2 + 150,
-            "VictoryScene"
+            "restart-btn-big",
+            () => {
+                this.scene.stop("VictoryScene");
+                EventEmitter.emit("RESTART_GAME");
+            }
         );
-        this.createPlayButton();
     }
 
     createPlayButton() {
