@@ -1,8 +1,8 @@
 // @ts-nocheck
 
 import { Socket } from "socket.io-client";
-import PlayerConfig from "../../utils/PlayerConfig";
-import BaseScene from "./BaseScene";
+import PlayerConfig from "../../../utils/PlayerConfig";
+import BaseScene from "../BaseScene";
 
 class CharSelection extends BaseScene {
     config: any;
@@ -28,7 +28,6 @@ class CharSelection extends BaseScene {
 
         this.addSoundEffects();
         this.createPage();
-        this.createCloseButton();
 
         this.createSprite();
     }
@@ -67,6 +66,8 @@ class CharSelection extends BaseScene {
             )
             .setOrigin(0.5, 0.5)
             .setColor("#D9B48FFF");
+
+        this.createCloseButton();
     }
 
     createCloseButton() {

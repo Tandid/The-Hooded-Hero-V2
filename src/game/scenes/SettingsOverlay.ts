@@ -31,7 +31,7 @@ export default class SettingsOverlay extends Scene {
         this.addSoundEffects();
 
         this.createPage();
-        this.createCloseButton();
+
         this.createMusicController();
         this.createMuteButton();
         this.createMusicBars();
@@ -136,6 +136,8 @@ export default class SettingsOverlay extends Scene {
             )
             .setOrigin(0.5)
             .setScale(0.8);
+
+        this.createCloseButton();
     }
 
     addSoundEffects() {
