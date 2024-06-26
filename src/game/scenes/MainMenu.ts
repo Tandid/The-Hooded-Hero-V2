@@ -35,6 +35,7 @@ export default class MainMenu extends BaseScene {
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
         this.addSoundEffects();
+        this.playBgMusic();
 
         this.createPage();
         this.createControlsButton();
@@ -96,6 +97,16 @@ export default class MainMenu extends BaseScene {
 
         this.flute = this.sound.add("flute");
         this.flute.volume = 0.4;
+    }
+
+    playBgMusic() {
+        this.sound.stopAll();
+
+        if (this.sound.get("menu-theme")) {
+            this.sound.get("menu-theme", { loop: true, volume: 0.04 }).play();
+            return;
+        }
+        this.sound.add("menu-theme", { loop: true, volume: 0.04 }).play();
     }
 
     createSettingsButton() {

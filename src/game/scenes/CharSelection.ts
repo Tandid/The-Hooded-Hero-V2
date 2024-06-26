@@ -83,7 +83,7 @@ class CharSelection extends BaseScene {
 
         closeBtn.on("pointerup", () => {
             this.select.play();
-            this.scene.wake("MenuScene");
+            this.scene.wake("MainMenu");
             this.scene.stop("CharSelection");
         });
 
