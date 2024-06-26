@@ -22,12 +22,8 @@ class GameOver extends Phaser.Scene {
 
     addSoundEffects() {
         this.gameOver = this.sound.add("lose", { volume: 0.1 }).play();
-
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
-
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
+        this.cursorOver = this.sound.add("cursorOver", { volume: 0.4 });
+        this.select = this.sound.add("select", { volume: 0.4 });
     }
 
     createPage() {
