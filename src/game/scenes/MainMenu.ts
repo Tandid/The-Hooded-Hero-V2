@@ -202,7 +202,7 @@ export default class MainMenu extends BaseScene {
             if (menuItem.text === "Story Mode") {
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
-                setTimeout(() => this.scene.stop("MenuScene"), 500);
+                setTimeout(() => this.scene.stop("MainMenu"), 500);
                 setTimeout(() => this.scene.start("TransitionScene"), 500);
                 setTimeout(() => this.scene.stop("TransitionScene"), 4000);
 
@@ -213,11 +213,11 @@ export default class MainMenu extends BaseScene {
                 this.flute.play();
             } else {
                 this.select.play();
-                this.scene.sleep("MenuScene");
-                // this.scene.launch(menuItem.scene, {
-                //     socket: this.socket,
-                //     username: this.username,
-                // });
+                this.scene.sleep("MainMenu");
+                this.scene.launch(menuItem.scene, {
+                    socket: this.socket,
+                    username: "Player",
+                });
             }
         });
     }
