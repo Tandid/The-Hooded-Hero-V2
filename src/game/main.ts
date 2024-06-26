@@ -16,6 +16,7 @@ import CharSelection from "./scenes/multiplayer/CharSelection";
 import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
 import Contact from "./scenes/secondary/Contact";
+import Controls from "./scenes/secondary/Controls";
 import SettingsOverlay from "./scenes/secondary/SettingsOverlay";
 
 // Custom configurations
@@ -56,6 +57,7 @@ const Scenes = [
     SettingsOverlay,
     JoinRoomScene,
     Contact,
+    Controls,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
