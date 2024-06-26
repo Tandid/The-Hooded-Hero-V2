@@ -9,6 +9,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 // Scene Imports
 import Boot from "./scenes/Boot";
+import LevelSelect from "./scenes/LevelSelect";
 import MainMenu from "./scenes/MainMenu";
 import Preloader from "./scenes/Preloader";
 import Signup from "./scenes/Signup";
@@ -17,7 +18,12 @@ import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
 import Contact from "./scenes/secondary/Contact";
 import Controls from "./scenes/secondary/Controls";
+import Credits from "./scenes/secondary/Credits";
+import GameOverScene from "./scenes/secondary/GameOver";
+import Loading from "./scenes/secondary/Loading";
+import PauseScene from "./scenes/secondary/Pause";
 import SettingsOverlay from "./scenes/secondary/SettingsOverlay";
+import VictoryScene from "./scenes/secondary/Victory";
 
 // Custom configurations
 const MAP_WIDTH = 16000;
@@ -58,6 +64,12 @@ const Scenes = [
     JoinRoomScene,
     Contact,
     Controls,
+    Credits,
+    LevelSelect,
+    Loading,
+    GameOverScene,
+    VictoryScene,
+    PauseScene,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);

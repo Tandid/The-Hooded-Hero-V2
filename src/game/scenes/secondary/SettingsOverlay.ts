@@ -1,20 +1,16 @@
-// @ts-nocheck
+import BaseUIScene from "./BaseUIScene";
 
-import { Scene } from "phaser";
-
-export default class SettingsOverlay extends Scene {
+export default class SettingsOverlay extends BaseUIScene {
     currentMusicBars: number;
     maxVolumeBars: number;
     minVolumeBars: number;
     volumeBars: Phaser.GameObjects.Image[];
     inputBlock: Phaser.GameObjects.Rectangle;
-    config: any;
     muteBtn: Phaser.GameObjects.Image;
     muteStateImage: Phaser.GameObjects.Image;
 
-    constructor(config) {
+    constructor(config: any) {
         super("SettingsOverlay", { ...config, canGoBack: false });
-        this.config = config;
         this.volumeBars = [];
     }
 
@@ -25,9 +21,8 @@ export default class SettingsOverlay extends Scene {
     }
 
     create() {
+        super.create();
         this.createInputBlock(); // Prevents click events behind the overlay from happening
-
-        this.addSoundEffects();
 
         this.createPage();
 
@@ -44,15 +39,18 @@ export default class SettingsOverlay extends Scene {
                 this.config.width,
                 this.config.height,
                 0x000000,
-                50 // fully transparent
+                50
             )
             .setOrigin(0.5)
             .setInteractive()
             .setDepth(-1);
 
-        this.inputBlock.on("pointerdown", (pointer, localX, localY, event) => {
-            event.stopPropagation();
-        });
+        this.inputBlock.on(
+            "pointerdown",
+            (pointer: any, localX: number, localY: number, event: any) => {
+                event.stopPropagation();
+            }
+        );
     }
 
     createPage() {
@@ -139,78 +137,34 @@ export default class SettingsOverlay extends Scene {
         this.createCloseButton();
     }
 
-    addSoundEffects() {
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
-
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
-
-        this.pageFlip = this.sound.add("page-flip");
-        this.pageFlip.volume = 0.4;
-    }
-
     createCloseButton() {
-        const closeBtn = this.add
-            .image(
-                this.config.width * 0.75 + 20,
-                this.config.height / 7 + 20,
-                "close-btn"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
-
-        closeBtn.on("pointerup", () => {
-            this.select.play();
-            this.scene.stop("SettingsOverlay");
-            this.scene.isPaused("PlayScene") === true
-                ? this.scene.resume("PlayScene")
-                : "";
-            this.game.canvas.classList.remove("custom-cursor");
-        });
-
-        closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
-            closeBtn.setTint(0xff6666);
-            this.game.canvas.classList.add("custom-cursor");
-        });
-
-        closeBtn.on("pointerout", () => {
-            closeBtn.clearTint();
-            this.game.canvas.classList.remove("custom-cursor");
-        });
+        this.createButton(
+            this.config.width * 0.75 + 20,
+            this.config.height / 7 + 20,
+            "close-btn",
+            () => {
+                this.select.play();
+                this.scene.stop("SettingsOverlay");
+                if (this.scene.isPaused("PlayScene")) {
+                    this.scene.resume("PlayScene");
+                }
+            }
+        );
     }
 
     createMuteButton() {
-        this.muteBtn = this.add
-            .image(
-                this.config.width / 2 + 50,
-                this.config.height / 2 + 150,
-                "switch-off-bg"
-            )
-            .setOrigin(0.5)
-            .setScale(1.3, 0.9)
-            .setInteractive();
+        this.muteBtn = this.createButton(
+            this.config.width / 2 + 50,
+            this.config.height / 2 + 150,
+            "switch-off-bg",
+            () => {
+                this.select.play();
+                this.toggleMute();
+                this.game.canvas.classList.add("custom-cursor");
+            }
+        ).setScale(1.3, 0.9);
 
         this.updateMuteStateImage();
-
-        this.muteBtn.on("pointerup", () => {
-            this.select.play();
-            this.toggleMute();
-        });
-
-        this.muteBtn.on("pointerover", () => {
-            this.muteBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
-            this.game.canvas.classList.add("custom-cursor");
-        });
-
-        this.muteBtn.on("pointerout", () => {
-            this.muteBtn.clearTint();
-            this.game.canvas.classList.remove("custom-cursor");
-        });
     }
 
     updateMuteStateImage() {
@@ -227,7 +181,8 @@ export default class SettingsOverlay extends Scene {
                     imageKey
                 )
                 .setOrigin(0.5)
-                .setScale(0.8);
+                .setScale(0.8)
+                .setDepth(3);
         } else {
             this.muteStateImage = this.add
                 .image(
@@ -236,7 +191,8 @@ export default class SettingsOverlay extends Scene {
                     imageKey
                 )
                 .setOrigin(0.5)
-                .setScale(0.8);
+                .setScale(0.8)
+                .setDepth(3);
         }
     }
 
@@ -251,50 +207,20 @@ export default class SettingsOverlay extends Scene {
         );
     }
 
-    createDecrementBtn(width, height) {
-        const volumeDownBtn = this.add
-            .image(width, height, "prev-btn")
-            .setOrigin(0.5)
-            .setScale(0.5)
-            .setInteractive();
-
-        volumeDownBtn.on("pointerup", () => {
+    createDecrementBtn(width: number, height: number) {
+        this.createButton(width, height, "prev-btn", () => {
             this.select.play();
             this.decreaseVolume();
-        });
-        volumeDownBtn.on("pointerover", () => {
-            volumeDownBtn.setTintFill(0xc2c2c2);
-            this.cursorOver.play();
             this.game.canvas.classList.add("custom-cursor");
-        });
-        volumeDownBtn.on("pointerout", () => {
-            volumeDownBtn.clearTint();
-            this.game.canvas.classList.remove("custom-cursor");
-        });
+        }).setScale(0.5);
     }
 
-    createIncrementBtn(width, height) {
-        const volumeUpBtn = this.add
-            .image(width, height, "next-btn")
-            .setOrigin(0.5)
-            .setScale(0.5)
-            .setInteractive();
-
-        volumeUpBtn.on("pointerup", () => {
+    createIncrementBtn(width: number, height: number) {
+        this.createButton(width, height, "next-btn", () => {
             this.select.play();
             this.increaseVolume();
-        });
-
-        volumeUpBtn.on("pointerover", () => {
-            volumeUpBtn.setTintFill(0xc2c2c2);
-            this.cursorOver.play();
             this.game.canvas.classList.add("custom-cursor");
-        });
-
-        volumeUpBtn.on("pointerout", () => {
-            volumeUpBtn.clearTint();
-            this.game.canvas.classList.remove("custom-cursor");
-        });
+        }).setScale(0.5);
     }
 
     // Volume bar creation
@@ -312,7 +238,7 @@ export default class SettingsOverlay extends Scene {
         }
     }
 
-    createVolumeBar(width, height) {
+    createVolumeBar(width: number, height: number) {
         return this.add
             .image(width, height, "yellow-bar")
             .setOrigin(0.5)

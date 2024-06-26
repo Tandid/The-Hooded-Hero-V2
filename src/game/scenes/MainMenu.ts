@@ -6,7 +6,7 @@ import BaseScene from "./BaseScene";
 
 export default class MainMenu extends BaseScene {
     socket: Socket;
-    menu: { scene: string; text: string }[];
+    menu: { scene: string; text: string; level?: number }[];
     tooltipText: any;
 
     constructor(config: any) {
@@ -14,7 +14,7 @@ export default class MainMenu extends BaseScene {
         this.menu = [
             { scene: "PlayScene", text: "Story Mode" },
             { scene: "CharSelection", text: "Multiplayer" },
-            { scene: "LevelScene", text: "Levels" },
+            { scene: "LevelSelect", text: "Levels" },
         ];
     }
 
@@ -190,26 +190,14 @@ export default class MainMenu extends BaseScene {
         const textGO = menuItem.textGO;
         textGO.setInteractive();
 
-        textGO.on("pointerover", () => {
-            this.scene.is;
-            this.cursorOver.play();
-            textGO.setStyle({ fill: "#fff" });
-            this.game.canvas.classList.add("custom-cursor");
-        });
-
-        textGO.on("pointerout", () => {
-            textGO.setStyle({ fill: "#000" });
-            this.game.canvas.classList.remove("custom-cursor");
-        });
-
         textGO.on("pointerup", () => {
             this.game.canvas.classList.remove("custom-cursor");
             if (menuItem.text === "Story Mode") {
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
                 setTimeout(() => this.scene.stop("MainMenu"), 500);
-                setTimeout(() => this.scene.start("TransitionScene"), 500);
-                setTimeout(() => this.scene.stop("TransitionScene"), 4000);
+                setTimeout(() => this.scene.start("Loading"), 500);
+                setTimeout(() => this.scene.stop("Loading"), 4000);
 
                 setTimeout(
                     () => menuItem.scene && this.scene.start(menuItem.scene),
@@ -224,6 +212,18 @@ export default class MainMenu extends BaseScene {
                     username: "Player",
                 });
             }
+        });
+
+        textGO.on("pointerover", () => {
+            this.scene.is;
+            this.cursorOver.play();
+            textGO.setStyle({ fill: "#fff" });
+            this.game.canvas.classList.add("custom-cursor");
+        });
+
+        textGO.on("pointerout", () => {
+            textGO.setStyle({ fill: "#000" });
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -240,7 +240,7 @@ export default class MainMenu extends BaseScene {
     }
 
     changeScene() {
-        this.scene.start("Signup");
+        this.scene.start("VictoryScene");
     }
 }
 
