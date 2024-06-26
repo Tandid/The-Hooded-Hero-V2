@@ -15,7 +15,6 @@ export default class LobbyScene extends BaseScene {
 
     constructor(config: any) {
         super("LobbyScene", { ...config, canGoBack: true });
-        this.config = config;
     }
 
     init(data: any) {
@@ -28,7 +27,6 @@ export default class LobbyScene extends BaseScene {
     create() {
         super.create();
 
-        this.addSoundEffects();
         this.createPage();
 
         // Send message to start room status communication chain
@@ -98,14 +96,6 @@ export default class LobbyScene extends BaseScene {
                 username: this.username,
             });
         });
-    }
-
-    addSoundEffects() {
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
-
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
     }
 
     createPage() {

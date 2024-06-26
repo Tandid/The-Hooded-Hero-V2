@@ -34,7 +34,6 @@ export default class MainMenu extends BaseScene {
 
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
-        this.addSoundEffects();
         this.playBgMusic();
 
         this.createPage();
@@ -83,20 +82,6 @@ export default class MainMenu extends BaseScene {
             .setOrigin(0.5)
             .setDepth(3)
             .setVisible(false); // Initially hidden
-    }
-
-    addSoundEffects() {
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
-
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
-
-        this.pageFlip = this.sound.add("page-flip");
-        this.pageFlip.volume = 0.4;
-
-        this.flute = this.sound.add("flute");
-        this.flute.volume = 0.4;
     }
 
     playBgMusic() {
