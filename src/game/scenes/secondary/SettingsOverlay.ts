@@ -163,23 +163,23 @@ export default class SettingsOverlay extends Scene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            console.log(this.scene.isActive("MainMenu"));
-            console.log(this.scene.isActive("SettingsOverlay"));
-
             this.select.play();
             this.scene.stop("SettingsOverlay");
             this.scene.isPaused("PlayScene") === true
                 ? this.scene.resume("PlayScene")
                 : "";
+            this.game.canvas.classList.remove("custom-cursor");
         });
 
         closeBtn.on("pointerover", () => {
             this.cursorOver.play();
             closeBtn.setTint(0xff6666);
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         closeBtn.on("pointerout", () => {
             closeBtn.clearTint();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -200,12 +200,16 @@ export default class SettingsOverlay extends Scene {
             this.select.play();
             this.toggleMute();
         });
+
         this.muteBtn.on("pointerover", () => {
             this.muteBtn.setTint(0xc2c2c2);
             this.cursorOver.play();
+            this.game.canvas.classList.add("custom-cursor");
         });
+
         this.muteBtn.on("pointerout", () => {
             this.muteBtn.clearTint();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -261,9 +265,11 @@ export default class SettingsOverlay extends Scene {
         volumeDownBtn.on("pointerover", () => {
             volumeDownBtn.setTintFill(0xc2c2c2);
             this.cursorOver.play();
+            this.game.canvas.classList.add("custom-cursor");
         });
         volumeDownBtn.on("pointerout", () => {
             volumeDownBtn.clearTint();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
@@ -282,10 +288,12 @@ export default class SettingsOverlay extends Scene {
         volumeUpBtn.on("pointerover", () => {
             volumeUpBtn.setTintFill(0xc2c2c2);
             this.cursorOver.play();
+            this.game.canvas.classList.add("custom-cursor");
         });
 
         volumeUpBtn.on("pointerout", () => {
             volumeUpBtn.clearTint();
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
