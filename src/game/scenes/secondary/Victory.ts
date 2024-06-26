@@ -8,8 +8,8 @@ class VictoryScene extends BaseUIScene {
         super("VictoryScene", config);
     }
 
-    create({ gameStatus }: any) {
-        super.create({ gameStatus });
+    create() {
+        super.create();
 
         this.victory = this.sound.add("win", { volume: 0.1 }).play();
 

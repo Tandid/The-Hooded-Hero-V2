@@ -8,9 +8,11 @@ class GameOverScene extends BaseUIScene {
         super("GameOverScene", config);
     }
 
-    create({ gameStatus }: any) {
-        super.create({ gameStatus });
+    create() {
+        super.create();
+
         this.gameOver = this.sound.add("lose", { volume: 0.1 }).play();
+
         this.createPage();
     }
 

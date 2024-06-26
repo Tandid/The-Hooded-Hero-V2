@@ -5,8 +5,8 @@ class PauseScene extends BaseUIScene {
         super("PauseScene", config);
     }
 
-    create({ gameStatus }: any) {
-        super.create({ gameStatus });
+    create() {
+        super.create();
         this.createPage();
     }
 

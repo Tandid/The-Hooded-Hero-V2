@@ -4,13 +4,14 @@ class BaseUIScene extends Phaser.Scene {
     config: any;
     cursorOver: any;
     select: any;
+    pageFlip: any;
 
     constructor(key: any, config: any) {
         super(key);
         this.config = config;
     }
 
-    create({ gameStatus }: any) {
+    create() {
         this.cameras.main.fadeIn(500, 0, 0, 0);
         this.createPage();
 
@@ -20,6 +21,7 @@ class BaseUIScene extends Phaser.Scene {
     addSoundEffects() {
         this.cursorOver = this.sound.add("cursorOver", { volume: 0.4 });
         this.select = this.sound.add("select", { volume: 0.4 });
+        this.pageFlip = this.sound.add("page-flip", { volume: 0.4 });
     }
 
     createPage() {
@@ -36,8 +38,8 @@ class BaseUIScene extends Phaser.Scene {
 
         button.on("pointerup", () => {
             this.select.play();
-            callback();
             this.game.canvas.classList.remove("custom-cursor");
+            callback();
         });
 
         button.on("pointerover", () => {
