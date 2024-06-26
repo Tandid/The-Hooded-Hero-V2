@@ -9,6 +9,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 // Scene Imports
 import Boot from "./scenes/Boot";
+import LevelSelect from "./scenes/LevelSelect";
 import MainMenu from "./scenes/MainMenu";
 import Preloader from "./scenes/Preloader";
 import Signup from "./scenes/Signup";
@@ -60,6 +61,7 @@ const Scenes = [
     Contact,
     Controls,
     Credits,
+    LevelSelect,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);

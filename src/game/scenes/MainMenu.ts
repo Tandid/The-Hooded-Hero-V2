@@ -6,7 +6,7 @@ import BaseScene from "./BaseScene";
 
 export default class MainMenu extends BaseScene {
     socket: Socket;
-    menu: { scene: string; text: string }[];
+    menu: { scene: string; text: string; level?: number }[];
     tooltipText: any;
 
     constructor(config: any) {
@@ -14,7 +14,7 @@ export default class MainMenu extends BaseScene {
         this.menu = [
             { scene: "PlayScene", text: "Story Mode" },
             { scene: "CharSelection", text: "Multiplayer" },
-            { scene: "LevelScene", text: "Levels" },
+            { scene: "LevelSelect", text: "Levels" },
         ];
     }
 
@@ -190,18 +190,6 @@ export default class MainMenu extends BaseScene {
         const textGO = menuItem.textGO;
         textGO.setInteractive();
 
-        textGO.on("pointerover", () => {
-            this.scene.is;
-            this.cursorOver.play();
-            textGO.setStyle({ fill: "#fff" });
-            this.game.canvas.classList.add("custom-cursor");
-        });
-
-        textGO.on("pointerout", () => {
-            textGO.setStyle({ fill: "#000" });
-            this.game.canvas.classList.remove("custom-cursor");
-        });
-
         textGO.on("pointerup", () => {
             this.game.canvas.classList.remove("custom-cursor");
             if (menuItem.text === "Story Mode") {
@@ -224,6 +212,18 @@ export default class MainMenu extends BaseScene {
                     username: "Player",
                 });
             }
+        });
+
+        textGO.on("pointerover", () => {
+            this.scene.is;
+            this.cursorOver.play();
+            textGO.setStyle({ fill: "#fff" });
+            this.game.canvas.classList.add("custom-cursor");
+        });
+
+        textGO.on("pointerout", () => {
+            textGO.setStyle({ fill: "#000" });
+            this.game.canvas.classList.remove("custom-cursor");
         });
     }
 
