@@ -196,8 +196,8 @@ export default class MainMenu extends BaseScene {
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
                 setTimeout(() => this.scene.stop("MainMenu"), 500);
-                setTimeout(() => this.scene.start("TransitionScene"), 500);
-                setTimeout(() => this.scene.stop("TransitionScene"), 4000);
+                setTimeout(() => this.scene.start("Loading"), 500);
+                setTimeout(() => this.scene.stop("Loading"), 4000);
 
                 setTimeout(
                     () => menuItem.scene && this.scene.start(menuItem.scene),

@@ -1,5 +1,6 @@
 import { GameObjects, Scene } from "phaser";
 import { Socket } from "socket.io-client";
+import generateRandomHint from "../../utils/functions/generateRandomHint";
 
 // Preloader Assets
 import { preloadAudio } from "../preloaders/preloadAudio";
@@ -34,7 +35,7 @@ export default class Preloader extends Scene {
         console.log({ Preloader: data });
 
         this.createPage();
-        this.generateRandomHint();
+        generateRandomHint(this, this.config.width, this.config.height);
     }
 
     // Preload all assets here
@@ -106,32 +107,6 @@ export default class Preloader extends Scene {
 
     loadingComplete() {
         this.scene.start("MainMenu", { socket: this.socket });
-    }
-
-    // Random hint generator
-    generateRandomHint() {
-        const messages = [
-            "Not all heroes wear capes, some wear hoods..",
-            "Hint: Yes, you can double jump!",
-            "The Hooded Hero's favorite show is Arrow, who would've guessed right??",
-            "Hint: A little birdy said to stay away from Level 3, unless...",
-            "Hint: You can spam arrows!",
-            "Hint: Sword attacks do double the damage of arrows. You're welcome.",
-        ];
-        const randomIndex = Math.floor(Math.random() * messages.length);
-
-        this.add
-            .text(
-                this.config.width / 2,
-                this.config.height / 1.1,
-                `${messages[randomIndex]}`,
-                {
-                    fontFamily: this.fontFamily,
-                    fontSize: "15px",
-                }
-            )
-            .setOrigin(0.5, 0.5)
-            .setColor("#FFF");
     }
 }
 

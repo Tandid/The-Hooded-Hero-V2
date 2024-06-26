@@ -143,8 +143,8 @@ class LevelSelect extends BaseScene {
             this.game.canvas.classList.remove("custom-cursor");
             this.cameras.main.fadeOut(500, 0, 0, 0);
 
-            setTimeout(() => this.scene.start("TransitionScene"), 500);
-            setTimeout(() => this.scene.stop("TransitionScene"), 4000);
+            setTimeout(() => this.scene.start("Loading"), 500);
+            setTimeout(() => this.scene.stop("Loading"), 4000);
 
             if (menuItem.scene) {
                 this.flute.play();
