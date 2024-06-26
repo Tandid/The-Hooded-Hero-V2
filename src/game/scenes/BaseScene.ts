@@ -29,8 +29,6 @@ export default class BaseScene extends Scene {
     }
 
     create() {
-        this.playBgMusic();
-
         this.createBackground();
         this.createArrows();
         this.createLeaves();
@@ -110,16 +108,6 @@ export default class BaseScene extends Scene {
             lastMenuPositionY += this.lineHeight;
             setupMenuEvents(menuItem);
         });
-    }
-
-    playBgMusic() {
-        this.sound.stopAll();
-
-        if (this.sound.get("menu-theme")) {
-            this.sound.get("menu-theme", { loop: true, volume: 0.04 }).play();
-            return;
-        }
-        this.sound.add("menu-theme", { loop: true, volume: 0.04 }).play();
     }
 
     update() {
