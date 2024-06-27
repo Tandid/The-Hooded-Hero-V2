@@ -162,55 +162,43 @@ class PlayScene extends BaseScene {
     }
 
     createUIButtons() {
-        this.createButton(
-            this.config.rightBottomCorner.x - 15,
-            this.config.rightBottomCorner.y - 10,
+        this.settingsButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 50,
             "settings-button",
-            "SettingsOverlay"
-        );
-        this.createButton(
-            this.config.rightBottomCorner.x - 15,
-            this.config.rightBottomCorner.y - 115,
-            "home-btn",
-            "PauseScene",
-            0.9
-        );
-        this.createButton(
-            this.config.rightBottomCorner.x - 15,
-            this.config.rightBottomCorner.y - 210,
-            "restart-btn",
-            () => this.scene.restart(),
-            0.9
-        );
-    }
-
-    createButton(x, y, key, targetScene, scale = 1) {
-        const btn = this.add
-            .image(x, y, key)
-            .setOrigin(1)
-            .setScrollFactor(0)
-            .setScale(scale)
-            .setInteractive()
-            .setDepth(2);
-
-        btn.on("pointerup", () => {
-            this.select.play();
-            if (typeof targetScene === "string") {
+            () => {
                 this.scene.pause("PlayScene");
-                this.scene.launch(targetScene);
-            } else if (typeof targetScene === "function") {
-                targetScene();
+                this.scene.sendToBack("PlayScene");
+                this.scene.launch("SettingsOverlayScene");
             }
-        });
+        )
+            .setScrollFactor(0)
+            .setScale(1.2);
 
-        btn.on("pointerover", () => {
-            btn.setTint(0xc2c2c2);
-            this.cursorOver.play();
-        });
+        this.homeButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 150,
+            "home-btn",
+            () => {
+                this.select.play();
+                this.scene.pause("PlayScene");
+                this.scene.launch("PauseScene");
+            }
+        )
+            .setScrollFactor(0)
+            .setScale(1.2);
 
-        btn.on("pointerout", () => {
-            btn.clearTint();
-        });
+        this.restartButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 250,
+            "restart-btn",
+            () => {
+                this.select.play();
+                this.scene.restart();
+            }
+        )
+            .setScrollFactor(0)
+            .setScale(1.2);
     }
 
     createGameEvents() {
