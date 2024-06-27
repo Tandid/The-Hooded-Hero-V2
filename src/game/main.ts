@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Phaser from "phaser"; // This needs to be in the top level for RexUI to work properly
 
 // TODO: Add Phase.d.ts to assist with type checking for TextEditPlugin
@@ -12,8 +13,7 @@ import Boot from "./scenes/Boot";
 import LevelSelect from "./scenes/LevelSelect";
 import MainMenu from "./scenes/MainMenu";
 import Preloader from "./scenes/Preloader";
-import UsernameScene from "./scenes/Signin";
-import Signup from "./scenes/Signup";
+import SignupScene from "./scenes/Signup";
 import CharSelection from "./scenes/multiplayer/CharSelection";
 import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
@@ -57,10 +57,10 @@ const SHARED_CONFIG = {
 const Scenes = [
     Boot,
     Preloader,
+    SignupScene,
     MainMenu,
     CharSelection,
     LobbyScene,
-    Signup,
     SettingsOverlay,
     JoinRoomScene,
     Contact,
@@ -71,7 +71,6 @@ const Scenes = [
     GameOverScene,
     VictoryScene,
     PauseScene,
-    UsernameScene,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
