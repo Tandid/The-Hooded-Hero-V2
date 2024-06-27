@@ -137,7 +137,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.handleJumping(isSpaceJustDown, onFloor);
         this.handleSpeedBoost(shift, onFloor);
 
-        if (this.isPlayingAnims("throw") || this.isPlayingAnims("melee")) {
+        if (
+            this.isPlayingAnims("shoot-arrow") ||
+            this.isPlayingAnims("melee")
+        ) {
             return;
         }
 
@@ -202,7 +205,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     handleProjectileAttack() {
         const delay = 300;
-        this.play("throw", true);
+        this.play("shoot-arrow", true);
         setTimeout(() => this.arrowFx.play(), delay);
         setTimeout(() => this.projectiles.fireProjectile(this, "arrow"), delay);
     }
