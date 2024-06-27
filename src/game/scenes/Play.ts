@@ -1,5 +1,5 @@
 // @ts-nocheck
-import initAnims from "../../anims";
+import initAnims from "../../animations";
 import Player from "../../entities/Player";
 import EventEmitter from "../../events/Emitter";
 import Collectables from "../../groups/Collectables";

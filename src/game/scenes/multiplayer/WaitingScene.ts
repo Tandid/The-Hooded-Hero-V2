@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import OnlinePlayer from "../entities/OnlinePlayer";
 // import EventEmitter from "../events/Emitter";
 
-import initAnims from "../../../anims";
+import initAnims from "../../../animations";
 
 class WaitingScene extends Phaser.Scene {
     constructor(config) {

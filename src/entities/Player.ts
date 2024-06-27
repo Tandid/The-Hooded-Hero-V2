@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import Phaser from "phaser";
+import initAnimations from "../animations/entities/playerAnims";
 import MeleeWeapon from "../attacks/MeleeWeapon";
 import Projectiles from "../attacks/Projectiles";
 import EventEmitter from "../events/Emitter";
@@ -8,7 +9,6 @@ import HealthBar from "../hud/Healthbar";
 import anims from "../mixins/anims";
 import collidable from "../mixins/collidable";
 import { getTimestamp } from "../utils/functions";
-import initAnimations from "./anims/playerAnims";
 
 class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
