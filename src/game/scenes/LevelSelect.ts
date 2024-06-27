@@ -19,6 +19,7 @@ class LevelSelect extends BaseScene {
 
     create() {
         super.create();
+        super.createBackground();
 
         this.menu = [];
 

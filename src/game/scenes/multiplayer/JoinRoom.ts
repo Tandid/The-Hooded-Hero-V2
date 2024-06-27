@@ -21,6 +21,8 @@ class JoinRoomScene extends BaseScene {
 
     create() {
         super.create();
+        super.createBackground();
+
         this.createPage();
         this.handleSocketEvents();
     }

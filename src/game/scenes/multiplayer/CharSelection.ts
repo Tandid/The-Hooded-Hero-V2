@@ -20,6 +20,7 @@ class CharSelection extends BaseScene {
 
     create() {
         super.create();
+        super.createBackground();
 
         this.createPage();
 
