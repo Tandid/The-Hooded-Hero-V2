@@ -26,6 +26,17 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     init() {
+        this.initProperties();
+        this.initSounds();
+        this.initControls();
+        this.initWeapons();
+        this.initHealthBar();
+        this.initAnimations();
+        this.handleAttacks();
+        this.initMovementSound();
+    }
+
+    initProperties() {
         this.gravity = 2500;
         this.playerSpeed = 500;
         this.jumpCount = 0;
@@ -33,21 +44,36 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.hasBeenHit = false;
         this.isSliding = false;
         this.bounceVelocity = 400;
-        this.cursors = this.scene.input.keyboard.createCursorKeys();
-
-        this.jumpSound = this.scene.sound.add("jump", { volume: 0.2 });
-        this.takeDamageSound = this.scene.sound.add("damage", { volume: 0.2 });
-        this.projectileSound = this.scene.sound.add("projectile-launch", {
-            volume: 0.4,
-        });
-        this.stepSound = this.scene.sound.add("step", { volume: 0.05 });
-        this.swipeSound = this.scene.sound.add("swipe", { volume: 0.1 });
-
         this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
-        this.projectiles = new Projectiles(this.scene, "arrow");
-        this.meleeWeapon = new MeleeWeapon(this.scene, 0, 0, "sword-default");
         this.timeFromLastSwing = null;
 
+        this.body.setSize(120, 150);
+        this.body.setOffset(90, 40);
+        this.body.setGravityY(this.gravity);
+        this.setCollideWorldBounds(true);
+        this.setOrigin(0, 1);
+    }
+
+    initSounds() {
+        this.jumpFx = this.scene.sound.add("jump", { volume: 0.2 });
+        this.takeDamageFx = this.scene.sound.add("damage", { volume: 0.2 });
+        this.arrowFx = this.scene.sound.add("projectile-launch", {
+            volume: 1,
+        });
+        this.stepFx = this.scene.sound.add("step", { volume: 0.05 });
+        this.swingSwordFx = this.scene.sound.add("swipe", { volume: 0.1 });
+    }
+
+    initControls() {
+        this.cursors = this.scene.input.keyboard.createCursorKeys();
+    }
+
+    initWeapons() {
+        this.projectiles = new Projectiles(this.scene, "arrow");
+        this.meleeWeapon = new MeleeWeapon(this.scene, 0, 0, "sword-default");
+    }
+
+    initHealthBar() {
         this.health = 100;
         this.hp = new HealthBar(
             this.scene,
@@ -56,26 +82,20 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             2,
             this.health
         );
+    }
 
-        this.body.setSize(120, 150);
-        this.body.setOffset(90, 40);
-
-        this.body.setGravityY(this.gravity);
-        this.setCollideWorldBounds(true);
-        this.setOrigin(0, 1);
-
+    initAnimations() {
         initAnimations(this.scene.anims);
+    }
 
-        this.handleAttacks();
-        // this.handleMovements();
-
+    initMovementSound() {
         this.scene.time.addEvent({
             delay: 350,
             repeat: -1,
             callbackScope: this,
             callback: () => {
                 if (this.isPlayingAnims("run")) {
-                    this.stepSound.play();
+                    this.stepFx.play();
                 }
             },
         });
@@ -90,21 +110,33 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             return;
         }
 
-        // if (this.healthRegen()) {
-        //   return;
-        // }
+        this.checkOutOfBounds();
+        this.handleMovement();
+    }
 
-        // console.log(this.health);
-
+    checkOutOfBounds() {
         if (this.getBounds().top > this.scene.config.height * 2.5) {
             EventEmitter.emit("PLAYER_LOSE");
-            return;
         }
+    }
 
+    handleMovement() {
         const { left, right, space, shift } = this.cursors;
         const isSpaceJustDown = Phaser.Input.Keyboard.JustDown(space);
         const onFloor = this.body.onFloor();
 
+        this.handleHorizontalMovement(left, right);
+        this.handleJumping(isSpaceJustDown, onFloor);
+        this.handleSpeedBoost(shift, onFloor);
+
+        if (this.isPlayingAnims("throw") || this.isPlayingAnims("melee")) {
+            return;
+        }
+
+        this.updateAnimation(onFloor);
+    }
+
+    handleHorizontalMovement(left, right) {
         if (left.isDown) {
             this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
             this.setVelocityX(-this.playerSpeed);
@@ -116,34 +148,32 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         } else {
             this.setVelocityX(0);
         }
+    }
 
+    handleJumping(isSpaceJustDown, onFloor) {
         if (
             isSpaceJustDown &&
             (onFloor || this.jumpCount < this.consecutiveJumps)
         ) {
-            this.jumpSound.play();
+            this.jumpFx.play();
             this.setVelocityY(-1000);
             this.jumpCount++;
-        }
-
-        if (shift.isDown && onFloor) {
-            this.playerSpeed = 650;
-        } else {
-            this.playerSpeed = 500;
         }
 
         if (onFloor) {
             this.jumpCount = 0;
         }
+    }
 
-        if (this.isPlayingAnims("throw")) {
-            return;
+    handleSpeedBoost(shift, onFloor) {
+        if (shift.isDown && onFloor) {
+            this.playerSpeed = 650;
+        } else {
+            this.playerSpeed = 500;
         }
+    }
 
-        if (this.isPlayingAnims("melee")) {
-            return;
-        }
-
+    updateAnimation(onFloor) {
         onFloor
             ? this.body.velocity.x !== 0
                 ? this.play("run", true)
@@ -152,30 +182,36 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     handleAttacks() {
-        this.scene.input.keyboard.on("keydown-Q", () => {
-            let delay = 300;
-            this.play("throw", true);
-            setTimeout(() => this.projectileSound.play(), delay);
-            setTimeout(
-                () => this.projectiles.fireProjectile(this, "arrow"),
-                delay
-            );
-        });
+        this.scene.input.keyboard.on(
+            "keydown-Q",
+            this.handleProjectileAttack.bind(this)
+        );
+        this.scene.input.keyboard.on(
+            "keydown-E",
+            this.handleMeleeAttack.bind(this)
+        );
+    }
 
-        this.scene.input.keyboard.on("keydown-E", () => {
-            if (
-                this.timeFromLastSwing &&
-                this.timeFromLastSwing + this.meleeWeapon.attackSpeed >
-                    getTimestamp()
-            ) {
-                return;
-            }
+    handleProjectileAttack() {
+        const delay = 300;
+        this.play("throw", true);
+        setTimeout(() => this.arrowFx.play(), delay);
+        setTimeout(() => this.projectiles.fireProjectile(this, "arrow"), delay);
+    }
 
-            this.swipeSound.play();
-            this.play("melee", true);
-            this.meleeWeapon.swing(this);
-            this.timeFromLastSwing = getTimestamp();
-        });
+    handleMeleeAttack() {
+        if (
+            this.timeFromLastSwing &&
+            this.timeFromLastSwing + this.meleeWeapon.attackSpeed >
+                getTimestamp()
+        ) {
+            return;
+        }
+
+        this.swingSwordFx.play();
+        this.play("melee", true);
+        this.meleeWeapon.swing(this);
+        this.timeFromLastSwing = getTimestamp();
     }
 
     playDamageTween() {
@@ -206,13 +242,12 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             if (!this.hasBeenHit && this.health < 100) {
                 this.health += 5;
                 this.hp.increase(this.health);
-                return;
             }
         }, 5000);
     }
 
     takesHit(source) {
-        this.takeDamageSound.play();
+        this.takeDamageFx.play();
         if (this.hasBeenHit) {
             return;
         }
@@ -220,7 +255,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.health -= source.damage || source.properties.damage || 0;
 
         if (this.health <= 0) {
-            // this.play("player-die", true);
             EventEmitter.emit("PLAYER_LOSE");
             return;
         }
