@@ -9,12 +9,13 @@ class UsernameScene extends BaseScene {
     };
     socket: Socket;
     pageFlip: any;
+    confirmBtn: any;
+    noBtn: any;
 
     constructor(config: any) {
         super("UsernameScene", config);
         this.state = {
             savedText: "",
-            inputTextBoxConfigSettings: undefined,
         };
     }
 
@@ -28,6 +29,7 @@ class UsernameScene extends BaseScene {
         this.cameras.main.fadeIn(500, 0, 0, 0);
         this.createPage();
         this.createInputBox();
+        this.createConfirmButton();
     }
 
     createPage() {
@@ -70,10 +72,12 @@ class UsernameScene extends BaseScene {
             const config = {
                 onTextChanged: (textObject, text) => {
                     textObject.text = text;
+                    this.state.savedText = text;
+                    this.updateButtonVisibility();
                 },
                 onClose: (textObject) => {
                     this.state.savedText = textObject.text;
-                    this.startConfirmation();
+                    this.updateButtonVisibility();
                 },
                 selectAll: true,
             };
@@ -81,12 +85,28 @@ class UsernameScene extends BaseScene {
         });
     }
 
-    startConfirmation() {
-        if (this.pageFlip) {
-            this.pageFlip.play();
-        }
+    createConfirmButton() {
+        this.confirmBtn = this.createButton(
+            this.config.width / 2,
+            this.config.height / 2 + 125,
+            "yes-btn",
+            () => {
+                this.confirmName();
+            }
+        ).setVisible(false);
 
-        this.scene.start("UserConfirmationScene", {
+        return this.confirmBtn;
+    }
+
+    updateButtonVisibility() {
+        const isTextNotEmpty = this.state.savedText.trim().length > 0;
+        this.confirmBtn.setVisible(isTextNotEmpty);
+    }
+
+    confirmName() {
+        this.pageFlip?.play();
+
+        this.scene.start("MainMenu", {
             socket: this.socket,
             username: this.state.savedText,
         });
