@@ -33,18 +33,7 @@ export default class BaseScene extends Scene {
     }
 
     create() {
-        this.createBackground();
-        this.createArrows();
-        this.createLeaves();
-
         this.addSoundEffects();
-    }
-
-    addSoundEffects() {
-        this.cursorOver = this.sound.add("cursorOver", { volume: 0.4 });
-        this.select = this.sound.add("select", { volume: 0.4 });
-        this.pageFlip = this.sound.add("page-flip", { volume: 0.4 });
-        this.flute = this.sound.add("flute", { volume: 0.4 });
     }
 
     createBackground() {
@@ -61,6 +50,16 @@ export default class BaseScene extends Scene {
             .setOrigin(0.5)
             .setScale(2)
             .setDepth(-1);
+
+        this.createArrows();
+        this.createLeaves();
+    }
+
+    addSoundEffects() {
+        this.cursorOver = this.sound.add("cursorOver", { volume: 0.4 });
+        this.select = this.sound.add("select", { volume: 0.4 });
+        this.pageFlip = this.sound.add("page-flip", { volume: 0.4 });
+        this.flute = this.sound.add("flute", { volume: 0.4 });
     }
 
     createLeaves() {
@@ -123,8 +122,36 @@ export default class BaseScene extends Scene {
         });
     }
 
+    createButton(x: number, y: number, texture: string, callback: () => void) {
+        const button = this.add
+            .image(x, y, texture)
+            .setOrigin(0.5)
+            .setScale(0.7)
+            .setInteractive()
+            .setDepth(2);
+
+        button.on("pointerup", () => {
+            this.select.play();
+            this.game.canvas.classList.remove("custom-cursor");
+            callback();
+        });
+
+        button.on("pointerover", () => {
+            this.cursorOver.play();
+            button.setTint(0xc2c2c2);
+            this.game.canvas.classList.add("custom-cursor");
+        });
+
+        button.on("pointerout", () => {
+            button.clearTint();
+            this.game.canvas.classList.remove("custom-cursor");
+        });
+
+        return button;
+    }
+
     update() {
-        this.leaves.forEach((leaf) => {
+        this.leaves?.forEach((leaf) => {
             leaf.y += 0.4;
             leaf.x += -0.9;
             if (leaf.x < 0) {
@@ -133,7 +160,7 @@ export default class BaseScene extends Scene {
             }
         });
 
-        this.arrows.forEach((arrow) => {
+        this.arrows?.forEach((arrow) => {
             const speed = arrow.getData("speed");
             const gravity = arrow.getData("gravity");
 

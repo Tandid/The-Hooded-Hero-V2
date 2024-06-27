@@ -9,6 +9,8 @@ class Credits extends BaseScene {
 
     create() {
         super.create();
+        super.createBackground();
+
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
         this.createPage();

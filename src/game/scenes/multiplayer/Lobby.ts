@@ -21,6 +21,7 @@ export default class LobbyScene extends BaseScene {
 
     create() {
         super.create();
+        super.createBackground();
 
         this.createPage();
 

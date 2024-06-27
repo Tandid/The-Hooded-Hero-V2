@@ -1,6 +1,6 @@
-import BaseUIScene from "./BaseUIScene";
+import BaseScene from "../BaseScene";
 
-export default class SettingsOverlay extends BaseUIScene {
+export default class SettingsOverlay extends BaseScene {
     currentMusicBars: number;
     maxVolumeBars: number;
     minVolumeBars: number;
@@ -22,6 +22,8 @@ export default class SettingsOverlay extends BaseUIScene {
 
     create() {
         super.create();
+        super.createBackground();
+
         this.createInputBlock(); // Prevents click events behind the overlay from happening
 
         this.createPage();

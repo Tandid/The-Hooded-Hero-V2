@@ -1,7 +1,7 @@
 import EventEmitter from "../../../events/Emitter";
-import BaseUIScene from "./BaseUIScene";
+import BaseScene from "../BaseScene";
 
-class GameOverScene extends BaseUIScene {
+class GameOverScene extends BaseScene {
     gameOver: any;
 
     constructor(config: any) {
@@ -9,6 +9,8 @@ class GameOverScene extends BaseUIScene {
     }
 
     create() {
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         super.create();
 
         this.gameOver = this.sound.add("lose", { volume: 0.1 }).play();

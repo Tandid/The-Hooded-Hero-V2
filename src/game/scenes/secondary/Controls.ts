@@ -7,6 +7,8 @@ class Controls extends BaseScene {
 
     create() {
         super.create();
+        super.createBackground();
+
         this.createPage();
     }
 

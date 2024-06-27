@@ -24,7 +24,8 @@ export default class MainMenu extends BaseScene {
     }
 
     create() {
-        super.create(); // This uses the create function from the BaseScene
+        super.create();
+        super.createBackground();
 
         this.cameras.main.fadeIn(500, 0, 0, 0);
 

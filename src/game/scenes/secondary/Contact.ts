@@ -7,6 +7,8 @@ export default class Contact extends BaseScene {
 
     create() {
         super.create();
+        super.createBackground();
+
         this.createPage();
     }
 

@@ -1,11 +1,13 @@
-import BaseUIScene from "./BaseUIScene";
+import BaseScene from "../BaseScene";
 
-class PauseScene extends BaseUIScene {
+class PauseScene extends BaseScene {
     constructor(config: any) {
         super("PauseScene", config);
     }
 
     create() {
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         super.create();
         this.createPage();
     }

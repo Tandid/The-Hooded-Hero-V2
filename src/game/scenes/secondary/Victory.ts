@@ -1,7 +1,7 @@
 import EventEmitter from "../../../events/Emitter";
-import BaseUIScene from "./BaseUIScene";
+import BaseScene from "../BaseScene";
 
-class VictoryScene extends BaseUIScene {
+class VictoryScene extends BaseScene {
     victory: any;
 
     constructor(config: any) {
@@ -9,6 +9,8 @@ class VictoryScene extends BaseUIScene {
     }
 
     create() {
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         super.create();
 
         this.victory = this.sound.add("win", { volume: 0.1 }).play();
