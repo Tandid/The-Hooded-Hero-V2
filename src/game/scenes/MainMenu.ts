@@ -1,11 +1,9 @@
 // @ts-nocheck
 
-import { Socket } from "socket.io-client";
 import { EventBus } from "../EventBus";
 import BaseScene from "./BaseScene";
 
 export default class MainMenu extends BaseScene {
-    socket: Socket;
     menu: { scene: string; text: string; level?: number }[];
     tooltipText: any;
 
@@ -18,13 +16,8 @@ export default class MainMenu extends BaseScene {
         ];
     }
 
-    init(data: any) {
-        this.socket = data.socket;
-        this.username = data.username;
-        console.log({ MainMenu: data });
-    }
-
     create() {
+        console.log("MainMenu", this.socket);
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
         super.create();
@@ -79,7 +72,7 @@ export default class MainMenu extends BaseScene {
             .text(
                 this.config.width / 10 - 10,
                 this.config.height - 45,
-                `${this.username}`,
+                `${localStorage.getItem("username")}`,
                 {
                     fontFamily: "customFont",
                     fontSize: "30px",
@@ -99,12 +92,7 @@ export default class MainMenu extends BaseScene {
 
     playBgMusic() {
         this.sound.stopAll();
-
-        if (this.sound.get("menu-theme")) {
-            this.sound.get("menu-theme", { loop: true, volume: 0.04 }).play();
-            return;
-        }
-        this.sound.add("menu-theme", { loop: true, volume: 0.04 }).play();
+        this.menuBGM.play();
     }
 
     createSettingsButton() {
@@ -119,14 +107,14 @@ export default class MainMenu extends BaseScene {
             .setInteractive();
 
         settingsBtn.on("pointerup", () => {
-            this.select.play();
-            this.scene.launch("SettingsOverlay");
+            this.selectFx.play();
+            this.scene.launch("SettingsScene");
             this.hideTooltip();
             this.game.canvas.classList.remove("custom-cursor");
         });
         settingsBtn.on("pointerover", () => {
             settingsBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             this.showTooltip(settingsBtn.x, settingsBtn.y - 50, "Settings");
             this.game.canvas.classList.add("custom-cursor");
         });
@@ -150,7 +138,7 @@ export default class MainMenu extends BaseScene {
             .setInteractive();
 
         controlsBtn.on("pointerup", () => {
-            this.pageFlip.play();
+            this.pageFlipFx.play();
             this.scene.sleep("MainMenu");
             this.scene.launch("Controls");
             this.hideTooltip();
@@ -159,7 +147,7 @@ export default class MainMenu extends BaseScene {
 
         controlsBtn.on("pointerover", () => {
             controlsBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             this.showTooltip(
                 controlsBtn.x,
                 controlsBtn.y - 50,
@@ -184,7 +172,7 @@ export default class MainMenu extends BaseScene {
             .setInteractive();
 
         contactsBtn.on("pointerup", () => {
-            this.pageFlip.play();
+            this.pageFlipFx.play();
             this.scene.sleep("MainMenu");
             this.scene.launch("Contact");
             this.hideTooltip();
@@ -193,7 +181,7 @@ export default class MainMenu extends BaseScene {
 
         contactsBtn.on("pointerover", () => {
             contactsBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             this.showTooltip(contactsBtn.x, contactsBtn.y + 50, "Contact");
             this.game.canvas.classList.add("custom-cursor");
         });
@@ -222,20 +210,17 @@ export default class MainMenu extends BaseScene {
                     () => menuItem.scene && this.scene.start(menuItem.scene),
                     4000
                 );
-                this.flute.play();
+                this.fluteFx.play();
             } else {
-                this.select.play();
+                this.selectFx.play();
                 this.scene.sleep("MainMenu");
-                this.scene.launch(menuItem.scene, {
-                    socket: this.socket,
-                    username: this.username,
-                });
+                this.scene.launch(menuItem.scene);
             }
         });
 
         textGO.on("pointerover", () => {
             this.scene.is;
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             textGO.setStyle({ fill: "#fff" });
             this.game.canvas.classList.add("custom-cursor");
         });
@@ -259,7 +244,7 @@ export default class MainMenu extends BaseScene {
     }
 
     changeScene() {
-        this.scene.start("GameOverScene", { socket: this.socket });
+        this.scene.start("PauseScene");
     }
 }
 

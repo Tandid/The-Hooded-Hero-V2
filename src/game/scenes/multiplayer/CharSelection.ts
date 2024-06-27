@@ -1,21 +1,11 @@
 // @ts-nocheck
 
-import { Socket } from "socket.io-client";
 import PlayerConfig from "../../../utils/PlayerConfig";
 import BaseScene from "../BaseScene";
 
 class CharSelection extends BaseScene {
-    socket: Socket;
-    username: string;
-
     constructor(config: any) {
         super("CharSelection", { ...config, canGoBack: true });
-    }
-
-    init(data: any) {
-        this.socket = data.socket;
-        this.username = data.username;
-        console.log({ CharSelection: data });
     }
 
     create() {
@@ -67,13 +57,13 @@ class CharSelection extends BaseScene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.scene.wake("MainMenu");
             this.scene.stop("CharSelection");
         });
 
         closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             closeBtn.setTint(0xff6666);
         });
 
@@ -113,26 +103,24 @@ class CharSelection extends BaseScene {
 
             player.on("pointerover", () => {
                 player.play(`run-${key}`, true);
-                this.cursorOver.play();
+                this.cursorOverFx.play();
                 bg.setTint("0xc2c2c2");
                 bg.setScale(0.45, 1.25);
             });
             player.on("pointerout", () => {
                 player.play(`idle-${key}`, true);
-                this.cursorOver.stop();
+                this.cursorOverFx.stop();
                 bg.clearTint();
                 bg.setScale(0.43, 1.2);
             });
 
             player.on("pointerdown", () => {
-                this.select.play();
+                this.selectFx.play();
             });
 
             player.on("pointerup", () => {
                 this.scene.stop("CharSelection");
                 this.scene.start("LobbyScene", {
-                    socket: this.socket,
-                    username: this.username,
                     charSpriteKey: key,
                 });
             });

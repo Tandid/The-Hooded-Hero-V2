@@ -6,7 +6,6 @@ import BaseScene from "../BaseScene";
 
 class JoinRoomScene extends BaseScene {
     socket: Socket;
-    username: string;
     charSpriteKey: string;
 
     constructor(config: any) {
@@ -14,9 +13,7 @@ class JoinRoomScene extends BaseScene {
     }
 
     init(data: any) {
-        this.socket = data.socket;
         this.charSpriteKey = data.charSpriteKey;
-        this.username = data.username;
     }
 
     create() {
@@ -95,7 +92,7 @@ class JoinRoomScene extends BaseScene {
                 roomInfo,
                 roomKey,
                 charSpriteKey: this.charSpriteKey,
-                username: this.username,
+                username: localStorage.getItem("username"),
             });
         });
     }
@@ -153,14 +150,14 @@ class JoinRoomScene extends BaseScene {
         joinButton.setInteractive();
         joinButton.on("pointerover", () => {
             joinButton.setFill("#fff");
-            this.cursorOver.play();
+            this.cursorOverFx.play();
         });
         joinButton.on("pointerout", () => {
             joinButton.setFill("#000");
-            this.cursorOver.stop();
+            this.cursorOverFx.stop();
         });
         joinButton.on("pointerdown", () => {
-            this.select.play();
+            this.selectFx.play();
         });
         joinButton.on("pointerup", () => {
             this.input.enabled = false;
@@ -170,7 +167,7 @@ class JoinRoomScene extends BaseScene {
             this.socket.emit("joinRoom", {
                 roomKey: textbox._text.toUpperCase(),
                 spriteKey: this.charSpriteKey,
-                username: this.username,
+                username: localStorage.getItem("username"),
             });
         });
     }
@@ -188,13 +185,13 @@ class JoinRoomScene extends BaseScene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.scene.wake("MainMenu");
             this.scene.stop("JoinRoomScene");
         });
 
         closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             closeBtn.setTint(0xff6666);
         });
 

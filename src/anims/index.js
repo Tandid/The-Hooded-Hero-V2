@@ -15,6 +15,7 @@ export default (anims) => {
         frameRate: 60,
         repeat: 0,
     });
+
     anims.create({
         key: "axe-default-swing",
         frames: anims.generateFrameNumbers("boss-default", {
@@ -56,3 +57,4 @@ export default (anims) => {
         repeat: -1,
     });
 };
+

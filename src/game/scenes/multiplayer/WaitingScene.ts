@@ -20,17 +20,17 @@ class WaitingScene extends Phaser.Scene {
         this.roomInfo = data.roomInfo;
         this.roomKey = data.roomKey;
         this.charSpriteKey = data.charSpriteKey;
-        this.username = data.username;
+        this.username = this.localStorage.getItem("username");
         console.log({ Waiting: data });
     }
 
     create() {
         const height = this.config.height;
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
+        this.cursorOverFx = this.sound.add("cursorOver");
+        this.cursorOverFx.volume = 0.4;
 
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
+        this.selectFx = this.sound.add("select");
+        this.selectFx.volume = 0.4;
 
         const map = this.createMap();
 
@@ -411,12 +411,12 @@ class WaitingScene extends Phaser.Scene {
         settingsBtn.on("pointerup", () => {
             this.scene.pause("WaitingScene");
             this.scene.sendToBack("WaitingScene");
-            this.scene.launch("SettingsOverlayScene");
+            this.scene.launch("SettingsScene");
         });
 
         settingsBtn.on("pointerover", () => {
             settingsBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
+            this.cursorOverFx.play();
         });
         settingsBtn.on("pointerout", () => {
             settingsBtn.clearTint();
@@ -437,14 +437,14 @@ class WaitingScene extends Phaser.Scene {
             .setDepth(2);
 
         homeBtn.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.scene.pause("WaitingScene");
             // this.scene.sendToBack("PlayScene");
             this.scene.launch("PauseScene");
         });
         homeBtn.on("pointerover", () => {
             homeBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
+            this.cursorOverFx.play();
         });
         homeBtn.on("pointerout", () => {
             homeBtn.clearTint();

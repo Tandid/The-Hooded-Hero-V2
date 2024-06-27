@@ -55,11 +55,6 @@ class Loading extends Phaser.Scene {
         });
 
         generateRandomHint(this, this.config.width, this.config.height);
-
-        // setTimeout(() => {
-        //   this.scene.stop("LoadingScene");
-        //   this.scene.start("MainMenu");
-        // }, 1000);
     }
 }
 

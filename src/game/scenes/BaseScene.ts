@@ -1,11 +1,23 @@
 import { GameObjects, Scene } from "phaser";
+import io, { Socket } from "socket.io-client";
 
 export default class BaseScene extends Scene {
+    socket: Socket;
     config: any;
-    cursorOver: any;
-    select: any;
-    pageFlip: any;
-    flute: any;
+
+    // Sound Effects
+    cursorOverFx: any;
+    selectFx: any;
+    pageFlipFx: any;
+    fluteFx: any;
+    collectFx: any;
+
+    // Music Themes
+    menuBGM: any;
+    forestBGM: any;
+    caveBGM: any;
+    bossBGM: any;
+
     screenCenter: Array<number>;
     fontSize: number;
     fontFamily: string;
@@ -17,6 +29,7 @@ export default class BaseScene extends Scene {
 
     constructor(key: any, config: any) {
         super(key);
+        this.socket = io("http://localhost:3000");
         this.config = config;
         this.screenCenter = [this.config.width / 2, this.config.height / 2];
         this.fontSize = 60;
@@ -33,6 +46,7 @@ export default class BaseScene extends Scene {
 
     create() {
         this.addSoundEffects();
+        this.addMusicThemes();
     }
 
     createBackground() {
@@ -55,10 +69,30 @@ export default class BaseScene extends Scene {
     }
 
     addSoundEffects() {
-        this.cursorOver = this.sound.add("cursorOver", { volume: 0.4 });
-        this.select = this.sound.add("select", { volume: 0.4 });
-        this.pageFlip = this.sound.add("page-flip", { volume: 0.4 });
-        this.flute = this.sound.add("flute", { volume: 0.4 });
+        this.cursorOverFx = this.sound.add("cursorOver", { volume: 0.4 });
+        this.selectFx = this.sound.add("select", { volume: 0.4 });
+        this.pageFlipFx = this.sound.add("page-flip", { volume: 0.4 });
+        this.fluteFx = this.sound.add("flute", { volume: 0.4 });
+        this.collectFx = this.sound.add("coin-pickup", { volume: 0.05 });
+    }
+
+    addMusicThemes() {
+        this.menuBGM = this.sound.add("menu-theme", {
+            loop: true,
+            volume: 0.04,
+        });
+        this.forestBGM = this.sound.add("forest-theme", {
+            loop: true,
+            volume: 0.04,
+        });
+        this.caveBGM = this.sound.add("cave-theme", {
+            loop: true,
+            volume: 0.04,
+        });
+        this.bossBGM = this.sound.add("boss-theme", {
+            loop: true,
+            volume: 0.04,
+        });
     }
 
     createLeaves() {
@@ -151,13 +185,13 @@ export default class BaseScene extends Scene {
         container.setDepth(2).setInteractive();
 
         container.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.game.canvas.classList.remove("custom-cursor");
             callback();
         });
 
         container.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             button.setTint(0xc2c2c2);
             this.game.canvas.classList.add("custom-cursor");
         });

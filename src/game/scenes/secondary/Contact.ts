@@ -96,14 +96,14 @@ export default class Contact extends BaseScene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.scene.wake("MainMenu");
             this.scene.stop("Contact");
             this.game.canvas.classList.remove("custom-cursor");
         });
 
         closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             closeBtn.setTint(0xff6666);
             this.game.canvas.classList.add("custom-cursor");
         });
@@ -128,7 +128,7 @@ export default class Contact extends BaseScene {
         });
 
         githubBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             githubBtn.setScale(0.17);
             this.game.canvas.classList.add("custom-cursor");
         });
@@ -153,7 +153,7 @@ export default class Contact extends BaseScene {
         });
 
         linkedinBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             linkedinBtn.setScale(0.17);
             this.game.canvas.classList.add("custom-cursor");
         });
@@ -178,7 +178,7 @@ export default class Contact extends BaseScene {
         });
 
         emailBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             emailBtn.setScale(0.17);
             this.game.canvas.classList.add("custom-cursor");
         });

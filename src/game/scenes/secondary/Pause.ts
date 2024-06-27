@@ -6,8 +6,6 @@ class PauseScene extends BaseScene {
     }
 
     create() {
-        this.cameras.main.fadeIn(500, 0, 0, 0);
-
         super.create();
         this.createPage();
     }
@@ -42,7 +40,7 @@ class PauseScene extends BaseScene {
             "yes-btn",
             () => {
                 this.scene.stop("PlayScene");
-                this.scene.stop("WaitingScene");
+                // this.scene.stop("WaitingScene");
                 this.scene.start("MainMenu");
             }
         );
@@ -58,9 +56,9 @@ class PauseScene extends BaseScene {
                 this.scene.isPaused("PlayScene") === true
                     ? this.scene.resume("PlayScene")
                     : "";
-                this.scene.isPaused("WaitingScene") === true
-                    ? this.scene.resume("WaitingScene")
-                    : "";
+                // this.scene.isPaused("WaitingScene") === true
+                //     ? this.scene.resume("WaitingScene")
+                //     : "";
             }
         );
     }

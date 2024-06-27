@@ -1,6 +1,6 @@
 import BaseScene from "../BaseScene";
 
-export default class SettingsOverlay extends BaseScene {
+export default class SettingsScene extends BaseScene {
     currentMusicBars: number;
     maxVolumeBars: number;
     minVolumeBars: number;
@@ -10,7 +10,7 @@ export default class SettingsOverlay extends BaseScene {
     muteStateImage: Phaser.GameObjects.Image;
 
     constructor(config: any) {
-        super("SettingsOverlay", { ...config, canGoBack: false });
+        super("SettingsScene", { ...config, canGoBack: false });
         this.volumeBars = [];
     }
 
@@ -22,7 +22,6 @@ export default class SettingsOverlay extends BaseScene {
 
     create() {
         super.create();
-        super.createBackground();
 
         this.createInputBlock(); // Prevents click events behind the overlay from happening
 
@@ -145,8 +144,8 @@ export default class SettingsOverlay extends BaseScene {
             this.config.height / 7 + 20,
             "close-btn",
             () => {
-                this.select.play();
-                this.scene.stop("SettingsOverlay");
+                this.selectFx.play();
+                this.scene.stop("SettingsScene");
                 if (this.scene.isPaused("PlayScene")) {
                     this.scene.resume("PlayScene");
                 }
@@ -160,7 +159,7 @@ export default class SettingsOverlay extends BaseScene {
             this.config.height / 2 + 150,
             "switch-off-bg",
             () => {
-                this.select.play();
+                this.selectFx.play();
                 this.toggleMute();
                 this.game.canvas.classList.add("custom-cursor");
             }
@@ -211,7 +210,7 @@ export default class SettingsOverlay extends BaseScene {
 
     createDecrementBtn(width: number, height: number) {
         this.createButton(width, height, "prev-btn", () => {
-            this.select.play();
+            this.selectFx.play();
             this.decreaseVolume();
             this.game.canvas.classList.add("custom-cursor");
         }).setScale(0.5);
@@ -219,7 +218,7 @@ export default class SettingsOverlay extends BaseScene {
 
     createIncrementBtn(width: number, height: number) {
         this.createButton(width, height, "next-btn", () => {
-            this.select.play();
+            this.selectFx.play();
             this.increaseVolume();
             this.game.canvas.classList.add("custom-cursor");
         }).setScale(0.5);
