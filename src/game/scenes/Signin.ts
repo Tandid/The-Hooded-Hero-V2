@@ -89,11 +89,14 @@ class UsernameScene extends BaseScene {
         this.confirmBtn = this.createButton(
             this.config.width / 2,
             this.config.height / 2 + 125,
-            "yes-btn",
+            "blue-long-button",
             () => {
                 this.confirmName();
-            }
-        ).setVisible(false);
+            },
+            "Confirm"
+        )
+            .setVisible(false)
+            .setScale(1.5);
 
         return this.confirmBtn;
     }
