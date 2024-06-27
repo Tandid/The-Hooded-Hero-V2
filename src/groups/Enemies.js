@@ -1,6 +1,22 @@
 import Phaser from "phaser";
+import Archer from "../entities/Archer";
+import Bee from "../entities/Bee";
+import Boss from "../entities/Boss";
+import Mage from "../entities/Mage";
+import Skeleton from "../entities/Skeleton";
+import Slime from "../entities/Slime";
+import Spider from "../entities/Spider";
 import collidable from "../mixins/collidable";
-import { ENEMY_TYPES } from "../types";
+
+const ENEMY_TYPES = {
+    Skeleton,
+    Archer,
+    Mage,
+    Slime,
+    Bee,
+    Spider,
+    Boss,
+};
 
 class Enemies extends Phaser.GameObjects.Group {
     constructor(scene) {
@@ -26,3 +42,4 @@ class Enemies extends Phaser.GameObjects.Group {
 }
 
 export default Enemies;
+
