@@ -27,8 +27,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     init() {
         this.initProperties();
-        this.initSounds();
-        this.initControls();
+        this.initSoundEffects();
+        this.initKeyboardControls();
         this.initWeapons();
         this.initHealthBar();
         this.initAnimations();
@@ -54,7 +54,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.setOrigin(0, 1);
     }
 
-    initSounds() {
+    initSoundEffects() {
         this.jumpFx = this.scene.sound.add("jump", { volume: 0.2 });
         this.takeDamageFx = this.scene.sound.add("damage", { volume: 0.2 });
         this.arrowFx = this.scene.sound.add("projectile-launch", {
@@ -64,8 +64,16 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.swingSwordFx = this.scene.sound.add("swipe", { volume: 0.1 });
     }
 
-    initControls() {
-        this.cursors = this.scene.input.keyboard.createCursorKeys();
+    initKeyboardControls() {
+        this.keyBindings = this.scene.input.keyboard.addKeys({
+            left: Phaser.Input.Keyboard.KeyCodes.LEFT,
+            right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            space: Phaser.Input.Keyboard.KeyCodes.SPACE,
+            shift: Phaser.Input.Keyboard.KeyCodes.SHIFT,
+            Q: Phaser.Input.Keyboard.KeyCodes.Q,
+            E: Phaser.Input.Keyboard.KeyCodes.E,
+        });
+        console.log(this.keyBindings);
     }
 
     initWeapons() {
@@ -121,7 +129,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     handleMovement() {
-        const { left, right, space, shift } = this.cursors;
+        const { left, right, space, shift } = this.keyBindings;
         const isSpaceJustDown = Phaser.Input.Keyboard.JustDown(space);
         const onFloor = this.body.onFloor();
 
