@@ -17,7 +17,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        // Mixins
+        // Mixins (Adds methods from other objects to this current instance)
         Object.assign(this, collidable);
         Object.assign(this, anims);
 
@@ -32,7 +32,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.initWeapons();
         this.initHealthBar();
         this.initAnimations();
-        this.handleAttacks();
+        this.handlePlayerAttacks();
         this.initMovementSound();
     }
 
@@ -70,10 +70,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
             space: Phaser.Input.Keyboard.KeyCodes.SPACE,
             shift: Phaser.Input.Keyboard.KeyCodes.SHIFT,
-            Q: Phaser.Input.Keyboard.KeyCodes.Q,
-            E: Phaser.Input.Keyboard.KeyCodes.E,
+            keyQ: Phaser.Input.Keyboard.KeyCodes.Q,
+            keyE: Phaser.Input.Keyboard.KeyCodes.E,
         });
-        console.log(this.keyBindings);
     }
 
     initWeapons() {
@@ -135,8 +134,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.handleHorizontalMovement(left, right);
         this.handleJumping(isSpaceJustDown, onFloor);
-        this.handleSpeedBoost(shift, onFloor);
+        this.handleRunning(shift, onFloor);
 
+        // Prevents animations from overlapping
         if (
             this.isPlayingAnims("shoot-arrow") ||
             this.isPlayingAnims("melee")
@@ -144,7 +144,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             return;
         }
 
-        this.updateAnimation(onFloor);
+        this.updatePlayerAnimation(onFloor);
     }
 
     handleHorizontalMovement(left, right) {
@@ -176,7 +176,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    handleSpeedBoost(shift, onFloor) {
+    handleRunning(shift, onFloor) {
         if (shift.isDown && onFloor) {
             this.playerSpeed = 650;
         } else {
@@ -184,7 +184,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    updateAnimation(onFloor) {
+    updatePlayerAnimation(onFloor) {
         onFloor
             ? this.body.velocity.x !== 0
                 ? this.play("run", true)
@@ -192,15 +192,16 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             : this.play("jump", true);
     }
 
-    handleAttacks() {
-        this.scene.input.keyboard.on(
-            "keydown-Q",
-            this.handleProjectileAttack.bind(this)
-        );
-        this.scene.input.keyboard.on(
-            "keydown-E",
-            this.handleMeleeAttack.bind(this)
-        );
+    handlePlayerAttacks() {
+        const { keyQ, keyE } = this.keyBindings;
+
+        keyQ.on("down", () => {
+            this.handleProjectileAttack();
+        });
+
+        keyE.on("down", () => {
+            this.handleMeleeAttack();
+        });
     }
 
     handleProjectileAttack() {
