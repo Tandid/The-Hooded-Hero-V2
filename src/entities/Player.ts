@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import MeleeWeapon from "../attacks/MeleeWeapon";
 import Projectiles from "../attacks/Projectiles";
 import EventEmitter from "../events/Emitter";
-import HealthBar from "../hud/HealthBar";
+import HealthBar from "../hud/Healthbar";
 import anims from "../mixins/anims";
 import collidable from "../mixins/collidable";
 import { getTimestamp } from "../utils/functions";
