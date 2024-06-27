@@ -12,6 +12,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import Boot from "./scenes/Boot";
 import LevelSelect from "./scenes/LevelSelect";
 import MainMenu from "./scenes/MainMenu";
+import PlayScene from "./scenes/Play";
 import Preloader from "./scenes/Preloader";
 import SignupScene from "./scenes/Signup";
 import CharSelection from "./scenes/multiplayer/CharSelection";
@@ -71,6 +72,7 @@ const Scenes = [
     GameOverScene,
     VictoryScene,
     PauseScene,
+    PlayScene,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
