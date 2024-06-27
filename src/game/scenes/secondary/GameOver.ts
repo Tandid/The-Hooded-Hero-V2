@@ -56,7 +56,7 @@ class GameOverScene extends BaseScene {
     }
 
     createHomeButton() {
-        return this.createButton(
+        this.createButton(
             this.config.width / 2 - 75,
             this.config.height / 2 + 150,
             "home-btn-big",
@@ -68,7 +68,7 @@ class GameOverScene extends BaseScene {
     }
 
     createRestartButton() {
-        return this.createButton(
+        this.createButton(
             this.config.width / 2 + 75,
             this.config.height / 2 + 150,
             "restart-btn-big",

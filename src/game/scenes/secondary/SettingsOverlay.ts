@@ -155,7 +155,7 @@ export default class SettingsOverlay extends BaseScene {
     }
 
     createMuteButton() {
-        this.muteBtn = this.createButton(
+        this.createButton(
             this.config.width / 2 + 50,
             this.config.height / 2 + 150,
             "switch-off-bg",

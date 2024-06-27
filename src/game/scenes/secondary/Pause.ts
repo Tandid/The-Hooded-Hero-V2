@@ -36,7 +36,7 @@ class PauseScene extends BaseScene {
     }
 
     createYesButton() {
-        return this.createButton(
+        this.createButton(
             this.config.width / 2 - 75,
             this.config.height / 2 + 50,
             "yes-btn",
@@ -49,7 +49,7 @@ class PauseScene extends BaseScene {
     }
 
     createNoButton() {
-        return this.createButton(
+        this.createButton(
             this.config.width / 2 + 75,
             this.config.height / 2 + 50,
             "no-btn",

@@ -241,7 +241,7 @@ export default class MainMenu extends BaseScene {
     }
 
     changeScene() {
-        this.scene.start("SignupScene", { socket: this.socket });
+        this.scene.start("GameOverScene", { socket: this.socket });
     }
 }
 
