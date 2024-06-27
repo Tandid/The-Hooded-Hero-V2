@@ -4,10 +4,19 @@ import io, { Socket } from "socket.io-client";
 export default class BaseScene extends Scene {
     socket: Socket;
     config: any;
+
+    // Sound Effects
     cursorOver: any;
     select: any;
     pageFlip: any;
     flute: any;
+    collectSound: any;
+
+    // Music Themes
+    forestBg: any;
+    caveBg: any;
+    bossBg: any;
+
     screenCenter: Array<number>;
     fontSize: number;
     fontFamily: string;
@@ -36,6 +45,7 @@ export default class BaseScene extends Scene {
 
     create() {
         this.addSoundEffects();
+        this.addMusicThemes();
     }
 
     createBackground() {
@@ -62,6 +72,22 @@ export default class BaseScene extends Scene {
         this.select = this.sound.add("select", { volume: 0.4 });
         this.pageFlip = this.sound.add("page-flip", { volume: 0.4 });
         this.flute = this.sound.add("flute", { volume: 0.4 });
+        this.collectSound = this.sound.add("coin-pickup", { volume: 0.05 });
+    }
+
+    addMusicThemes() {
+        this.forestBg = this.sound.add("forest-theme", {
+            loop: true,
+            volume: 0.04,
+        });
+        this.caveBg = this.sound.add("cave-theme", {
+            loop: true,
+            volume: 0.04,
+        });
+        this.bossBg = this.sound.add("boss-theme", {
+            loop: true,
+            volume: 0.04,
+        });
     }
 
     createLeaves() {

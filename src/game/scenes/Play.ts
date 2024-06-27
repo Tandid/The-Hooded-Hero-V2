@@ -22,7 +22,6 @@ class PlayScene extends BaseScene {
         this.isPaused = false;
 
         this.playBgMusic();
-        this.collectSound = this.sound.add("coin-pickup", { volume: 0.05 });
 
         this.add
             .image(
@@ -94,29 +93,16 @@ class PlayScene extends BaseScene {
         const level = this.getCurrentLevel();
         this.sound.stopAll();
 
-        const forestBg = this.sound.add("forest-theme", {
-            loop: true,
-            volume: 0.04,
-        });
-        const caveBg = this.sound.add("cave-theme", {
-            loop: true,
-            volume: 0.04,
-        });
-        const bossBg = this.sound.add("boss-theme", {
-            loop: true,
-            volume: 0.04,
-        });
-
         if (level === 1) {
-            forestBg.play();
+            this.forestBg.play();
         }
 
         if (level === 2) {
-            caveBg.play();
+            this.caveBg.play();
         }
 
         if (level === 3) {
-            bossBg.play();
+            this.bossBg.play();
         }
     }
 
