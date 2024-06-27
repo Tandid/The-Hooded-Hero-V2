@@ -1,6 +1,6 @@
 // @ts-nocheck
+import BaseScene from "./BaseScene";
 
-import Phaser from "phaser";
 import Player from "../../entities/Player";
 import EventEmitter from "../../events/Emitter";
 import Collectables from "../../groups/Collectables";
@@ -9,28 +9,20 @@ import Hud from "../../hud";
 
 import initAnims from "../../anims";
 
-class PlayScene extends Phaser.Scene {
+class PlayScene extends BaseScene {
     constructor(config) {
-        super("PlayScene");
+        super("PlayScene", config);
         this.config = config;
     }
 
     create({ gameStatus }) {
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
-
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
-
-        this.pageFlip = this.sound.add("page-flip");
-        this.pageFlip.volume = 0.4;
-
+        super.create();
         this.score = 0;
         this.hud = new Hud(this, 0, 0);
         this.isPaused = false;
 
         this.playBgMusic();
-        this.collectSound = this.sound.add("coin-pickup", { volume: 0.2 });
+        this.collectSound = this.sound.add("coin-pickup", { volume: 0.05 });
 
         this.add
             .image(

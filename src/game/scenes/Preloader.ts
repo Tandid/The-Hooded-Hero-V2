@@ -105,7 +105,7 @@ export default class Preloader extends Scene {
         this.registry.set("unlocked-levels", 1);
         console.log("Registry contents:", this.registry.getAll());
 
-        this.scene.start("SignupScene");
+        this.scene.start("PlayScene");
     }
 }
 
