@@ -1,17 +1,20 @@
 // @ts-nocheck
 
 import { Socket } from "socket.io-client";
-import UsernameConfig from "../../utils/SigninConfig";
 import BaseScene from "./BaseScene";
 
 class UsernameScene extends BaseScene {
-    state: { titleText: string };
+    state: {
+        savedText: string;
+    };
     socket: Socket;
+    pageFlip: any;
 
     constructor(config: any) {
         super("UsernameScene", config);
         this.state = {
-            titleText: "Enter your name!",
+            savedText: "",
+            inputTextBoxConfigSettings: undefined,
         };
     }
 
@@ -22,20 +25,9 @@ class UsernameScene extends BaseScene {
 
     create() {
         super.create();
-        const usernameConfig = new UsernameConfig(this, this.socket);
         this.cameras.main.fadeIn(500, 0, 0, 0);
-
-        usernameConfig.runAllTextBoxLogic(
-            this.config.width / 2,
-            this.config.height / 2,
-            {
-                fontFamily: "customFont",
-                textColor: 0xffffff,
-                fontSize: "20px",
-                fixedWidth: 500,
-                fixedHeight: 60,
-            }
-        );
+        this.createPage();
+        this.createInputBox();
     }
 
     createPage() {
@@ -48,7 +40,7 @@ class UsernameScene extends BaseScene {
             .text(
                 this.config.width / 2,
                 this.config.height / 3,
-                `${this.state.titleText}`,
+                "Enter Your Name!",
                 {
                     fontFamily: "customFont",
                     fontSize: "60px",
@@ -57,6 +49,47 @@ class UsernameScene extends BaseScene {
             )
             .setOrigin(0.5, 0.5)
             .setColor("#000");
+    }
+
+    createInputBox() {
+        const inputTextBox = this.add
+            .rexBBCodeText(this.config.width / 2, this.config.height / 2, "", {
+                fontFamily: "customFont",
+                fontSize: "50px",
+                fixedWidth: 300,
+                fixedHeight: 80,
+                backgroundColor: "#958761",
+                halign: "center",
+                valign: "center",
+                maxLines: 1,
+            })
+            .setOrigin(0.5)
+            .setInteractive();
+
+        inputTextBox.on("pointerdown", () => {
+            const config = {
+                onTextChanged: (textObject, text) => {
+                    textObject.text = text;
+                },
+                onClose: (textObject) => {
+                    this.state.savedText = textObject.text;
+                    this.startConfirmation();
+                },
+                selectAll: true,
+            };
+            this.plugins.get("rexTextEdit").edit(inputTextBox, config);
+        });
+    }
+
+    startConfirmation() {
+        if (this.pageFlip) {
+            this.pageFlip.play();
+        }
+
+        this.scene.start("UserConfirmationScene", {
+            socket: this.socket,
+            username: this.state.savedText,
+        });
     }
 }
 

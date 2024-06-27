@@ -4,7 +4,7 @@ import Phaser from "phaser"; // This needs to be in the top level for RexUI to w
 // REX UI Plugin Imports
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
-// import TextEditPlugin from "phaser3-rex-plugins/plugins/textedit-plugin.js";
+import TextEditPlugin from "phaser3-rex-plugins/plugins/textedit-plugin.js";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 // Scene Imports
@@ -12,6 +12,7 @@ import Boot from "./scenes/Boot";
 import LevelSelect from "./scenes/LevelSelect";
 import MainMenu from "./scenes/MainMenu";
 import Preloader from "./scenes/Preloader";
+import UsernameScene from "./scenes/Signin";
 import Signup from "./scenes/Signup";
 import CharSelection from "./scenes/multiplayer/CharSelection";
 import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
@@ -70,6 +71,7 @@ const Scenes = [
     GameOverScene,
     VictoryScene,
     PauseScene,
+    UsernameScene,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
@@ -113,11 +115,11 @@ const config: Phaser.Types.Core.GameConfig = {
                 plugin: BBCodeTextPlugin,
                 start: true,
             },
-            // {
-            //     key: "rexTextEdit",
-            //     plugin: TextEditPlugin,
-            //     start: true,
-            // },
+            {
+                key: "rexTextEdit",
+                plugin: TextEditPlugin,
+                start: true,
+            },
         ],
     },
     scale: {
