@@ -1,10 +1,11 @@
+// @ts-nocheck
 import Phaser from "phaser"; // This needs to be in the top level for RexUI to work properly
 
 // TODO: Add Phase.d.ts to assist with type checking for TextEditPlugin
 // REX UI Plugin Imports
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
-// import TextEditPlugin from "phaser3-rex-plugins/plugins/textedit-plugin.js";
+import TextEditPlugin from "phaser3-rex-plugins/plugins/textedit-plugin.js";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 // Scene Imports
@@ -12,7 +13,7 @@ import Boot from "./scenes/Boot";
 import LevelSelect from "./scenes/LevelSelect";
 import MainMenu from "./scenes/MainMenu";
 import Preloader from "./scenes/Preloader";
-import Signup from "./scenes/Signup";
+import SignupScene from "./scenes/Signup";
 import CharSelection from "./scenes/multiplayer/CharSelection";
 import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
@@ -56,10 +57,10 @@ const SHARED_CONFIG = {
 const Scenes = [
     Boot,
     Preloader,
+    SignupScene,
     MainMenu,
     CharSelection,
     LobbyScene,
-    Signup,
     SettingsOverlay,
     JoinRoomScene,
     Contact,
@@ -113,11 +114,11 @@ const config: Phaser.Types.Core.GameConfig = {
                 plugin: BBCodeTextPlugin,
                 start: true,
             },
-            // {
-            //     key: "rexTextEdit",
-            //     plugin: TextEditPlugin,
-            //     start: true,
-            // },
+            {
+                key: "rexTextEdit",
+                plugin: TextEditPlugin,
+                start: true,
+            },
         ],
     },
     scale: {

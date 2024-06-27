@@ -106,7 +106,7 @@ export default class Preloader extends Scene {
     }
 
     loadingComplete() {
-        this.scene.start("MainMenu", { socket: this.socket });
+        this.scene.start("SignupScene", { socket: this.socket });
     }
 }
 

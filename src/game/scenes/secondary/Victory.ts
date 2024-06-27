@@ -89,7 +89,7 @@ class VictoryScene extends BaseScene {
     }
 
     createHomeButton() {
-        return this.createButton(
+        this.createButton(
             this.config.width / 2 - 150,
             this.config.height / 2 + 150,
             "home-btn-big",
@@ -101,7 +101,7 @@ class VictoryScene extends BaseScene {
     }
 
     createRestartButton() {
-        return this.createButton(
+        this.createButton(
             this.config.width / 2,
             this.config.height / 2 + 150,
             "restart-btn-big",
@@ -113,7 +113,7 @@ class VictoryScene extends BaseScene {
     }
 
     createPlayButton() {
-        return this.createButton(
+        this.createButton(
             this.config.width / 2 + 150,
             this.config.height / 2 + 150,
             "play-btn",

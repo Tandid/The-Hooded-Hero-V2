@@ -126,32 +126,48 @@ export default class BaseScene extends Scene {
         });
     }
 
-    createButton(x: number, y: number, texture: string, callback: () => void) {
+    createButton(
+        x: number,
+        y: number,
+        texture: string,
+        callback: () => void,
+        text?: string
+    ) {
         const button = this.add
-            .image(x, y, texture)
+            .image(0, 0, texture)
             .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
+            .setScale(0.7);
 
-        button.on("pointerup", () => {
+        const buttonText = this.add
+            .text(0, 0, text || "", {
+                fontFamily: "customFont",
+                fontSize: "30px",
+            })
+            .setOrigin(0.5)
+            .setColor("#000000");
+
+        const container = this.add.container(x, y, [button, buttonText]);
+        container.setSize(button.width * 0.7, button.height * 0.7);
+        container.setDepth(2).setInteractive();
+
+        container.on("pointerup", () => {
             this.select.play();
             this.game.canvas.classList.remove("custom-cursor");
             callback();
         });
 
-        button.on("pointerover", () => {
+        container.on("pointerover", () => {
             this.cursorOver.play();
             button.setTint(0xc2c2c2);
             this.game.canvas.classList.add("custom-cursor");
         });
 
-        button.on("pointerout", () => {
+        container.on("pointerout", () => {
             button.clearTint();
             this.game.canvas.classList.remove("custom-cursor");
         });
 
-        return button;
+        return container;
     }
 
     update() {
