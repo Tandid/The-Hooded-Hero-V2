@@ -204,8 +204,8 @@ class PlayScene extends BaseScene {
 
     createGameEvents() {
         EventEmitter.on("PLAYER_LOSE", () => {
-            this.scene.pause("PlayScene");
-            this.scene.launch("LoseScene");
+            this.scene.stop("PlayScene");
+            this.scene.launch("GameOverScene");
         });
         EventEmitter.on("RESTART_GAME", () => {
             this.scene.restart({ gameStatus: "PLAYER_LOSE" });
@@ -294,17 +294,17 @@ class PlayScene extends BaseScene {
             .setSize(5, 200)
             .setOrigin(0.5, 1);
 
-        const endOfLevelOverlap = this.physics.add.overlap(
-            player,
-            endOfLevel,
-            () => {
-                endOfLevelOverlap.active = false;
-                this.scene.stop("PlayScene");
-                this.scene.start("LevelTransition", {
-                    nextLevel: this.getNextLevel(),
-                });
+        const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
+            eolOverlap.active = false;
+
+            if (this.registry.get("level") === this.config.lastLevel) {
+                this.scene.start("CreditsScene");
+                return;
             }
-        );
+
+            this.scene.stop("PlayScene");
+            this.scene.launch("VictoryScene");
+        });
     }
 
     getCurrentLevel() {
