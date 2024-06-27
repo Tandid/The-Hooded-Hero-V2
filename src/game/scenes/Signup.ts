@@ -61,6 +61,22 @@ class SignupScene extends BaseScene {
             .setOrigin(0.5)
             .setInteractive();
 
+        inputTextBox.on("pointerup", () => {
+            this.select.play();
+            this.game.canvas.classList.remove("custom-cursor");
+        });
+
+        inputTextBox.on("pointerover", () => {
+            this.cursorOver.play();
+            inputTextBox.setTint(0xc2c2c2);
+            this.game.canvas.classList.add("custom-cursor");
+        });
+
+        inputTextBox.on("pointerout", () => {
+            inputTextBox.clearTint();
+            this.game.canvas.classList.remove("custom-cursor");
+        });
+
         inputTextBox.on("pointerdown", () => {
             const config = {
                 onTextChanged: (textObject, text) => {
