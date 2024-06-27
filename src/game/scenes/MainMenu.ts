@@ -92,12 +92,7 @@ export default class MainMenu extends BaseScene {
 
     playBgMusic() {
         this.sound.stopAll();
-
-        if (this.sound.get("menu-theme")) {
-            this.sound.get("menu-theme", { loop: true, volume: 0.04 }).play();
-            return;
-        }
-        this.sound.add("menu-theme", { loop: true, volume: 0.04 }).play();
+        this.menuBGM.play();
     }
 
     createSettingsButton() {

@@ -13,6 +13,7 @@ export default class BaseScene extends Scene {
     collectFx: any;
 
     // Music Themes
+    menuBGM: any;
     forestBGM: any;
     caveBGM: any;
     bossBGM: any;
@@ -76,6 +77,10 @@ export default class BaseScene extends Scene {
     }
 
     addMusicThemes() {
+        this.menuBGM = this.sound.add("menu-theme", {
+            loop: true,
+            volume: 0.04,
+        });
         this.forestBGM = this.sound.add("forest-theme", {
             loop: true,
             volume: 0.04,
