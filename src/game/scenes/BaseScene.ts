@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { GameObjects, Scene } from "phaser";
 
 export default class BaseScene extends Scene {
@@ -12,7 +10,8 @@ export default class BaseScene extends Scene {
     fontSize: number;
     fontFamily: string;
     lineHeight: number;
-    fontOptions: Object;
+
+    fontOptions: {};
     leaves: GameObjects.Image[];
     arrows: GameObjects.Image[];
 
@@ -106,7 +105,7 @@ export default class BaseScene extends Scene {
         }
     }
 
-    createMenu(menu, setupMenuEvents) {
+    createMenu(menu: any[], setupMenuEvents: any) {
         let lastMenuPositionY = 0;
 
         menu.forEach((menuItem) => {
@@ -115,7 +114,12 @@ export default class BaseScene extends Scene {
                 this.screenCenter[1] + lastMenuPositionY,
             ];
             menuItem.textGO = this.add
-                .text(...menuPosition, menuItem.text, this.fontOptions)
+                .text(
+                    menuPosition[0],
+                    menuPosition[1],
+                    menuItem.text,
+                    this.fontOptions
+                )
                 .setOrigin(0.5, 1);
             lastMenuPositionY += this.lineHeight;
             setupMenuEvents(menuItem);
