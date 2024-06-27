@@ -113,7 +113,7 @@ export default class MainMenu extends BaseScene {
 
         settingsBtn.on("pointerup", () => {
             this.select.play();
-            this.scene.launch("SettingsOverlay");
+            this.scene.launch("SettingsScene");
             this.hideTooltip();
             this.game.canvas.classList.remove("custom-cursor");
         });
@@ -249,7 +249,7 @@ export default class MainMenu extends BaseScene {
     }
 
     changeScene() {
-        this.scene.start("GameOverScene");
+        this.scene.start("PauseScene");
     }
 }
 

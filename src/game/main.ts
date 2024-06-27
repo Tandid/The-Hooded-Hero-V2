@@ -24,7 +24,7 @@ import Credits from "./scenes/secondary/Credits";
 import GameOverScene from "./scenes/secondary/GameOver";
 import Loading from "./scenes/secondary/Loading";
 import PauseScene from "./scenes/secondary/Pause";
-import SettingsOverlay from "./scenes/secondary/SettingsOverlay";
+import SettingsScene from "./scenes/secondary/Settings";
 import VictoryScene from "./scenes/secondary/Victory";
 
 // Custom configurations
@@ -62,7 +62,7 @@ const Scenes = [
     MainMenu,
     CharSelection,
     LobbyScene,
-    SettingsOverlay,
+    SettingsScene,
     JoinRoomScene,
     Contact,
     Controls,

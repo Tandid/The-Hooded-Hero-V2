@@ -411,7 +411,7 @@ class WaitingScene extends Phaser.Scene {
         settingsBtn.on("pointerup", () => {
             this.scene.pause("WaitingScene");
             this.scene.sendToBack("WaitingScene");
-            this.scene.launch("SettingsOverlayScene");
+            this.scene.launch("SettingsScene");
         });
 
         settingsBtn.on("pointerover", () => {

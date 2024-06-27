@@ -1,6 +1,6 @@
 import BaseScene from "../BaseScene";
 
-export default class SettingsOverlay extends BaseScene {
+export default class SettingsScene extends BaseScene {
     currentMusicBars: number;
     maxVolumeBars: number;
     minVolumeBars: number;
@@ -10,7 +10,7 @@ export default class SettingsOverlay extends BaseScene {
     muteStateImage: Phaser.GameObjects.Image;
 
     constructor(config: any) {
-        super("SettingsOverlay", { ...config, canGoBack: false });
+        super("SettingsScene", { ...config, canGoBack: false });
         this.volumeBars = [];
     }
 
@@ -22,7 +22,6 @@ export default class SettingsOverlay extends BaseScene {
 
     create() {
         super.create();
-        super.createBackground();
 
         this.createInputBlock(); // Prevents click events behind the overlay from happening
 
@@ -146,7 +145,7 @@ export default class SettingsOverlay extends BaseScene {
             "close-btn",
             () => {
                 this.select.play();
-                this.scene.stop("SettingsOverlay");
+                this.scene.stop("SettingsScene");
                 if (this.scene.isPaused("PlayScene")) {
                     this.scene.resume("PlayScene");
                 }

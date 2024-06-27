@@ -169,7 +169,7 @@ class PlayScene extends BaseScene {
             () => {
                 this.scene.pause("PlayScene");
                 this.scene.sendToBack("PlayScene");
-                this.scene.launch("SettingsOverlayScene");
+                this.scene.launch("SettingsScene");
             }
         )
             .setScrollFactor(0)
@@ -182,6 +182,7 @@ class PlayScene extends BaseScene {
             () => {
                 this.select.play();
                 this.scene.pause("PlayScene");
+                this.scene.sendToBack("PlayScene");
                 this.scene.launch("PauseScene");
             }
         )
