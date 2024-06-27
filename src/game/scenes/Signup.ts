@@ -1,13 +1,11 @@
 // @ts-nocheck
 
-import { Socket } from "socket.io-client";
 import BaseScene from "./BaseScene";
 
 class SignupScene extends BaseScene {
     state: {
         savedText: string;
     };
-    socket: Socket;
     pageFlip: any;
     confirmBtn: any;
     noBtn: any;
@@ -17,11 +15,6 @@ class SignupScene extends BaseScene {
         this.state = {
             savedText: "",
         };
-    }
-
-    init(data: any) {
-        this.socket = data.socket;
-        console.log({ SignupScene: data });
     }
 
     create() {
@@ -109,10 +102,11 @@ class SignupScene extends BaseScene {
     confirmName() {
         if (this.state.savedText.trim().length <= 10) {
             this.pageFlip?.play();
-            this.scene.start("MainMenu", {
-                socket: this.socket,
-                username: this.state.savedText,
-            });
+
+            localStorage.setItem("username", this.state.savedText);
+            console.log(localStorage.getItem("username"));
+
+            this.scene.start("MainMenu");
         } else {
             const feedbackText = this.add
                 .text(

@@ -20,7 +20,7 @@ class WaitingScene extends Phaser.Scene {
         this.roomInfo = data.roomInfo;
         this.roomKey = data.roomKey;
         this.charSpriteKey = data.charSpriteKey;
-        this.username = data.username;
+        this.username = this.localStorage.getItem("username"),;
         console.log({ Waiting: data });
     }
 

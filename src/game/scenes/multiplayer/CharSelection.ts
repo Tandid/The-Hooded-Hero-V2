@@ -1,21 +1,11 @@
 // @ts-nocheck
 
-import { Socket } from "socket.io-client";
 import PlayerConfig from "../../../utils/PlayerConfig";
 import BaseScene from "../BaseScene";
 
 class CharSelection extends BaseScene {
-    socket: Socket;
-    username: string;
-
     constructor(config: any) {
         super("CharSelection", { ...config, canGoBack: true });
-    }
-
-    init(data: any) {
-        this.socket = data.socket;
-        this.username = data.username;
-        console.log({ CharSelection: data });
     }
 
     create() {
@@ -131,8 +121,6 @@ class CharSelection extends BaseScene {
             player.on("pointerup", () => {
                 this.scene.stop("CharSelection");
                 this.scene.start("LobbyScene", {
-                    socket: this.socket,
-                    username: this.username,
                     charSpriteKey: key,
                 });
             });

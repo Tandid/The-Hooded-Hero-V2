@@ -1,11 +1,9 @@
 // @ts-nocheck
 
-import { Socket } from "socket.io-client";
 import { EventBus } from "../EventBus";
 import BaseScene from "./BaseScene";
 
 export default class MainMenu extends BaseScene {
-    socket: Socket;
     menu: { scene: string; text: string; level?: number }[];
     tooltipText: any;
 
@@ -18,13 +16,8 @@ export default class MainMenu extends BaseScene {
         ];
     }
 
-    init(data: any) {
-        this.socket = data.socket;
-        this.username = data.username;
-        console.log({ MainMenu: data });
-    }
-
     create() {
+        console.log("MainMenu", this.socket);
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
         super.create();
@@ -79,7 +72,7 @@ export default class MainMenu extends BaseScene {
             .text(
                 this.config.width / 10 - 10,
                 this.config.height - 45,
-                `${this.username}`,
+                `${localStorage.getItem("username")}`,
                 {
                     fontFamily: "customFont",
                     fontSize: "30px",
@@ -226,10 +219,7 @@ export default class MainMenu extends BaseScene {
             } else {
                 this.select.play();
                 this.scene.sleep("MainMenu");
-                this.scene.launch(menuItem.scene, {
-                    socket: this.socket,
-                    username: this.username,
-                });
+                this.scene.launch(menuItem.scene);
             }
         });
 
@@ -259,7 +249,7 @@ export default class MainMenu extends BaseScene {
     }
 
     changeScene() {
-        this.scene.start("GameOverScene", { socket: this.socket });
+        this.scene.start("GameOverScene");
     }
 }
 

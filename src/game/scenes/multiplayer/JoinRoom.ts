@@ -6,7 +6,6 @@ import BaseScene from "../BaseScene";
 
 class JoinRoomScene extends BaseScene {
     socket: Socket;
-    username: string;
     charSpriteKey: string;
 
     constructor(config: any) {
@@ -14,9 +13,7 @@ class JoinRoomScene extends BaseScene {
     }
 
     init(data: any) {
-        this.socket = data.socket;
         this.charSpriteKey = data.charSpriteKey;
-        this.username = data.username;
     }
 
     create() {
@@ -95,7 +92,7 @@ class JoinRoomScene extends BaseScene {
                 roomInfo,
                 roomKey,
                 charSpriteKey: this.charSpriteKey,
-                username: this.username,
+                username: localStorage.getItem("username"),
             });
         });
     }
@@ -170,7 +167,7 @@ class JoinRoomScene extends BaseScene {
             this.socket.emit("joinRoom", {
                 roomKey: textbox._text.toUpperCase(),
                 spriteKey: this.charSpriteKey,
-                username: this.username,
+                username: localStorage.getItem("username"),
             });
         });
     }

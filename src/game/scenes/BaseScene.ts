@@ -1,6 +1,8 @@
 import { GameObjects, Scene } from "phaser";
+import io, { Socket } from "socket.io-client";
 
 export default class BaseScene extends Scene {
+    socket: Socket;
     config: any;
     cursorOver: any;
     select: any;
@@ -17,6 +19,7 @@ export default class BaseScene extends Scene {
 
     constructor(key: any, config: any) {
         super(key);
+        this.socket = io("http://localhost:3000");
         this.config = config;
         this.screenCenter = [this.config.width / 2, this.config.height / 2];
         this.fontSize = 60;

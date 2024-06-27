@@ -1,11 +1,8 @@
 // @ts-nocheck
 
-import { Socket } from "socket.io-client";
 import BaseScene from "../BaseScene";
 
 export default class LobbyScene extends BaseScene {
-    socket: Socket;
-    username: string;
     charSpriteKey: string;
 
     constructor(config: any) {
@@ -13,9 +10,7 @@ export default class LobbyScene extends BaseScene {
     }
 
     init(data: any) {
-        this.socket = data.socket;
         this.charSpriteKey = data.charSpriteKey;
-        this.username = data.username;
         console.log({ LobbyScene: data });
     }
 
@@ -43,7 +38,7 @@ export default class LobbyScene extends BaseScene {
             this.socket.emit("joinRoom", {
                 roomKey: code,
                 spriteKey: this.charSpriteKey,
-                username: this.username,
+                username: localStorage.getItem("username"),
             });
         });
 
@@ -89,7 +84,7 @@ export default class LobbyScene extends BaseScene {
                 roomInfo,
                 roomKey,
                 charSpriteKey: this.charSpriteKey,
-                username: this.username,
+                username: localStorage.getItem("username"),
             });
         });
     }
@@ -187,7 +182,7 @@ export default class LobbyScene extends BaseScene {
                     this.socket.emit("joinRoom", {
                         roomKey: `room${i + 1}`,
                         spriteKey: this.charSpriteKey,
-                        username: this.username,
+                        username: localStorage.getItem("username"),
                     });
                 });
             }
@@ -250,7 +245,7 @@ export default class LobbyScene extends BaseScene {
             this.scene.start("JoinRoomScene", {
                 socket: this.socket,
                 charSpriteKey: this.charSpriteKey,
-                username: this.username,
+                username: localStorage.getItem("username"),
             });
         });
     }

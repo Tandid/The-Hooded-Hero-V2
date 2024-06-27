@@ -1,5 +1,4 @@
 import { GameObjects, Scene } from "phaser";
-import { Socket } from "socket.io-client";
 import generateRandomHint from "../../utils/functions/generateRandomHint";
 
 // Preloader Assets
@@ -20,7 +19,6 @@ export default class Preloader extends Scene {
     start: number;
     fontFamily: string;
     loadingText: GameObjects.Text;
-    socket: Socket;
 
     constructor(config: any) {
         super("Preloader");
@@ -30,10 +28,7 @@ export default class Preloader extends Scene {
     }
 
     // Init and create are similar, init starts before preload, while create starts after
-    init(data: any) {
-        this.socket = data.socket;
-        console.log({ Preloader: data });
-
+    init() {
         this.createPage();
         generateRandomHint(this, this.config.width, this.config.height);
     }
@@ -106,7 +101,11 @@ export default class Preloader extends Scene {
     }
 
     loadingComplete() {
-        this.scene.start("SignupScene", { socket: this.socket });
+        this.registry.set("level", 1);
+        this.registry.set("unlocked-levels", 1);
+        console.log("Registry contents:", this.registry.getAll());
+
+        this.scene.start("SignupScene");
     }
 }
 
