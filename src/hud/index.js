@@ -15,15 +15,30 @@ class Hud extends Phaser.GameObjects.Container {
         );
 
         this.setScrollFactor(0);
-
         this.fontSize = 50;
+
+        this.createPlayerIcon(leftTopCorner);
         this.setupList();
-        // this.scene.add
-        //   .image(150, 550, "player-icon")
-        //   .setOrigin(1)
-        //   .setScale(1.2)
-        //   .setDepth(1);
-        // this.createPlayerIcon();
+    }
+
+    createPlayerIcon(leftTopCorner) {
+        const portrait = this.scene.add
+            .image(leftTopCorner.x + 100, leftTopCorner.y + 100, "portrait")
+            .setOrigin(0.5)
+            .setScale(1);
+
+        const playerImage = this.scene.add
+            .image(leftTopCorner.x + 100, leftTopCorner.y + 100, "player-icon")
+            .setOrigin(0.5)
+            .setScale(1.1);
+
+        const playerIcon = this.scene.add.container(0, 0, [
+            portrait,
+            playerImage,
+        ]);
+
+        playerIcon.setDepth(2).setScrollFactor(0);
+        return playerIcon;
     }
 
     setupList() {
@@ -35,32 +50,31 @@ class Hud extends Phaser.GameObjects.Container {
             item.setPosition(item.x, item.y + lineHeight);
             lineHeight += 20;
         });
+        console.log(this.list);
     }
 
-    // createPlayerIcon() {}
-
     createScoreboard() {
-        const scoreText = this.scene.add.text(0, 0, "0", {
-            fontSize: `${this.fontSize}px`,
-            fill: "#fff",
-        });
         const scoreImage = this.scene.add
-            .image(scoreText.width + 5, 0, "coin")
+            .image(40, 5, "coin")
             .setOrigin(1.5, 0)
             .setScale(1);
 
+        const scoreText = this.scene.add.text(15, 20, "0", {
+            fontSize: `${this.fontSize}px`,
+            fill: "#fff",
+        });
+
         const scoreBoard = this.scene.add.container(0, 0, [
-            scoreText,
             scoreImage,
+            scoreText,
         ]);
         scoreBoard.setName("scoreBoard");
         return scoreBoard;
     }
 
     updateScoreboard(score) {
-        const [scoreText, scoreImage] = this.getByName("scoreBoard").list;
+        const [scoreImage, scoreText] = this.getByName("scoreBoard").list;
         scoreText.setText(score);
-        scoreImage.setX(scoreText.width + 5);
     }
 }
 

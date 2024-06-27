@@ -15,35 +15,17 @@ class PlayScene extends BaseScene {
         this.config = config;
     }
 
+    init() {
+        this.score = 0;
+        this.isPaused = false;
+    }
+
     create({ gameStatus }) {
         super.create();
-        this.score = 0;
+
         this.hud = new Hud(this, 0, 0);
-        this.isPaused = false;
 
         this.playBgMusic();
-
-        this.add
-            .image(
-                this.config.leftTopCorner.x + 100,
-                this.config.leftTopCorner.y + 100,
-                "portrait"
-            )
-            .setOrigin(0.5)
-            .setScale(1)
-            .setDepth(1)
-            .setScrollFactor(0);
-
-        this.add
-            .image(
-                this.config.leftTopCorner.x + 100,
-                this.config.leftTopCorner.y + 100,
-                "player-icon"
-            )
-            .setOrigin(0.5)
-            .setScale(1.1)
-            .setDepth(2)
-            .setScrollFactor(0);
 
         const map = this.createMap();
 
