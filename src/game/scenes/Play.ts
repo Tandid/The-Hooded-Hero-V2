@@ -63,9 +63,9 @@ class PlayScene extends BaseScene {
         const level = this.getCurrentLevel();
 
         const bgMusicMap = {
-            1: this.forestBg,
-            2: this.caveBg,
-            3: this.bossBg,
+            1: this.forestBGM,
+            2: this.caveBGM,
+            3: this.bossBGM,
         };
 
         const bgMusic = bgMusicMap[level];
@@ -125,15 +125,24 @@ class PlayScene extends BaseScene {
         const bgObject = map.getObjectLayer("distance_bg").objects[0];
         const level = this.getCurrentLevel();
 
+        this.forestBg = [
+            { key: "bg-forest-1", y: bgObject.y, depth: -10, scale: 1 },
+            { key: "bg-forest-2", y: 300, depth: -11, scale: 1 },
+            { key: "bg-forest-3", y: 300, depth: -12, scale: 1 },
+            { key: "mountain-bg", y: 200, depth: -13, scale: 1 },
+            { key: "sky-bg", y: 0, depth: -14, scale: 1 },
+        ];
+
         const bgConfig = {
-            1: [
-                { key: "bg-forest-1", y: bgObject.y, depth: -10, scale: 1 },
-                { key: "bg-forest-2", y: 300, depth: -11, scale: 1 },
-                { key: "bg-forest-3", y: 300, depth: -12, scale: 1 },
-                { key: "mountain-bg", y: 200, depth: -13, scale: 1 },
-                { key: "sky-bg", y: 0, depth: -14, scale: 1 },
-            ],
+            1: this.forestBg,
             2: [
+                { key: "bg-cave-1", y: bgObject.y, depth: -10, scale: 1.6 },
+                { key: "bg-cave-2", y: 0, depth: -11, scale: 1.5 },
+                { key: "bg-cave-3", y: 0, depth: -12, scale: 1.5 },
+                { key: "bg-cave-4", y: 0, depth: -13, scale: 1.5 },
+                { key: "bg-cave-5", y: 0, depth: -14, scale: 1.5 },
+            ],
+            3: [
                 { key: "bg-cave-1", y: bgObject.y, depth: -10, scale: 1.6 },
                 { key: "bg-cave-2", y: 0, depth: -11, scale: 1.5 },
                 { key: "bg-cave-3", y: 0, depth: -12, scale: 1.5 },
@@ -180,7 +189,7 @@ class PlayScene extends BaseScene {
             this.config.rightBottomCorner.y - 150,
             "home-btn",
             () => {
-                this.select.play();
+                this.selectFx.play();
                 this.scene.pause("PlayScene");
                 this.scene.sendToBack("PlayScene");
                 this.scene.launch("PauseScene");
@@ -194,7 +203,7 @@ class PlayScene extends BaseScene {
             this.config.rightBottomCorner.y - 250,
             "restart-btn",
             () => {
-                this.select.play();
+                this.selectFx.play();
                 this.scene.restart();
             }
         )
@@ -226,7 +235,7 @@ class PlayScene extends BaseScene {
     onCollect(entity, collectable) {
         this.score += collectable.score;
         this.hud.updateScoreboard(this.score);
-        this.collectSound.play();
+        this.collectFx.play();
         collectable.disableBody(true, true);
     }
 
@@ -309,10 +318,6 @@ class PlayScene extends BaseScene {
 
     getCurrentLevel() {
         return this.registry.get("level");
-    }
-
-    getNextLevel() {
-        return this.getCurrentLevel() + 1;
     }
 
     update() {

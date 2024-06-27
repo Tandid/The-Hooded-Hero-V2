@@ -6,16 +6,16 @@ export default class BaseScene extends Scene {
     config: any;
 
     // Sound Effects
-    cursorOver: any;
-    select: any;
-    pageFlip: any;
-    flute: any;
-    collectSound: any;
+    cursorOverFx: any;
+    selectFx: any;
+    pageFlipFx: any;
+    fluteFx: any;
+    collectFx: any;
 
     // Music Themes
-    forestBg: any;
-    caveBg: any;
-    bossBg: any;
+    forestBGM: any;
+    caveBGM: any;
+    bossBGM: any;
 
     screenCenter: Array<number>;
     fontSize: number;
@@ -68,23 +68,23 @@ export default class BaseScene extends Scene {
     }
 
     addSoundEffects() {
-        this.cursorOver = this.sound.add("cursorOver", { volume: 0.4 });
-        this.select = this.sound.add("select", { volume: 0.4 });
-        this.pageFlip = this.sound.add("page-flip", { volume: 0.4 });
-        this.flute = this.sound.add("flute", { volume: 0.4 });
-        this.collectSound = this.sound.add("coin-pickup", { volume: 0.05 });
+        this.cursorOverFx = this.sound.add("cursorOver", { volume: 0.4 });
+        this.selectFx = this.sound.add("select", { volume: 0.4 });
+        this.pageFlipFx = this.sound.add("page-flip", { volume: 0.4 });
+        this.fluteFx = this.sound.add("flute", { volume: 0.4 });
+        this.collectFx = this.sound.add("coin-pickup", { volume: 0.05 });
     }
 
     addMusicThemes() {
-        this.forestBg = this.sound.add("forest-theme", {
+        this.forestBGM = this.sound.add("forest-theme", {
             loop: true,
             volume: 0.04,
         });
-        this.caveBg = this.sound.add("cave-theme", {
+        this.caveBGM = this.sound.add("cave-theme", {
             loop: true,
             volume: 0.04,
         });
-        this.bossBg = this.sound.add("boss-theme", {
+        this.bossBGM = this.sound.add("boss-theme", {
             loop: true,
             volume: 0.04,
         });
@@ -180,13 +180,13 @@ export default class BaseScene extends Scene {
         container.setDepth(2).setInteractive();
 
         container.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.game.canvas.classList.remove("custom-cursor");
             callback();
         });
 
         container.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             button.setTint(0xc2c2c2);
             this.game.canvas.classList.add("custom-cursor");
         });

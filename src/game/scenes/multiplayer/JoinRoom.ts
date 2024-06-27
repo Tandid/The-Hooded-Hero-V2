@@ -150,14 +150,14 @@ class JoinRoomScene extends BaseScene {
         joinButton.setInteractive();
         joinButton.on("pointerover", () => {
             joinButton.setFill("#fff");
-            this.cursorOver.play();
+            this.cursorOverFx.play();
         });
         joinButton.on("pointerout", () => {
             joinButton.setFill("#000");
-            this.cursorOver.stop();
+            this.cursorOverFx.stop();
         });
         joinButton.on("pointerdown", () => {
-            this.select.play();
+            this.selectFx.play();
         });
         joinButton.on("pointerup", () => {
             this.input.enabled = false;
@@ -185,13 +185,13 @@ class JoinRoomScene extends BaseScene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.scene.wake("MainMenu");
             this.scene.stop("JoinRoomScene");
         });
 
         closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             closeBtn.setTint(0xff6666);
         });
 

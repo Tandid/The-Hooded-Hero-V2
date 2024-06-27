@@ -57,13 +57,13 @@ class CharSelection extends BaseScene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.scene.wake("MainMenu");
             this.scene.stop("CharSelection");
         });
 
         closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             closeBtn.setTint(0xff6666);
         });
 
@@ -103,19 +103,19 @@ class CharSelection extends BaseScene {
 
             player.on("pointerover", () => {
                 player.play(`run-${key}`, true);
-                this.cursorOver.play();
+                this.cursorOverFx.play();
                 bg.setTint("0xc2c2c2");
                 bg.setScale(0.45, 1.25);
             });
             player.on("pointerout", () => {
                 player.play(`idle-${key}`, true);
-                this.cursorOver.stop();
+                this.cursorOverFx.stop();
                 bg.clearTint();
                 bg.setScale(0.43, 1.2);
             });
 
             player.on("pointerdown", () => {
-                this.select.play();
+                this.selectFx.play();
             });
 
             player.on("pointerup", () => {

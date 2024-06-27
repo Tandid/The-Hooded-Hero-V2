@@ -120,14 +120,14 @@ class Controls extends BaseScene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.scene.wake("MainMenu");
             this.scene.stop("Controls");
             this.game.canvas.classList.remove("custom-cursor");
         });
 
         closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             closeBtn.setTint(0xff6666);
             this.game.canvas.classList.add("custom-cursor");
         });

@@ -144,7 +144,7 @@ export default class SettingsScene extends BaseScene {
             this.config.height / 7 + 20,
             "close-btn",
             () => {
-                this.select.play();
+                this.selectFx.play();
                 this.scene.stop("SettingsScene");
                 if (this.scene.isPaused("PlayScene")) {
                     this.scene.resume("PlayScene");
@@ -159,7 +159,7 @@ export default class SettingsScene extends BaseScene {
             this.config.height / 2 + 150,
             "switch-off-bg",
             () => {
-                this.select.play();
+                this.selectFx.play();
                 this.toggleMute();
                 this.game.canvas.classList.add("custom-cursor");
             }
@@ -210,7 +210,7 @@ export default class SettingsScene extends BaseScene {
 
     createDecrementBtn(width: number, height: number) {
         this.createButton(width, height, "prev-btn", () => {
-            this.select.play();
+            this.selectFx.play();
             this.decreaseVolume();
             this.game.canvas.classList.add("custom-cursor");
         }).setScale(0.5);
@@ -218,7 +218,7 @@ export default class SettingsScene extends BaseScene {
 
     createIncrementBtn(width: number, height: number) {
         this.createButton(width, height, "next-btn", () => {
-            this.select.play();
+            this.selectFx.play();
             this.increaseVolume();
             this.game.canvas.classList.add("custom-cursor");
         }).setScale(0.5);

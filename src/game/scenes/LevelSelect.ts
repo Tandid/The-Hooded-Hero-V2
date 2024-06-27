@@ -118,14 +118,14 @@ class LevelSelect extends BaseScene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            this.select.play();
+            this.selectFx.play();
             this.scene.wake("MainMenu");
             this.scene.stop("LevelSelect");
             this.game.canvas.classList.remove("custom-cursor");
         });
 
         closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             closeBtn.setTint(0xff6666);
             this.game.canvas.classList.add("custom-cursor");
         });
@@ -148,14 +148,14 @@ class LevelSelect extends BaseScene {
             setTimeout(() => this.scene.stop("Loading"), 4000);
 
             if (menuItem.scene) {
-                this.flute.play();
+                this.fluteFx.play();
                 this.registry.set("level", menuItem.level);
                 setTimeout(() => this.scene.start(menuItem.scene), 4000);
             }
         });
 
         textGO.on("pointerover", () => {
-            this.cursorOver.play();
+            this.cursorOverFx.play();
             textGO.setStyle({ fill: "#fff" });
             this.game.canvas.classList.add("custom-cursor");
         });
