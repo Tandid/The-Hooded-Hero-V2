@@ -1,13 +1,11 @@
 // @ts-nocheck
-import BaseScene from "./BaseScene";
-
+import initAnims from "../../anims";
 import Player from "../../entities/Player";
 import EventEmitter from "../../events/Emitter";
 import Collectables from "../../groups/Collectables";
 import Enemies from "../../groups/Enemies";
 import Hud from "../../hud";
-
-import initAnims from "../../anims";
+import BaseScene from "./BaseScene";
 
 class PlayScene extends BaseScene {
     constructor(config) {
@@ -22,13 +20,10 @@ class PlayScene extends BaseScene {
 
     create({ gameStatus }) {
         super.create();
-
         this.hud = new Hud(this, 0, 0);
-
         this.playBgMusic();
 
         const map = this.createMap();
-
         initAnims(this.anims);
 
         const layers = this.createLayers(map);
@@ -41,50 +36,41 @@ class PlayScene extends BaseScene {
         const collectables = this.createCollectables(layers.collectables);
 
         this.createEnemyColliders(enemies, {
-            colliders: {
-                platformsColliders: layers.platformsColliders,
-                player,
-            },
+            platformsColliders: layers.platformsColliders,
+            player,
         });
 
         this.createPlayerColliders(player, {
-            colliders: {
-                platformsColliders: layers.platformsColliders,
-                projectiles: enemies.getProjectiles(),
-                collectables,
-                traps: layers.traps,
-                enemies,
-            },
+            platformsColliders: layers.platformsColliders,
+            projectiles: enemies.getProjectiles(),
+            collectables,
+            traps: layers.traps,
+            enemies,
         });
 
         this.createBG(map);
-        this.createRestartButton();
-        this.createHomeButton();
-        this.createSettingsButton();
+        this.createUIButtons();
         this.createEndOfLevel(playerZones.end, player);
         this.setupFollowupCameraOn(player);
 
-        if (gameStatus === "PLAYER_LOSE") {
-            return;
+        if (gameStatus !== "PLAYER_LOSE") {
+            this.createGameEvents();
         }
-
-        this.createGameEvents();
     }
 
     playBgMusic() {
-        const level = this.getCurrentLevel();
         this.sound.stopAll();
+        const level = this.getCurrentLevel();
 
-        if (level === 1) {
-            this.forestBg.play();
-        }
+        const bgMusicMap = {
+            1: this.forestBg,
+            2: this.caveBg,
+            3: this.bossBg,
+        };
 
-        if (level === 2) {
-            this.caveBg.play();
-        }
-
-        if (level === 3) {
-            this.bossBg.play();
+        const bgMusic = bgMusicMap[level];
+        if (bgMusic) {
+            bgMusic.play();
         }
     }
 
@@ -95,7 +81,6 @@ class PlayScene extends BaseScene {
         map.addTilesetImage("tileset_1", "forest-tiles");
         map.addTilesetImage("tileset_2", "cave-tiles");
         map.addTilesetImage("environment", "environment-tiles");
-        // map.addTilesetImage("bg_spikes_tileset", "bg-spikes-tileset");
 
         return map;
     }
@@ -104,20 +89,15 @@ class PlayScene extends BaseScene {
         const tileset1 = map.getTileset("tileset_1");
         const tileset2 = map.getTileset("tileset_2");
         const tileset3 = map.getTileset("environment");
-        // const tilesetBg = map.getTileset("bg_spikes_tileset");
 
-        // map.createLayer("distance", tilesetBg).setDepth(-12);
-
-        const platformsColliders = map.createLayer("platforms_colliders", [
-            tileset1,
-            tileset2,
-            tileset3,
-        ]);
+        const platformsColliders = map
+            .createLayer("platforms_colliders", [tileset1, tileset2, tileset3])
+            .setCollisionByProperty({ collides: true })
+            .setAlpha(0);
 
         const environment = map
             .createLayer("environment", [tileset3])
             .setDepth(-4);
-
         const platforms = map.createLayer("platforms", [
             tileset1,
             tileset2,
@@ -126,12 +106,9 @@ class PlayScene extends BaseScene {
         const playerZones = map.getObjectLayer("player_zones");
         const enemySpawns = map.getObjectLayer("enemy_spawns");
         const collectables = map.getObjectLayer("collectables");
-        const traps = map.createLayer("traps", tileset1);
-
-        platformsColliders
-            .setCollisionByProperty({ collides: true })
-            .setAlpha(0);
-        traps.setCollisionByExclusion(-1);
+        const traps = map
+            .createLayer("traps", tileset1)
+            .setCollisionByExclusion(-1);
 
         return {
             environment,
@@ -148,233 +125,91 @@ class PlayScene extends BaseScene {
         const bgObject = map.getObjectLayer("distance_bg").objects[0];
         const level = this.getCurrentLevel();
 
-        if (level === 1) {
-            this.forestImageOne = this.add
-                .tileSprite(
-                    bgObject.x,
-                    bgObject.y,
-                    this.config.width * 3,
-                    bgObject.height * 1.75,
-                    "bg-forest-1"
-                )
-                .setOrigin(0.5)
-                .setDepth(-10)
-                .setScale(1)
-                .setScrollFactor(0, 1);
+        const bgConfig = {
+            1: [
+                { key: "bg-forest-1", y: bgObject.y, depth: -10, scale: 1 },
+                { key: "bg-forest-2", y: 300, depth: -11, scale: 1 },
+                { key: "bg-forest-3", y: 300, depth: -12, scale: 1 },
+                { key: "mountain-bg", y: 200, depth: -13, scale: 1 },
+                { key: "sky-bg", y: 0, depth: -14, scale: 1 },
+            ],
+            2: [
+                { key: "bg-cave-1", y: bgObject.y, depth: -10, scale: 1.6 },
+                { key: "bg-cave-2", y: 0, depth: -11, scale: 1.5 },
+                { key: "bg-cave-3", y: 0, depth: -12, scale: 1.5 },
+                { key: "bg-cave-4", y: 0, depth: -13, scale: 1.5 },
+                { key: "bg-cave-5", y: 0, depth: -14, scale: 1.5 },
+            ],
+        };
 
-            this.forestImageTwo = this.add
-                .tileSprite(
-                    0,
-                    300,
-                    this.config.width + 3000,
-                    this.config.height + 800,
-                    "bg-forest-2"
-                )
-                .setOrigin(0.5, 0)
-                .setDepth(-11)
-                .setScale(1)
-                .setScrollFactor(0, 1);
-
-            this.forestImageThree = this.add
-                .tileSprite(
-                    0,
-                    300,
-                    this.config.width + 3000,
-                    this.config.height + 800,
-                    "bg-forest-3"
-                )
-                .setOrigin(0.5, 0)
-                .setDepth(-12)
-                .setScale(1)
-                .setScrollFactor(0, 1);
-
-            this.mountainImage = this.add
-                .tileSprite(
-                    0,
-                    200,
-                    this.config.width + 3000,
-                    this.config.height + 800,
-                    "mountain-bg"
-                )
-                .setOrigin(0.5, 0)
-                .setDepth(-13)
-                .setScale(1)
-                .setScrollFactor(0, 1);
-
-            this.skyImage = this.add
-                .tileSprite(
-                    0,
-                    0,
-                    this.config.width + 3000,
-                    this.config.height + 800,
-                    "sky-bg"
-                )
-                .setOrigin(0.5, 0)
-                .setDepth(-14)
-                .setScale(1)
-                .setScrollFactor(0, 1);
-        }
-
-        if (level > 1) {
-            this.caveImageOne = this.add
-                .tileSprite(
-                    bgObject.x,
-                    bgObject.y,
-                    this.config.width + 3000,
-                    bgObject.height + 800,
-                    "bg-cave-1"
-                )
-                .setOrigin(0.5)
-                .setDepth(-10)
-                .setScale(1.6)
-                .setScrollFactor(0, 1);
-
-            this.caveImageTwo = this.add
-                .tileSprite(
-                    0,
-                    0,
-                    this.config.width + 3000,
-                    this.config.height + 800,
-                    "bg-cave-2"
-                )
-                .setOrigin(0.5, 0)
-                .setDepth(-11)
-                .setScale(1.5)
-                .setScrollFactor(0, 1);
-
-            this.caveImageThree = this.add
-                .tileSprite(
-                    0,
-                    0,
-                    this.config.width + 3000,
-                    this.config.height + 800,
-                    "bg-cave-3"
-                )
-                .setOrigin(0.5, 0)
-                .setDepth(-12)
-                .setScale(1.5)
-                .setScrollFactor(0, 1);
-
-            this.caveImageFour = this.add
-                .tileSprite(
-                    0,
-                    0,
-                    this.config.width + 3000,
-                    this.config.height + 800,
-                    "bg-cave-4"
-                )
-                .setOrigin(0.5, 0)
-                .setDepth(-13)
-                .setScale(1.5)
-                .setScrollFactor(0, 1);
-
-            this.caveImageFive = this.add
-                .tileSprite(
-                    0,
-                    0,
-                    this.config.width + 3000,
-                    this.config.height + 800,
-                    "bg-cave-5"
-                )
-                .setOrigin(0.5, 0)
-                .setDepth(-14)
-                .setScale(1.5)
-                .setScrollFactor(0, 1);
+        const bgLayers = bgConfig[level];
+        if (bgLayers) {
+            bgLayers.forEach(({ key, y, depth, scale }) => {
+                this.add
+                    .tileSprite(
+                        0,
+                        y,
+                        this.config.width + 3000,
+                        this.config.height + 800,
+                        key
+                    )
+                    .setOrigin(0.5, 0)
+                    .setDepth(depth)
+                    .setScale(scale)
+                    .setScrollFactor(0, 1);
+            });
         }
     }
 
-    createSettingsButton() {
-        const settingsBtn = this.add
-            .image(
-                this.config.rightBottomCorner.x - 15,
-                this.config.rightBottomCorner.y - 10,
-                "settings-button"
-            )
-            .setOrigin(1)
-            .setScrollFactor(0)
-            .setScale(1)
-            .setInteractive();
-
-        settingsBtn.on("pointerup", () => {
-            this.scene.pause("PlayScene");
-            this.scene.sendToBack("PlayScene");
-            this.scene.launch("SettingsOverlay");
-        });
-
-        settingsBtn.on("pointerover", () => {
-            settingsBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
-        });
-        settingsBtn.on("pointerout", () => {
-            settingsBtn.clearTint();
-        });
+    createUIButtons() {
+        this.createButton(
+            this.config.rightBottomCorner.x - 15,
+            this.config.rightBottomCorner.y - 10,
+            "settings-button",
+            "SettingsOverlay"
+        );
+        this.createButton(
+            this.config.rightBottomCorner.x - 15,
+            this.config.rightBottomCorner.y - 115,
+            "home-btn",
+            "PauseScene",
+            0.9
+        );
+        this.createButton(
+            this.config.rightBottomCorner.x - 15,
+            this.config.rightBottomCorner.y - 210,
+            "restart-btn",
+            () => this.scene.restart(),
+            0.9
+        );
     }
 
-    createPlayerIcon() {
-        this.add
-            .image(
-                this.config.rightBottomCorner.x - 15,
-                this.config.rightBottomCorner.y - 115,
-                "player-icon"
-            )
+    createButton(x, y, key, targetScene, scale = 1) {
+        const btn = this.add
+            .image(x, y, key)
             .setOrigin(1)
             .setScrollFactor(0)
-            .setScale(0.9)
-            .setInteractive()
-            .setDepth(2);
-    }
-
-    createHomeButton() {
-        const homeBtn = this.add
-            .image(
-                this.config.rightBottomCorner.x - 15,
-                this.config.rightBottomCorner.y - 115,
-                "home-btn"
-            )
-            .setOrigin(1)
-            .setScrollFactor(0)
-            .setScale(0.9)
+            .setScale(scale)
             .setInteractive()
             .setDepth(2);
 
-        homeBtn.on("pointerup", () => {
+        btn.on("pointerup", () => {
             this.select.play();
-            this.scene.pause("PlayScene");
-            // this.scene.sendToBack("PlayScene");
-            this.scene.launch("PauseScene");
+            if (typeof targetScene === "string") {
+                this.scene.pause("PlayScene");
+                this.scene.launch(targetScene);
+            } else if (typeof targetScene === "function") {
+                targetScene();
+            }
         });
-        homeBtn.on("pointerover", () => {
-            homeBtn.setTint(0xc2c2c2);
+
+        btn.on("pointerover", () => {
+            btn.setTint(0xc2c2c2);
             this.cursorOver.play();
         });
-        homeBtn.on("pointerout", () => {
-            homeBtn.clearTint();
-        });
-    }
 
-    createRestartButton() {
-        const restartBtn = this.add
-            .image(
-                this.config.rightBottomCorner.x - 15,
-                this.config.rightBottomCorner.y - 210,
-                "restart-btn"
-            )
-            .setOrigin(1)
-            .setScrollFactor(0)
-            .setScale(0.9)
-            .setInteractive()
-            .setDepth(2);
-
-        restartBtn.on("pointerup", () => {
-            this.select.play();
-            this.scene.restart();
-        });
-        restartBtn.on("pointerover", () => {
-            restartBtn.setTint(0xc2c2c2);
-            this.cursorOver.play();
-        });
-        restartBtn.on("pointerout", () => {
-            restartBtn.clearTint();
+        btn.on("pointerout", () => {
+            btn.clearTint();
         });
     }
 
@@ -382,7 +217,6 @@ class PlayScene extends BaseScene {
         EventEmitter.on("PLAYER_LOSE", () => {
             this.scene.pause("PlayScene");
             this.scene.launch("LoseScene");
-            // this.scene.restart({ gameStatus: "PLAYER_LOSE" });
         });
         EventEmitter.on("RESTART_GAME", () => {
             this.scene.restart({ gameStatus: "PLAYER_LOSE" });
@@ -391,11 +225,8 @@ class PlayScene extends BaseScene {
 
     createCollectables(collectableLayer) {
         const collectables = new Collectables(this).setDepth(-1);
-
         collectables.addFromLayer(collectableLayer);
-
         collectables.playAnimation("coin-spin");
-
         return collectables;
     }
 
@@ -414,15 +245,13 @@ class PlayScene extends BaseScene {
         const enemies = new Enemies(this);
         const enemyTypes = enemies.getTypes();
 
-        spawnLayer.objects.forEach((spawnPoint, i) => {
-            // if (i === 1) { return; }
-            const enemy = new enemyTypes[spawnPoint.type](
-                this,
-                spawnPoint.x,
-                spawnPoint.y
-            );
-            enemy.setPlatformColliders(platformsColliders);
-            enemies.add(enemy);
+        spawnLayer.objects.forEach((spawnPoint) => {
+            const EnemyType = enemyTypes[spawnPoint.type];
+            if (EnemyType) {
+                const enemy = new EnemyType(this, spawnPoint.x, spawnPoint.y);
+                enemy.setPlatformColliders(platformsColliders);
+                enemies.add(enemy);
+            }
         });
 
         return enemies;
@@ -436,7 +265,7 @@ class PlayScene extends BaseScene {
         entity.takesHit(source);
     }
 
-    createEnemyColliders(enemies, { colliders }) {
+    createEnemyColliders(enemies, colliders) {
         enemies
             .addCollider(colliders.platformsColliders)
             .addCollider(colliders.player, this.onPlayerCollision)
@@ -444,11 +273,10 @@ class PlayScene extends BaseScene {
             .addOverlap(colliders.player.meleeWeapon, this.onHit);
     }
 
-    createPlayerColliders(player, { colliders }) {
+    createPlayerColliders(player, colliders) {
         player
             .addCollider(colliders.platformsColliders)
             .addCollider(colliders.projectiles, this.onHit)
-            // .addCollider(colliders.traps, this.onHit)
             .addOverlap(colliders.collectables, this.onCollect, this)
             .addOverlap(colliders.enemies, this.onHit);
     }
@@ -458,8 +286,8 @@ class PlayScene extends BaseScene {
         this.physics.world.setBounds(0, 0, width + mapOffset, height * 3);
         this.cameras.main
             .setBounds(0, 0, width + mapOffset, height + 1000)
-            .setZoom(zoomFactor);
-        this.cameras.main.startFollow(player);
+            .setZoom(zoomFactor)
+            .startFollow(player);
     }
 
     getPlayerZones(playerZonesLayer) {
@@ -470,57 +298,49 @@ class PlayScene extends BaseScene {
         };
     }
 
-    getCurrentLevel() {
-        return this.registry.get("level") || 1;
-    }
-
     createEndOfLevel(end, player) {
         const endOfLevel = this.physics.add
             .sprite(end.x, end.y, "end")
             .setAlpha(0)
-            .setSize(5, this.config.height)
+            .setSize(5, 200)
             .setOrigin(0.5, 1);
 
-        const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
-            eolOverlap.active = false;
-
-            if (this.registry.get("level") === this.config.lastLevel) {
-                this.scene.start("CreditsScene");
-                return;
+        const endOfLevelOverlap = this.physics.add.overlap(
+            player,
+            endOfLevel,
+            () => {
+                endOfLevelOverlap.active = false;
+                this.scene.stop("PlayScene");
+                this.scene.start("LevelTransition", {
+                    nextLevel: this.getNextLevel(),
+                });
             }
+        );
+    }
 
-            this.scene.sleep("PlayScene");
-            this.scene.launch("WinScene");
-        });
+    getCurrentLevel() {
+        return this.registry.get("level");
+    }
+
+    getNextLevel() {
+        return this.getCurrentLevel() + 1;
     }
 
     update() {
-        const level = this.getCurrentLevel();
-        if (level === 1) {
-            if (this.caveImageOne) {
-                this.forestImageOne.tilePositionX =
-                    this.cameras.main.scrollX * 0.3;
-                this.forestImageTwo.tilePositionX =
-                    this.cameras.main.scrollX * 0.2;
-                this.forestImageThree.tilePositionX =
-                    this.cameras.main.scrollX * 0.3;
-                this.mountainImage.tilePositionX =
-                    this.cameras.main.scrollX * 0.2;
-                this.skyImage.tilePositionX = this.cameras.main.scrollX * 0.1;
-            }
-        } else {
-            if (this.caveImageOne) {
-                this.caveImageOne.tilePositionX =
-                    this.cameras.main.scrollX * 0.4;
-                this.caveImageTwo.tilePositionX =
-                    this.cameras.main.scrollX * 0.3;
-                this.caveImageThree.tilePositionX =
-                    this.cameras.main.scrollX * 0.3;
-                this.caveImageFour.tilePositionX =
-                    this.cameras.main.scrollX * 0.2;
-                this.caveImageFive.tilePositionX =
-                    this.cameras.main.scrollX * 0.2;
-            }
+        if (this.player && this.player.getBounds) {
+            this.checkGameStatus();
+        }
+    }
+
+    checkGameStatus() {
+        if (this.isPaused) {
+            return;
+        }
+
+        // Check if the player's top boundary is beyond the height of the game screen
+        if (this.player.getBounds().top > this.config.height) {
+            // Emit the PLAYER_LOSE event
+            EventEmitter.emit("PLAYER_LOSE");
         }
     }
 }
