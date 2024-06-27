@@ -20,22 +20,19 @@ export default class MainMenu extends BaseScene {
 
     init(data: any) {
         this.socket = data.socket;
+        this.username = data.username;
         console.log({ MainMenu: data });
     }
 
     create() {
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         super.create();
         super.createBackground();
-
-        this.cameras.main.fadeIn(500, 0, 0, 0);
 
         this.playBgMusic();
 
         this.createPage();
-        this.createControlsButton();
-        this.createContactsButton();
-        this.createSettingsButton();
-        this.createMenu(this.menu, this.setupMenuEvents.bind(this));
 
         EventBus.emit("current-scene-ready", this); // Essential for changing scenes
     }
@@ -77,6 +74,27 @@ export default class MainMenu extends BaseScene {
             .setOrigin(0.5)
             .setDepth(3)
             .setVisible(false); // Initially hidden
+
+        this.add
+            .text(
+                this.config.width / 10 - 10,
+                this.config.height - 45,
+                `${this.username}`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "30px",
+                    fontWeight: "larger",
+                }
+            )
+            .setOrigin(0)
+            .setColor("#000")
+            .setDepth(2);
+
+        this.createControlsButton();
+        this.createContactsButton();
+        this.createSettingsButton();
+
+        this.createMenu(this.menu, this.setupMenuEvents.bind(this));
     }
 
     playBgMusic() {
@@ -210,7 +228,7 @@ export default class MainMenu extends BaseScene {
                 this.scene.sleep("MainMenu");
                 this.scene.launch(menuItem.scene, {
                     socket: this.socket,
-                    username: "Player",
+                    username: this.username,
                 });
             }
         });

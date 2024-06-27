@@ -42,7 +42,7 @@ class SignupScene extends BaseScene {
             .text(
                 this.config.width / 2,
                 this.config.height / 3,
-                "Enter Your Name!",
+                "Enter Your Name",
                 {
                     fontFamily: "customFont",
                     fontSize: "60px",
@@ -89,7 +89,7 @@ class SignupScene extends BaseScene {
         this.confirmBtn = this.createButton(
             this.config.width / 2,
             this.config.height / 2 + 125,
-            "blue-long-button",
+            "green-long-button",
             () => {
                 this.confirmName();
             },
@@ -107,12 +107,30 @@ class SignupScene extends BaseScene {
     }
 
     confirmName() {
-        this.pageFlip?.play();
+        if (this.state.savedText.trim().length <= 10) {
+            this.pageFlip?.play();
+            this.scene.start("MainMenu", {
+                socket: this.socket,
+                username: this.state.savedText,
+            });
+        } else {
+            const feedbackText = this.add
+                .text(
+                    this.config.width / 2,
+                    this.config.height / 3 + 50,
+                    "Name can't exceed more than 10 characters!",
+                    {
+                        fontFamily: "customFont",
+                        fontSize: "24px",
+                        color: "#ff0000",
+                    }
+                )
+                .setOrigin(0.5);
 
-        this.scene.start("MainMenu", {
-            socket: this.socket,
-            username: this.state.savedText,
-        });
+            this.time.delayedCall(3000, () => {
+                feedbackText.destroy();
+            });
+        }
     }
 }
 
