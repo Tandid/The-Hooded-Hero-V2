@@ -192,7 +192,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setVelocity(0, 100); // Adjust the velocity as needed
 
         // Optionally, destroy the enemy after a delay
-        this.scene.time.delayedCall(1000, () => {
+        this.scene.time.delayedCall(500, () => {
             this.destroy();
         });
     }

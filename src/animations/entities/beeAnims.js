@@ -15,7 +15,7 @@ export default (anims) => {
                 start: 0,
                 end: 8,
             }),
-            frameRate: 8,
+            frameRate: 16,
             repeat: 0,
         });
 
