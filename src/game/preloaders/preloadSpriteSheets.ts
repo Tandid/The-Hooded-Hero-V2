@@ -7,11 +7,15 @@ export function preloadSpriteSheets(scene: Phaser.Scene) {
         // spacing: 50,
     });
 
-    scene.load.spritesheet("player-throw", "player/throw_attack_sheet_1.png", {
-        frameWidth: 300,
-        frameHeight: 190,
-        // spacing: 32,
-    });
+    scene.load.spritesheet(
+        "player-shoot-arrow",
+        "player/throw_attack_sheet_1.png",
+        {
+            frameWidth: 300,
+            frameHeight: 190,
+            // spacing: 32,
+        }
+    );
 
     scene.load.spritesheet("player-melee", "player/attackspritesheet.png", {
         frameWidth: 300,
@@ -99,16 +103,6 @@ export function preloadSpriteSheets(scene: Phaser.Scene) {
         frameHeight: 477,
         // spacing: 32,
     });
-
-    // scene.load.spritesheet(
-    //   "boss-default",
-    //   "enemy/boss_attack.png",
-    //   {
-    //     frameWidth: 850,
-    //     frameHeight: 477,
-    //     // spacing: 32,
-    //   }
-    // );
 
     // ------------------ DEATH ANIMATIONS --------------------------------
 

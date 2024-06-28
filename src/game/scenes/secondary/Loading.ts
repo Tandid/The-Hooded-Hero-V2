@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import Phaser from "phaser";
-import generateRandomHint from "../../../utils/functions/generateRandomHint";
+import { generateRandomHint } from "../../../utils/helpers";
 
 class Loading extends Phaser.Scene {
     config: any;
