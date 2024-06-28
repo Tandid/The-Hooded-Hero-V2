@@ -10,14 +10,10 @@ import anims from "../mixins/anims";
 import collidable from "../mixins/collidable";
 import { getTimestamp } from "../utils/functions";
 
-// Define the Player class extending Phaser.Physics.Arcade.Sprite
 class Player extends Phaser.Physics.Arcade.Sprite {
-    // Constructor method for initializing a new Player object
     constructor(scene, x, y) {
-        // Call the superclass constructor to initialize the sprite with physics
         super(scene, x, y, "player");
 
-        // Add the player sprite to the scene and enable physics for it
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -65,7 +61,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Method to initialize sound effects for player actions
     initSoundEffects() {
-        // Load and assign sound effects for jumping, taking damage, etc.
         this.jumpFx = this.scene.sound.add("jump", { volume: 0.2 });
         this.takeDamageFx = this.scene.sound.add("damage", { volume: 0.2 });
         this.arrowFx = this.scene.sound.add("projectile-launch", { volume: 1 });
@@ -75,7 +70,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Method to set up keyboard controls for player movement and actions
     initKeyboardControls() {
-        // Define keyboard bindings for left, right, jump, shift, etc.
         this.keyBindings = this.scene.input.keyboard.addKeys({
             left: Phaser.Input.Keyboard.KeyCodes.LEFT,
             right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
@@ -108,13 +102,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Method to load and set up animations for the player
     initAnimations() {
-        // Initialize player animations using predefined animations for the player sprite
         initAnimations(this.scene.anims);
     }
 
-    // Method to set up periodic movement sound effects for the player
+    // Method to set up repeating event to play footstep sound effects while the player is running
     initMovementSound() {
-        // Set up a repeating event to play footstep sound effects while the player is running
         this.scene.time.addEvent({
             delay: 350,
             repeat: -1,
@@ -308,17 +300,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         setTimeout(() => this.setVelocityY(-this.bounceVelocity), 0);
     }
 
-    // Method for health regeneration over time when not actively taking damage
-    healthRegen() {
-        // Delayed regeneration of health over time when not actively damaged
-        setTimeout(() => {
-            if (!this.hasBeenHit && this.health < 100) {
-                this.health += 5;
-                this.hp.increase(this.health);
-            }
-        }, 5000);
-    }
-
     // Method to handle player taking damage from a source (enemy or projectile)
     takesHit(source) {
         // Play damage sound effect and check if player has already been hit
@@ -354,6 +335,5 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
-// Export the Player class as default for use in other modules
 export default Player;
 
