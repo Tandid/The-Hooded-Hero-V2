@@ -56,7 +56,7 @@ class ProjectileManager extends Phaser.Physics.Arcade.Group {
             centerX = entityCenter.x - 10;
         }
 
-        const centerY = entityCenter.y + entityCenter.y / 20;
+        const centerY = entityCenter.y + 25;
         return { centerX, centerY };
     }
 

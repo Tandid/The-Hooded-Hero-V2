@@ -63,14 +63,14 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     // Handle delivering a hit to a target
     deliversHit(target) {
+        // Trigger hit effect at the impact position
+        const impactPosition = { x: this.x, y: this.y };
+        this.effectManager.playEffectOn("hit-effect", target, impactPosition);
+
         // Deactivate the projectile and reset its position
         this.activateProjectile(false);
         this.traveledDistance = 0;
         this.body.reset(0, 0);
-
-        // Trigger hit effect at the impact position
-        const impactPosition = { x: this.x, y: this.y };
-        this.effectManager.playEffectOn("hit-effect", target, impactPosition);
     }
 
     // Activate or deactivate the projectile
