@@ -13,9 +13,9 @@ export default (anims) => {
             key: "spider-die",
             frames: anims.generateFrameNumbers("spider-death", {
                 start: 0,
-                end: 10,
+                end: 9,
             }),
-            frameRate: 10,
+            frameRate: 9,
             repeat: 0,
         });
 

@@ -184,11 +184,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     // Perform actions when the enemy dies
     die() {
-        // Move the enemy upwards and make it non-collidable, preparing for destruction
-        this.setVelocity(50, -50);
-        this.body.checkCollision.none = true;
-        this.setCollideWorldBounds(false);
-        // setTimeout(() => this.destroy(), 1000);
+        // Disable physics and gravity
+        this.body.setEnable(false);
+        this.body.setGravityY(0);
+
+        // Move the enemy downwards
+        this.setVelocity(0, 100); // Adjust the velocity as needed
+
+        // Optionally, destroy the enemy after a delay
+        this.scene.time.delayedCall(1000, () => {
+            this.destroy();
+        });
     }
 
     // Perform a turn around action (change direction)
