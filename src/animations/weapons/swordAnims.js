@@ -3,7 +3,7 @@ export default (anims) => {
         key: "sword-default-swing",
         frames: anims.generateFrameNumbers("sword-default", {
             start: 0,
-            end: 7,
+            end: 6,
         }),
         frameRate: 60,
         repeat: 0,

@@ -104,16 +104,6 @@ export function preloadSpriteSheets(scene: Phaser.Scene) {
         // spacing: 32,
     });
 
-    // scene.load.spritesheet(
-    //   "boss-default",
-    //   "enemy/boss_attack.png",
-    //   {
-    //     frameWidth: 850,
-    //     frameHeight: 477,
-    //     // spacing: 32,
-    //   }
-    // );
-
     // ------------------ DEATH ANIMATIONS --------------------------------
 
     scene.load.spritesheet("player-death", "deathAnims/player_death.png", {

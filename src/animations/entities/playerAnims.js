@@ -20,7 +20,7 @@ export default (anims) => {
             key: "jump",
             frames: anims.generateFrameNumbers("player", {
                 start: 18,
-                end: 20,
+                end: 19,
             }),
             frameRate: 1,
             repeat: 0,
@@ -30,7 +30,7 @@ export default (anims) => {
             key: "shoot-arrow",
             frames: anims.generateFrameNumbers("player-shoot-arrow", {
                 start: 0,
-                end: 15,
+                end: 14,
             }),
             frameRate: 60,
             repeat: 0,
@@ -40,7 +40,7 @@ export default (anims) => {
             key: "melee",
             frames: anims.generateFrameNumbers("player-melee", {
                 start: 0,
-                end: 7,
+                end: 6,
             }),
             frameRate: 30,
             repeat: 0,
