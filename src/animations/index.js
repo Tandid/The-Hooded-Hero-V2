@@ -4,7 +4,7 @@ import createAxeAnimations from "./weapons/axeAnims";
 import createSwordAnimations from "./weapons/swordAnims";
 
 export default (anims) => {
-    // Effect animations
+    // --- Effect animations ---
     anims.create({
         key: "hit-effect",
         frames: anims.generateFrameNumbers("hit-sheet", { start: 0, end: 4 }),
@@ -12,14 +12,24 @@ export default (anims) => {
         repeat: 0,
     });
 
-    // Weapon animations
+    // --- Weapon animations ---
+
     createSwordAnimations(anims);
     createAxeAnimations(anims);
 
-    // Projectile animations
+    // --- Projectile animations ---
+
+    anims.create({
+        key: "arrow",
+        frames: [{ key: "arrow", frame: 0 }],
+        frameRate: 30,
+        repeat: 0,
+    });
+
     createFireAnimations(anims);
 
-    // Collectable animations
+    // --- Collectable animations ---
+
     createCoinAnimations(anims);
 };
 

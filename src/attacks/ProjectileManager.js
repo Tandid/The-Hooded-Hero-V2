@@ -33,6 +33,8 @@ class ProjectileManager extends Phaser.Physics.Arcade.Group {
         this.timeFromLastProjectile = getTimestamp();
     }
 
+    // --- Helper functions for fireProjectile() ---
+
     isInCooldown(projectile) {
         return (
             this.timeFromLastProjectile &&
