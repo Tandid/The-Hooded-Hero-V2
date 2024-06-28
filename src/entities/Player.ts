@@ -3,7 +3,7 @@
 import Phaser from "phaser";
 import initAnimations from "../animations/entities/playerAnims";
 import MeleeWeapon from "../attacks/MeleeWeapon";
-import Projectiles from "../attacks/Projectiles";
+import ProjectileManager from "../attacks/ProjectileManager";
 import EventEmitter from "../events/Emitter";
 import HealthBar from "../hud/Healthbar";
 import anims from "../mixins/anims";
@@ -76,7 +76,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     initWeapons() {
-        this.projectiles = new Projectiles(this.scene, "arrow");
+        this.projectiles = new ProjectileManager(this.scene, "arrow");
         this.meleeWeapon = new MeleeWeapon(this.scene, 0, 0, "sword-default");
     }
 

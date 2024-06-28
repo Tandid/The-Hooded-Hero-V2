@@ -1,5 +1,5 @@
 import initAnims from "../animations/entities/mageAnims";
-import Projectiles from "../attacks/Projectiles";
+import ProjectileManager from "../attacks/ProjectileManager";
 import Enemy from "./Enemy";
 
 class Mage extends Enemy {
@@ -15,7 +15,7 @@ class Mage extends Enemy {
         this.damage = 20;
         this.maxPatrolDistance = 0;
 
-        this.projectiles = new Projectiles(this.scene, "fire-1");
+        this.projectiles = new ProjectileManager(this.scene, "fire-1");
         this.timeFromLastAttack = 0;
         this.attackDelay = this.getAttackDelay();
         this.lastDirection = null;
