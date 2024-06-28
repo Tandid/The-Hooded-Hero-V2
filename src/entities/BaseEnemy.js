@@ -176,9 +176,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     playDamageTween() {
         return this.scene.tweens.add({
             targets: this,
-            duration: 100,
-            repeat: -1,
-            tint: 0xffffff,
+            alpha: 50,
+            duration: 250,
+            ease: "Power1",
+            yoyo: true,
+            tint: 0x222222,
         });
     }
 

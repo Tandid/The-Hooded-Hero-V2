@@ -13,7 +13,7 @@ export default (anims) => {
             key: "boss-melee",
             frames: anims.generateFrameNumbers("boss-default", {
                 start: 0,
-                end: 19,
+                end: 18,
             }),
             frameRate: 20,
             repeat: 0,

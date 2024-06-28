@@ -20,7 +20,7 @@ export default (anims) => {
             key: "mage-die",
             frames: anims.generateFrameNumbers("mage-death", {
                 start: 0,
-                end: 11,
+                end: 6,
             }),
             frameRate: 12,
             repeat: 0,
