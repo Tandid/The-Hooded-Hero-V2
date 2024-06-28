@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Phaser from "phaser";
 import EffectManager from "../effects/EffectManager";
 

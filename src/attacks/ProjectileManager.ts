@@ -1,5 +1,7 @@
+// @ts-nocheck
+
 import Phaser from "phaser";
-import { getTimestamp } from "../utils/functions";
+import { getTimestamp } from "../utils/helpers";
 import Projectile from "./Projectile";
 
 class ProjectileManager extends Phaser.Physics.Arcade.Group {

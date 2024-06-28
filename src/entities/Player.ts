@@ -8,7 +8,7 @@ import EventEmitter from "../events/Emitter";
 import HealthBar from "../hud/Healthbar";
 import anims from "../mixins/anims";
 import collidable from "../mixins/collidable";
-import { getTimestamp } from "../utils/functions";
+import { getTimestamp } from "../utils/helpers";
 
 class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
