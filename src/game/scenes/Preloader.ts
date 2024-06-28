@@ -1,6 +1,5 @@
 import { GameObjects, Scene } from "phaser";
-import generateRandomHint from "../../utils/functions/generateRandomHint";
-
+import { generateRandomHint } from "../../utils/helpers";
 // Preloader Assets
 import { preloadAudio } from "../preloaders/preloadAudio";
 import { preloadCaveBg } from "../preloaders/preloadCaveBg";
