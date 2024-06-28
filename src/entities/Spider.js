@@ -1,5 +1,5 @@
 import initAnims from "../animations/entities/spiderAnims";
-import Enemy from "./Enemy";
+import Enemy from "./BaseEnemy";
 
 class Spider extends Enemy {
     constructor(scene, x, y) {

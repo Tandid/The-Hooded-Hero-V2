@@ -1,5 +1,5 @@
 import initAnims from "../animations/entities/slimeAnims";
-import Enemy from "./Enemy";
+import Enemy from "./BaseEnemy";
 
 class Slime extends Enemy {
     constructor(scene, x, y) {

@@ -1,5 +1,5 @@
 import initAnims from "../animations/entities/beeAnims";
-import Enemy from "./Enemy";
+import Enemy from "./BaseEnemy";
 
 class Bee extends Enemy {
     constructor(scene, x, y) {

@@ -1,6 +1,6 @@
 import initAnims from "../animations/entities/mageAnims";
 import ProjectileManager from "../attacks/ProjectileManager";
-import Enemy from "./Enemy";
+import Enemy from "./BaseEnemy";
 
 class Mage extends Enemy {
     constructor(scene, x, y) {

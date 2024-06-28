@@ -1,5 +1,5 @@
 import initAnims from "../animations/entities/skeletonAnims";
-import Enemy from "./Enemy";
+import Enemy from "./BaseEnemy";
 
 class Skeleton extends Enemy {
     constructor(scene, x, y) {

@@ -1,6 +1,6 @@
 import initAnims from "../animations/entities/archerAnims";
 import ProjectileManager from "../attacks/ProjectileManager";
-import Enemy from "./Enemy";
+import Enemy from "./BaseEnemy";
 
 class Archer extends Enemy {
     constructor(scene, x, y) {
