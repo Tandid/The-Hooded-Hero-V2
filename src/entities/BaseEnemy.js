@@ -1,3 +1,4 @@
+// Import Phaser library if not already imported
 import Phaser from "phaser";
 
 // Import mixins for additional functionality
@@ -25,6 +26,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         // Initialize damage number properties
         this.damageNumbers = scene.add.group();
+
+        // Initialize blinking properties
+        this.blinkTween = null;
     }
 
     // Initialize properties and settings for the enemy
@@ -62,7 +66,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Update method called automatically by Phaser
-    update(time) {
+    update(time, delta) {
         // Check if the enemy has fallen below a certain point and destroy it if so
         if (this.getBounds().bottom > 1500) {
             this.destroyEnemy();
@@ -71,6 +75,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         // Perform patrolling behavior
         this.patrol(time);
+
+        // Handle blinking when health is below 40%
+        if (this.health < 40) {
+            this.startBlinking();
+        }
     }
 
     // Perform patrolling behavior for the enemy
@@ -189,6 +198,21 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX((this.speed = -this.speed));
         this.timeFromLastTurn = this.scene.time.now;
         this.currentPatrolDistance = 0;
+    }
+
+    // Start blinking effect when health is below 40%
+    startBlinking() {
+        if (!this.blinkTween) {
+            this.blinkTween = this.scene.tweens.add({
+                targets: this,
+                alpha: 50,
+                duration: 250,
+                ease: "Power1",
+                yoyo: true,
+                repeat: -1,
+                tint: 0xff0000,
+            });
+        }
     }
 
     // Show damage number above the enemy
