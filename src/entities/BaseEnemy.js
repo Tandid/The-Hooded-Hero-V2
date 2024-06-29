@@ -29,6 +29,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         // Initialize blinking properties
         this.blinkTween = null;
+        console.log(scene.player);
     }
 
     // Initialize properties and settings for the enemy

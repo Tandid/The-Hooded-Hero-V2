@@ -29,6 +29,7 @@ class PlayScene extends BaseScene {
         const layers = this.createLayers(map);
         const playerZones = this.getPlayerZones(layers.playerZones);
         const player = this.createPlayer(playerZones.start);
+        this.player = player;
         const enemies = this.createEnemies(
             layers.enemySpawns,
             layers.platformsColliders
@@ -239,7 +240,7 @@ class PlayScene extends BaseScene {
         collectable.disableBody(true, true);
     }
 
-    createEnemies(spawnLayer, platformsColliders) {
+    createEnemies(spawnLayer, platformsColliders, player) {
         const enemies = new Enemies(this);
         const enemyTypes = enemies.getTypes();
 
@@ -321,9 +322,9 @@ class PlayScene extends BaseScene {
     }
 
     update() {
-        if (this.player && this.player.getBounds) {
-            this.checkGameStatus();
-        }
+        // if (this.player && this.player.getBounds) {
+        //     this.checkGameStatus();
+        // }
     }
 
     checkGameStatus() {
