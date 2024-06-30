@@ -134,28 +134,26 @@ class PlayScene extends BaseScene {
             { key: "sky-bg", y: 0, depth: -14, scale: 1 },
         ];
 
+        this.caveBg = [
+            { key: "bg-cave-1", y: bgObject.y, depth: -10, scale: 1.6 },
+            { key: "bg-cave-2", y: 0, depth: -11, scale: 1.5 },
+            { key: "bg-cave-3", y: 0, depth: -12, scale: 1.5 },
+            { key: "bg-cave-4", y: 0, depth: -13, scale: 1.5 },
+            { key: "bg-cave-5", y: 0, depth: -14, scale: 1.5 },
+        ];
+
         const bgConfig = {
             1: this.forestBg,
-            2: [
-                { key: "bg-cave-1", y: bgObject.y, depth: -10, scale: 1.6 },
-                { key: "bg-cave-2", y: 0, depth: -11, scale: 1.5 },
-                { key: "bg-cave-3", y: 0, depth: -12, scale: 1.5 },
-                { key: "bg-cave-4", y: 0, depth: -13, scale: 1.5 },
-                { key: "bg-cave-5", y: 0, depth: -14, scale: 1.5 },
-            ],
-            3: [
-                { key: "bg-cave-1", y: bgObject.y, depth: -10, scale: 1.6 },
-                { key: "bg-cave-2", y: 0, depth: -11, scale: 1.5 },
-                { key: "bg-cave-3", y: 0, depth: -12, scale: 1.5 },
-                { key: "bg-cave-4", y: 0, depth: -13, scale: 1.5 },
-                { key: "bg-cave-5", y: 0, depth: -14, scale: 1.5 },
-            ],
+            2: this.caveBg,
+            3: this.cageBg, // Make sure this.cageBg is defined somewhere
         };
 
         const bgLayers = bgConfig[level];
         if (bgLayers) {
+            this.bgSprites = []; // Initialize the array to hold the background sprites
+
             bgLayers.forEach(({ key, y, depth, scale }) => {
-                this.add
+                const sprite = this.add
                     .tileSprite(
                         0,
                         y,
@@ -167,6 +165,8 @@ class PlayScene extends BaseScene {
                     .setDepth(depth)
                     .setScale(scale)
                     .setScrollFactor(0, 1);
+
+                this.bgSprites.push(sprite); // Add the created sprite to the array
             });
         }
     }
@@ -322,9 +322,32 @@ class PlayScene extends BaseScene {
     }
 
     update() {
-        // if (this.player && this.player.getBounds) {
-        //     this.checkGameStatus();
-        // }
+        const level = this.getCurrentLevel();
+        if (this.bgSprites) {
+            if (level === 1) {
+                this.bgSprites[0].tilePositionX =
+                    this.cameras.main.scrollX * 0.3;
+                this.bgSprites[1].tilePositionX =
+                    this.cameras.main.scrollX * 0.2;
+                this.bgSprites[2].tilePositionX =
+                    this.cameras.main.scrollX * 0.3;
+                this.bgSprites[3].tilePositionX =
+                    this.cameras.main.scrollX * 0.2;
+                this.bgSprites[4].tilePositionX =
+                    this.cameras.main.scrollX * 0.1;
+            } else {
+                this.bgSprites[0].tilePositionX =
+                    this.cameras.main.scrollX * 0.4;
+                this.bgSprites[1].tilePositionX =
+                    this.cameras.main.scrollX * 0.3;
+                this.bgSprites[2].tilePositionX =
+                    this.cameras.main.scrollX * 0.3;
+                this.bgSprites[3].tilePositionX =
+                    this.cameras.main.scrollX * 0.2;
+                this.bgSprites[4].tilePositionX =
+                    this.cameras.main.scrollX * 0.2;
+            }
+        }
     }
 
     checkGameStatus() {
