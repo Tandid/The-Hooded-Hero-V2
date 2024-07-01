@@ -29,7 +29,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     init() {
         this.gravity = 500;
         this.speed = 200;
-        this.timeFromLastTurn = 0;
         this.maxPatrolDistance = null;
         this.currentPatrolDistance = 0;
 
@@ -37,6 +36,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.damage = 10;
 
         this.detectionRadius = 500; // Radius to detect the player
+        this.attackRange = 50; // Range to attack the player
         this.isFollowingPlayer = false; // Flag to indicate if the enemy is following the player
 
         // Sound effect for when the enemy takes damage
@@ -77,7 +77,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Update method called automatically by Phaser
-    update(time, delta) {
+    update() {
         // Check if the enemy has fallen below a certain point and destroy it if so
         if (this.getBounds().bottom > 1500) {
             this.destroyEnemy();
@@ -89,11 +89,15 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.detectPlayer();
 
             // If following the player, move towards the player
-
             if (this.isFollowingPlayer) {
                 this.followPlayer();
             } else {
-                this.patrol(time);
+                this.patrol();
+            }
+
+            // Check if the player is within the attack range
+            if (this.isPlayerInRange()) {
+                this.attackPlayer();
             }
         }
 
@@ -154,7 +158,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Perform patrolling behavior for the enemy
-    patrol(time) {
+    patrol() {
         // Skip patrolling if the enemy is not on the floor
         if (!this.body || !this.body.onFloor()) {
             return;
@@ -175,11 +179,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         // Change direction if no obstacles are ahead or maximum distance is reached
         if (
-            (!hasHit ||
-                this.currentPatrolDistance >=
-                    (this.maxPatrolDistance ||
-                        this.platformCollidersLayer.width)) &&
-            this.timeFromLastTurn + 100 < time
+            !hasHit ||
+            this.currentPatrolDistance >=
+                (this.maxPatrolDistance || this.platformCollidersLayer.width)
         ) {
             this.turnAround();
         }
@@ -273,11 +275,32 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Perform a turn around action (change direction)
     turnAround() {
         // Reverse its movement direction
-
         this.setVelocityX((this.speed = -this.speed));
         this.setFlipX(this.body.velocity.x < 0);
-        this.timeFromLastTurn = this.scene.time.now;
         this.currentPatrolDistance = 0;
+    }
+
+    // Check if the player is within attack range
+    isPlayerInRange() {
+        if (!this.player) {
+            return false;
+        }
+        const distance = Phaser.Math.Distance.Between(
+            this.x,
+            this.y,
+            this.player.x,
+            this.player.y
+        );
+        return distance <= this.attackRange;
+    }
+
+    // Perform attack action
+    attackPlayer() {
+        // Play attack animation
+        this.play("enemy-attack");
+
+        // Deal damage to the player (you can customize this part)
+        this.scene.player.takesHit({ damage: this.damage });
     }
 
     // Start blinking effect when health is below 40%
