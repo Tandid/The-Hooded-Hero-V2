@@ -99,14 +99,13 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         // Handle blinking when health is below 40%
         if (this.health < 40) {
-            this.startBlinking();
+            this.playLowHealthTween();
         }
     }
 
     // Detect if the player is within the detection radius
+    // Detect if the player is within the detection radius
     detectPlayer() {
-        // Log current enemy and player positions
-
         // Check if the player object exists before accessing its properties
         if (!this.player) {
             console.warn("Player object is undefined!");
@@ -121,7 +120,18 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.player.y
         );
 
-        this.isFollowingPlayer = distance <= this.detectionRadius;
+        let heightDifference = Math.floor(this.player.y - this.y);
+
+        // Check if the player is within the detection radius and below the enemy
+        if (
+            distance <= this.detectionRadius &&
+            !this.canFly &&
+            heightDifference <= 1
+        ) {
+            this.isFollowingPlayer = true;
+        } else {
+            this.isFollowingPlayer = false;
+        }
     }
 
     // Move towards the player when detected
@@ -131,10 +141,10 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.setFlipX(this.player.x < this.x);
         } else {
             if (this.player.x < this.x) {
-                this.setVelocityX(-500);
+                this.setVelocityX(-300);
                 this.setFlipX(true);
             } else {
-                this.setVelocityX(500);
+                this.setVelocityX(300);
                 this.setFlipX(false);
             }
         }
@@ -165,6 +175,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             (!hasHit || this.currentPatrolDistance >= this.maxPatrolDistance) &&
             this.timeFromLastTurn + 100 < time
         ) {
+            this.turnAround();
+        }
+
+        // Check if the enemy is stationary
+        if (this.body.velocity.x === 0) {
             this.turnAround();
         }
 
@@ -246,7 +261,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.rayGraphics.clear();
         this.detectionGraphics.clear();
-        // this.isFollowingPlayer = false;
         this.destroy();
     }
 
@@ -260,7 +274,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Start blinking effect when health is below 40%
-    startBlinking() {
+    playLowHealthTween() {
         if (!this.blinkTween) {
             this.blinkTween = this.scene.tweens.add({
                 targets: this,
