@@ -5,12 +5,16 @@ import Phaser from "phaser";
 import anims from "../mixins/anims";
 import collidable from "../mixins/collidable";
 
+import initAnims from "../animations/entities/beeAnims";
+
 class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, key) {
         super(scene, x, y, key);
+        initAnims(scene.anims);
 
         // Store scene configuration for access throughout the class
         this.config = scene.config;
+        this.attackAnim = key + "-attack";
 
         // Add the enemy to the scene and enable physics for it
         scene.add.existing(this);
@@ -36,22 +40,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.damage = 10;
 
         this.detectionRadius = 500; // Radius to detect the player
-        this.attackRange = 50; // Range to attack the player
+        this.attackRange = 100; // Range to attack the player
         this.isFollowingPlayer = false; // Flag to indicate if the enemy is following the player
 
         // Sound effect for when the enemy takes damage
         this.takeDamageSound = this.scene.sound.add("enemy-damage", {
             volume: 0.1,
-        });
-
-        // Graphics object to visualize raycast for debugging
-        this.rayGraphics = this.scene.add.graphics({
-            lineStyle: { width: 2, color: 0xaa00aa },
-        });
-
-        // Initialize graphics for debugging
-        this.detectionGraphics = this.scene.add.graphics({
-            lineStyle: { width: 2, color: 0xff0000 },
         });
 
         // Set initial physics properties for the enemy
@@ -69,6 +63,15 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.player = this.scene.player;
         this.canFly = false;
+
+        // Graphics object to visualize raycast and detection radius for debugging
+        this.rayGraphics = this.scene.add.graphics({
+            lineStyle: { width: 2, color: 0xaa00aa },
+        });
+
+        this.detectionGraphics = this.scene.add.graphics({
+            lineStyle: { width: 2, color: 0xff0000 },
+        });
     }
 
     // Initialize events, such as the update loop for the enemy
@@ -78,13 +81,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     // Update method called automatically by Phaser
     update() {
+        if (!this.active) {
+            return;
+        }
+
         // Check if the enemy has fallen below a certain point and destroy it if so
         if (this.getBounds().bottom > 1500) {
             this.destroyEnemy();
             return;
         }
 
-        if (this.active && this.player) {
+        if (this.player) {
             // Detect the player
             this.detectPlayer();
 
@@ -95,9 +102,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
                 this.patrol();
             }
 
-            // Check if the player is within the attack range
-            if (this.isPlayerInRange()) {
-                this.attackPlayer();
+            if (this.isInAttackRange()) {
+                this.attackPlayer(this.attackAnim);
             }
         }
 
@@ -109,13 +115,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     // Detect if the player is within the detection radius
     detectPlayer() {
-        // Check if the player object exists before accessing its properties
-        if (!this.player) {
-            console.warn("Player object is undefined!");
-            this.isFollowingPlayer = false;
-            return;
-        }
-
         const distance = Phaser.Math.Distance.Between(
             this.x,
             this.y,
@@ -127,7 +126,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             Math.floor(this.player.y - this.y)
         );
 
-        // Check if the player is within the detection radius and below the enemy
+        // Check if the player is within the detection radius
         if (this.canFly && distance <= this.detectionRadius) {
             this.isFollowingPlayer = true;
         } else if (
@@ -281,7 +280,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Check if the player is within attack range
-    isPlayerInRange() {
+    isInAttackRange() {
         if (!this.player) {
             return false;
         }
@@ -294,13 +293,13 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         return distance <= this.attackRange;
     }
 
-    // Perform attack action
-    attackPlayer() {
-        // Play attack animation
-        this.play("enemy-attack");
+    attackPlayer(anim) {
+        // Stop all animations and play attack animation
+        this.stop();
+        this.play(anim);
 
         // Deal damage to the player (you can customize this part)
-        this.scene.player.takesHit({ damage: this.damage });
+        // this.scene.player.takesHit({ damage: this.damage });
     }
 
     // Start blinking effect when health is below 40%
