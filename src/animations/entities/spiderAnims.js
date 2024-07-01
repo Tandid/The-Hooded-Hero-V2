@@ -8,6 +8,15 @@ export default (anims) => {
             frameRate: 20,
             repeat: -1,
         });
+        anims.create({
+            key: "spider-attack",
+            frames: anims.generateFrameNumbers("spider-attack", {
+                start: 0,
+                end: 10,
+            }),
+            frameRate: 10,
+            repeat: 0,
+        });
 
         anims.create({
             key: "spider-die",

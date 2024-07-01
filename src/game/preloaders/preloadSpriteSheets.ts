@@ -98,17 +98,32 @@ export function preloadSpriteSheets(scene: Phaser.Scene) {
         frameHeight: 477,
         // spacing: 32,
     });
-    scene.load.spritesheet("boss-default", "enemy/boss_attack.png", {
-        frameWidth: 850,
-        frameHeight: 477,
-        // spacing: 32,
-    });
 
     // ------------------ ENEMY ATTACKS ----------------------------------
 
     scene.load.spritesheet("bee-attack", "enemyAttacks/bee-attack.png", {
         frameWidth: 170,
         frameHeight: 155,
+        // spacing: 32,
+    });
+    scene.load.spritesheet("spider-attack", "enemyAttacks/spider-attack.png", {
+        frameWidth: 184,
+        frameHeight: 126,
+        // spacing: 32,
+    });
+    scene.load.spritesheet(
+        "skeleton-attack",
+        "enemyAttacks/skeleton-attack.png",
+        {
+            frameWidth: 290,
+            frameHeight: 170,
+            // spacing: 32,
+        }
+    );
+
+    scene.load.spritesheet("boss-default", "enemy/boss_attack.png", {
+        frameWidth: 850,
+        frameHeight: 477,
         // spacing: 32,
     });
 
