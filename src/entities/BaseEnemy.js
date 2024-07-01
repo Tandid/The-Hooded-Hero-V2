@@ -30,6 +30,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.gravity = 500;
         this.speed = 200;
         this.timeFromLastTurn = 0;
+        this.maxPatrolDistance = null;
         this.currentPatrolDistance = 0;
 
         this.health = 100;
@@ -130,7 +131,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             distance <= this.detectionRadius &&
             verticalDistanceFromPlayer <= 100
         ) {
-            console.log(this.player.y, this.y, heightDifference);
             this.isFollowingPlayer = true;
         } else {
             this.isFollowingPlayer = false;
@@ -177,7 +177,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         if (
             (!hasHit ||
                 this.currentPatrolDistance >=
-                    this.platformCollidersLayer.width) &&
+                    (this.maxPatrolDistance ||
+                        this.platformCollidersLayer.width)) &&
             this.timeFromLastTurn + 100 < time
         ) {
             this.turnAround();
