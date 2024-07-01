@@ -68,6 +68,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.blinkTween = null;
 
         this.player = this.scene.player;
+        this.canFly = false;
     }
 
     // Initialize events, such as the update loop for the enemy
@@ -125,13 +126,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     // Move towards the player when detected
     followPlayer() {
-        console.log(this);
-        if (this.player.x < this.x) {
-            this.setVelocityX(-500);
-            this.setFlipX(true);
+        if (this.canFly) {
+            this.scene.physics.moveToObject(this, this.player, 500);
+            this.setFlipX(this.player.x < this.x);
         } else {
-            this.setVelocityX(500);
-            this.setFlipX(false);
+            if (this.player.x < this.x) {
+                this.setVelocityX(-500);
+                this.setFlipX(true);
+            } else {
+                this.setVelocityX(500);
+                this.setFlipX(false);
+            }
         }
     }
 

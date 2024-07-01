@@ -12,6 +12,7 @@ class Bee extends Enemy {
         this.health = 120;
         this.damage = 20;
         this.setSize(120, 140);
+        this.canFly = true;
     }
 
     update(time, delta) {
