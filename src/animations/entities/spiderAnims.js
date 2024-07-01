@@ -12,7 +12,7 @@ export default (anims) => {
             key: "spider-attack",
             frames: anims.generateFrameNumbers("spider-attack", {
                 start: 0,
-                end: 10,
+                end: 5,
             }),
             frameRate: 10,
             repeat: 0,
