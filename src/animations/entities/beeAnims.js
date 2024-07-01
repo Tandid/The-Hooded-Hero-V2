@@ -13,9 +13,9 @@ export default (anims) => {
             key: "bee-attack",
             frames: anims.generateFrameNumbers("bee-attack", {
                 start: 0,
-                end: 6,
+                end: 5,
             }),
-            frameRate: 12,
+            frameRate: 10,
             repeat: 0,
         });
 

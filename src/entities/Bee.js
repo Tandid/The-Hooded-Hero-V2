@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import initAnims from "../animations/entities/beeAnims";
 import Enemy from "./BaseEnemy";
 
@@ -5,6 +6,7 @@ class Bee extends Enemy {
     constructor(scene, x, y) {
         super(scene, x, y, "bee");
         initAnims(scene.anims);
+        this.position = new Phaser.Math.Vector2(x, y); // Store position as a vector
     }
 
     init() {
@@ -13,15 +15,23 @@ class Bee extends Enemy {
         this.damage = 20;
         this.setSize(100, 120);
         this.canFly = true;
+
         this.attackDelay = Phaser.Math.Between(1000, 2000);
         this.timeFromLastAttack = 0;
-        this.attackRange = 25;
+        this.attackRange = 100;
+        this.isAttacking = false;
     }
 
     update(time, delta) {
         super.update(time, delta);
 
         if (!this.active) {
+            return;
+        }
+
+        if (this.isAttacking) {
+            // Stop moving if attacking
+            this.setVelocity(0, 0);
             return;
         }
 
@@ -47,12 +57,26 @@ class Bee extends Enemy {
     }
 
     attackPlayer(anim) {
+        this.isAttacking = true; // Set attacking flag to true
+
         // Stop all animations and play attack animation
         this.stop();
         this.play(anim);
 
-        // Deal damage to the player (you can customize this part)
-        this.scene.player.takesHit({ damage: this.damage });
+        // Add an event listener for the animation complete event
+        this.on("animationcomplete", this.onAttackComplete, this);
+    }
+
+    onAttackComplete(animation, frame) {
+        if (animation.key === "bee-attack") {
+            // Deal damage to the player (you can customize this part)
+            if (this.isInAttackRange()) {
+                this.scene.player.takesHit({ damage: this.damage });
+            }
+
+            this.isAttacking = false; // Reset attacking flag
+            this.off("animationcomplete", this.onAttackComplete, this); // Remove the event listener
+        }
     }
 }
 

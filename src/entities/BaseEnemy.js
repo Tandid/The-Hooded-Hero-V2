@@ -208,7 +208,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.player.x,
             this.player.y
         );
-        return distance <= this.attackRange;
+        return distance - 200 <= this.attackRange;
     }
 
     // Play a damage animation and effects when the enemy takes a hit
