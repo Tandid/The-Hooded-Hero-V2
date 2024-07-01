@@ -272,9 +272,10 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     // Perform a turn around action (change direction)
     turnAround() {
-        // Flip the enemy sprite horizontally and reverse its movement direction
-        this.setFlipX(!this.flipX);
+        // Reverse its movement direction
+
         this.setVelocityX((this.speed = -this.speed));
+        this.setFlipX(this.body.velocity.x < 0);
         this.timeFromLastTurn = this.scene.time.now;
         this.currentPatrolDistance = 0;
     }
