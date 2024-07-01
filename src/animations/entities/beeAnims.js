@@ -10,6 +10,16 @@ export default (anims) => {
         });
 
         anims.create({
+            key: "bee-attack",
+            frames: anims.generateFrameNumbers("bee-attack", {
+                start: 0,
+                end: 12,
+            }),
+            frameRate: 12,
+            repeat: 0,
+        });
+
+        anims.create({
             key: "bee-die",
             frames: anims.generateFrameNumbers("bee-death", {
                 start: 0,

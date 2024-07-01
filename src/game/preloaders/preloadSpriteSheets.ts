@@ -104,6 +104,14 @@ export function preloadSpriteSheets(scene: Phaser.Scene) {
         // spacing: 32,
     });
 
+    // ------------------ ENEMY ATTACKS ----------------------------------
+
+    scene.load.spritesheet("bee-attack", "enemyAttacks/bee-attack.png", {
+        frameWidth: 170,
+        frameHeight: 155,
+        // spacing: 32,
+    });
+
     // ------------------ DEATH ANIMATIONS --------------------------------
 
     scene.load.spritesheet("player-death", "deathAnims/player_death.png", {
