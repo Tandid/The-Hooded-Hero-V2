@@ -30,7 +30,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.gravity = 500;
         this.speed = 200;
         this.timeFromLastTurn = 0;
-        this.maxPatrolDistance = 1000;
         this.currentPatrolDistance = 0;
 
         this.health = 100;
@@ -104,7 +103,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Detect if the player is within the detection radius
-    // Detect if the player is within the detection radius
     detectPlayer() {
         // Check if the player object exists before accessing its properties
         if (!this.player) {
@@ -120,7 +118,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.player.y
         );
 
-        let heightDifference = Math.floor(this.player.y - this.y);
+        let verticalDistanceFromPlayer = Math.abs(
+            Math.floor(this.player.y - this.y)
+        );
 
         // Check if the player is within the detection radius and below the enemy
         if (this.canFly && distance <= this.detectionRadius) {
@@ -128,8 +128,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         } else if (
             !this.canFly &&
             distance <= this.detectionRadius &&
-            heightDifference <= 1
+            verticalDistanceFromPlayer <= 100
         ) {
+            console.log(this.player.y, this.y, heightDifference);
             this.isFollowingPlayer = true;
         } else {
             this.isFollowingPlayer = false;
@@ -174,7 +175,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         // Change direction if no obstacles are ahead or maximum distance is reached
         if (
-            (!hasHit || this.currentPatrolDistance >= this.maxPatrolDistance) &&
+            (!hasHit ||
+                this.currentPatrolDistance >=
+                    this.platformCollidersLayer.width) &&
             this.timeFromLastTurn + 100 < time
         ) {
             this.turnAround();
