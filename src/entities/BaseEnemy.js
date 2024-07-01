@@ -315,8 +315,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             `${damage}`,
             {
                 fontFamily: "customFont",
-                fontSize: 50,
-                color: "#ff0000",
+                fontSize: 75,
+                color: "#ffff00",
             }
         );
 

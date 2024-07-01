@@ -36,6 +36,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.initAnimations(); // Load and set up animations for the player
         this.handlePlayerAttacks(); // Set up event listeners for player attacks
         this.initMovementSound(); // Set up movement sound effects
+
+        this.damageNumbers = this.scene.add.group();
     }
 
     // Method to initialize player-specific properties
@@ -52,8 +54,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.timeFromLastSwing = null;
 
         // Set physics properties and initial position for the player
-        this.body.setSize(120, 150); // Set collision body size
-        this.body.setOffset(90, 40); // Offset collision body position
+        this.body.setSize(60, 120); // Set collision body size
+        this.body.setOffset(120, 60); // Offset collision body position
         this.body.setGravityY(this.gravity); // Set vertical gravity
         this.setCollideWorldBounds(true); // Enable collision with world bounds
         this.setOrigin(0, 1); // Set sprite origin for correct positioning
@@ -274,12 +276,43 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Method to create a tint animation when the player takes damage
     playDamageTween() {
-        // Return a tween animation for tinting the player sprite temporarily on damage
         return this.scene.tweens.add({
             targets: this,
-            duration: 100,
-            repeat: -1,
-            tint: 0xffffff,
+            alpha: 50,
+            duration: 250,
+            ease: "Power1",
+            yoyo: true,
+            tint: 0x999999,
+        });
+    }
+
+    // Show damage number above the enemy
+    showDamageNumber(damage) {
+        const damageText = this.scene.add.text(
+            this.x + 200,
+            this.y - 200,
+            `${damage}`,
+            {
+                fontFamily: "customFont",
+                fontSize: 75,
+                color: "#ff0000",
+            }
+        );
+
+        damageText.setOrigin(0.5, 0.5);
+        damageText.setDepth(1);
+
+        this.damageNumbers.add(damageText);
+
+        this.scene.tweens.add({
+            targets: damageText,
+            y: damageText.y - 50,
+            alpha: 0,
+            duration: 1000,
+            ease: "Cubic.Out",
+            onComplete: () => {
+                damageText.destroy();
+            },
         });
     }
 
@@ -315,6 +348,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.health <= 0) {
             EventEmitter.emit("PLAYER_LOSE");
             return;
+        } else {
+            this.showDamageNumber(source.damage);
         }
 
         // Apply hit reaction: bounce off, play damage animation, and update health bar

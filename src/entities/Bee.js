@@ -15,7 +15,7 @@ class Bee extends Enemy {
         this.canFly = true;
         this.attackDelay = Phaser.Math.Between(1000, 2000);
         this.timeFromLastAttack = 0;
-        this.attackRange = 75;
+        this.attackRange = 25;
     }
 
     update(time, delta) {
