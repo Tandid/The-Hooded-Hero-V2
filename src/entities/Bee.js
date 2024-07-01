@@ -13,12 +13,11 @@ class Bee extends Enemy {
         super.init();
         this.health = 120;
         this.damage = 20;
-        this.setSize(100, 120);
+        this.setSize(60, 120);
         this.canFly = true;
 
         this.attackDelay = Phaser.Math.Between(1000, 2000);
         this.timeFromLastAttack = 0;
-        this.attackRange = 100;
         this.isAttacking = false;
     }
 
@@ -37,12 +36,12 @@ class Bee extends Enemy {
 
         // Perform attack if player is in range and enough time has passed since last attack
         if (
-            this.isInAttackRange() &&
+            this.isInAttackRange(100, 300) &&
             time > this.timeFromLastAttack + this.attackDelay
         ) {
             this.attackPlayer("bee-attack");
             this.timeFromLastAttack = time;
-            this.attackDelay = Phaser.Math.Between(1000, 4000);
+            this.attackDelay = Phaser.Math.Between(1000, 3000);
         }
 
         if (this.isPlayingAnims("bee-attack")) {
@@ -70,7 +69,8 @@ class Bee extends Enemy {
     onAttackComplete(animation, frame) {
         if (animation.key === "bee-attack") {
             // Deal damage to the player (you can customize this part)
-            if (this.isInAttackRange()) {
+            if (this.isInAttackRange(25, 250)) {
+                console.log("damage");
                 this.scene.player.takesHit({ damage: this.damage });
             }
 

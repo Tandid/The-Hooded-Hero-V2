@@ -2458,7 +2458,7 @@
                     "name": "Spawn",
                     "point": true,
                     "rotation": 0,
-                    "type": "Slime",
+                    "type": "Bee",
                     "visible": true,
                     "width": 0,
                     "x": 3795.68078113983,
@@ -7044,3 +7044,4 @@
     "version": "1.6",
     "width": 165
 }
+

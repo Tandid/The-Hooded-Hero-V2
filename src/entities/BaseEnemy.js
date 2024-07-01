@@ -36,7 +36,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.damage = 10;
 
         this.detectionRadius = 500; // Radius to detect the player
-        this.attackRange = 50; // Range to attack the player
         this.playerDetected = false; // Flag to indicate if the enemy is following the player
 
         // Sound effect for when the enemy takes damage
@@ -112,7 +111,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     // Detect if the player is within the detection radius
     detectPlayer() {
-        const distance = Phaser.Math.Distance.Between(
+        let distance = Phaser.Math.Distance.Between(
             this.x,
             this.y,
             this.player.x,
@@ -199,20 +198,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    // Check if the player is within attack range
-    isInAttackRange() {
-        if (!this.player) {
-            return false;
-        }
-        const distance = Phaser.Math.Distance.Between(
-            this.x,
-            this.y,
-            this.player.x,
-            this.player.y
-        );
-        return distance - 200 <= this.attackRange;
-    }
-
     // Play a damage animation and effects when the enemy takes a hit
     takesHit(source) {
         // Play the damage sound effect
@@ -258,6 +243,29 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.scene.time.delayedCall(500, () => {
             this.destroy();
         });
+    }
+
+    // Check if the player is within attack range
+    isInAttackRange(leftRange, rightRange) {
+        if (!this.player) {
+            return false;
+        }
+
+        let distance = Phaser.Math.Distance.Between(
+            this.x,
+            this.y,
+            this.player.x,
+            this.player.y
+        );
+
+        if (
+            (this.body.velocity.x >= 0 && distance <= leftRange) ||
+            (this.body.velocity.x <= 0 && distance <= rightRange)
+        ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // Destroy the enemy instance
