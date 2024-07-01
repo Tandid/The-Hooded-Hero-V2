@@ -37,7 +37,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.detectionRadius = 500; // Radius to detect the player
         this.attackRange = 50; // Range to attack the player
-        this.isFollowingPlayer = false; // Flag to indicate if the enemy is following the player
+        this.playerDetected = false; // Flag to indicate if the enemy is following the player
 
         // Sound effect for when the enemy takes damage
         this.takeDamageSound = this.scene.sound.add("enemy-damage", {
@@ -97,7 +97,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.detectPlayer();
 
             // If following the player, move towards the player
-            if (this.isFollowingPlayer) {
+            if (this.playerDetected) {
                 this.followPlayer();
             } else {
                 this.patrol();
@@ -119,21 +119,23 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.player.y
         );
 
+        console.log(this.player.x, this.player.y, this.x, this.y);
+
         let verticalDistanceFromPlayer = Math.abs(
             Math.floor(this.player.y - this.y)
         );
 
         // Check if the player is within the detection radius
         if (this.canFly && distance <= this.detectionRadius) {
-            this.isFollowingPlayer = true;
+            this.playerDetected = true;
         } else if (
             !this.canFly &&
             distance <= this.detectionRadius &&
             verticalDistanceFromPlayer <= 100
         ) {
-            this.isFollowingPlayer = true;
+            this.playerDetected = true;
         } else {
-            this.isFollowingPlayer = false;
+            this.playerDetected = false;
         }
     }
 
