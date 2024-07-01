@@ -4,8 +4,8 @@ export default (anims) => {
     if (!animationsInitialized) {
         anims.create({
             key: "bee-fly",
-            frames: anims.generateFrameNumbers("bee", { start: 0, end: 12 }),
-            frameRate: 15,
+            frames: anims.generateFrameNumbers("bee", { start: 0, end: 8 }),
+            frameRate: 16,
             repeat: -1,
         });
 

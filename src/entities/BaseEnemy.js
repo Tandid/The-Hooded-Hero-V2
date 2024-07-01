@@ -28,7 +28,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Initialize properties and settings for the enemy
     init() {
         this.gravity = 500;
-        this.speed = 150;
+        this.speed = 200;
         this.timeFromLastTurn = 0;
         this.maxPatrolDistance = 1000;
         this.currentPatrolDistance = 0;
@@ -123,9 +123,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         let heightDifference = Math.floor(this.player.y - this.y);
 
         // Check if the player is within the detection radius and below the enemy
-        if (
-            distance <= this.detectionRadius &&
+        if (this.canFly && distance <= this.detectionRadius) {
+            this.isFollowingPlayer = true;
+        } else if (
             !this.canFly &&
+            distance <= this.detectionRadius &&
             heightDifference <= 1
         ) {
             this.isFollowingPlayer = true;

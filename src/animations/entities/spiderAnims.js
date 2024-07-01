@@ -4,8 +4,8 @@ export default (anims) => {
     if (!animationsInitialized) {
         anims.create({
             key: "spider-run",
-            frames: anims.generateFrameNumbers("spider", { start: 0, end: 15 }),
-            frameRate: 15,
+            frames: anims.generateFrameNumbers("spider", { start: 0, end: 10 }),
+            frameRate: 20,
             repeat: -1,
         });
 
