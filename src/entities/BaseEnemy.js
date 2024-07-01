@@ -5,16 +5,12 @@ import Phaser from "phaser";
 import anims from "../mixins/anims";
 import collidable from "../mixins/collidable";
 
-import initAnims from "../animations/entities/beeAnims";
-
 class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, key) {
         super(scene, x, y, key);
-        initAnims(scene.anims);
 
         // Store scene configuration for access throughout the class
         this.config = scene.config;
-        this.attackAnim = key + "-attack";
 
         // Add the enemy to the scene and enable physics for it
         scene.add.existing(this);
@@ -40,7 +36,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.damage = 10;
 
         this.detectionRadius = 500; // Radius to detect the player
-        this.attackRange = 100; // Range to attack the player
+        this.attackRange = 50; // Range to attack the player
         this.isFollowingPlayer = false; // Flag to indicate if the enemy is following the player
 
         // Sound effect for when the enemy takes damage
@@ -79,6 +75,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
     }
 
+    // Set the platform colliders layer for the enemy
+    setPlatformColliders(platformCollidersLayer) {
+        this.platformCollidersLayer = platformCollidersLayer;
+    }
+
     // Update method called automatically by Phaser
     update() {
         if (!this.active) {
@@ -100,10 +101,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
                 this.followPlayer();
             } else {
                 this.patrol();
-            }
-
-            if (this.isInAttackRange()) {
-                this.attackPlayer(this.attackAnim);
             }
         }
 
@@ -143,7 +140,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Move towards the player when detected
     followPlayer() {
         if (this.canFly) {
-            this.scene.physics.moveToObject(this, this.player, 500);
+            this.scene.physics.moveToObject(this, this.player, 350);
             this.setFlipX(this.player.x < this.x);
         } else {
             if (this.player.x < this.x) {
@@ -200,14 +197,18 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    // Set the platform colliders layer for the enemy
-    setPlatformColliders(platformCollidersLayer) {
-        this.platformCollidersLayer = platformCollidersLayer;
-    }
-
-    // Placeholder method for future implementation where the enemy delivers a hit
-    deliversHit() {
-        // Currently not implemented
+    // Check if the player is within attack range
+    isInAttackRange() {
+        if (!this.player) {
+            return false;
+        }
+        const distance = Phaser.Math.Distance.Between(
+            this.x,
+            this.y,
+            this.player.x,
+            this.player.y
+        );
+        return distance <= this.attackRange;
     }
 
     // Play a damage animation and effects when the enemy takes a hit
@@ -277,29 +278,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX((this.speed = -this.speed));
         this.setFlipX(this.body.velocity.x < 0);
         this.currentPatrolDistance = 0;
-    }
-
-    // Check if the player is within attack range
-    isInAttackRange() {
-        if (!this.player) {
-            return false;
-        }
-        const distance = Phaser.Math.Distance.Between(
-            this.x,
-            this.y,
-            this.player.x,
-            this.player.y
-        );
-        return distance <= this.attackRange;
-    }
-
-    attackPlayer(anim) {
-        // Stop all animations and play attack animation
-        this.stop();
-        this.play(anim);
-
-        // Deal damage to the player (you can customize this part)
-        // this.scene.player.takesHit({ damage: this.damage });
     }
 
     // Start blinking effect when health is below 40%
