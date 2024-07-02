@@ -10,12 +10,13 @@ class Spider extends Enemy {
     init() {
         super.init();
         this.health = 150;
-        this.damage = 20;
+        this.damage = 5;
+        this.attackDamage = 20; // Damage from attacks
         this.setSize(120, 90);
-        this.setOffset(30, 20);
-        this.attackDelay = Phaser.Math.Between(1000, 2000);
+        // this.setOffset(30, 20);
+
+        this.attackDelay = Phaser.Math.Between(0, 1000);
         this.timeFromLastAttack = 0;
-        this.attackRange = 25;
     }
 
     update(time, delta) {
@@ -27,12 +28,12 @@ class Spider extends Enemy {
 
         // Perform attack if player is in range and enough time has passed since last attack
         if (
-            this.isInAttackRange() &&
+            this.isInAttackRange(300, 100) &&
             time > this.timeFromLastAttack + this.attackDelay
         ) {
             this.attackPlayer("spider-attack");
             this.timeFromLastAttack = time;
-            this.attackDelay = Phaser.Math.Between(1000, 4000);
+            this.attackDelay = Phaser.Math.Between(1000, 2000);
         }
 
         if (this.isPlayingAnims("spider-attack")) {
@@ -51,8 +52,19 @@ class Spider extends Enemy {
         this.stop();
         this.play(anim);
 
-        // Deal damage to the player (you can customize this part)
-        this.scene.player.takesHit({ damage: this.damage });
+        // Add an event listener for the animation complete event
+        this.on("animationcomplete", this.onAttackComplete, this);
+    }
+
+    onAttackComplete(animation, frame) {
+        if (animation.key === "spider-attack") {
+            // Deal damage to the player (you can customize this part)
+            if (this.isInAttackRange(300, 25)) {
+                this.scene.player.takesHit({ damage: this.attackDamage });
+            }
+
+            this.off("animationcomplete", this.onAttackComplete, this); // Remove the event listener
+        }
     }
 }
 

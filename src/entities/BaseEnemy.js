@@ -257,10 +257,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.player.x,
             this.player.y
         );
+        console.log(distance);
 
         if (
-            (this.body.velocity.x >= 0 && distance <= leftRange) ||
-            (this.body.velocity.x <= 0 && distance <= rightRange)
+            (this.body.velocity.x >= 0 && distance <= rightRange) ||
+            (this.body.velocity.x < 0 && distance <= leftRange)
         ) {
             return true;
         } else {
