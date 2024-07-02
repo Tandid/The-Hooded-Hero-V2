@@ -21,6 +21,7 @@ class Slime extends Enemy {
         if (!this.active) {
             return;
         }
+
         if (this.health > 0) {
             this.play("slime-run", true);
         } else {

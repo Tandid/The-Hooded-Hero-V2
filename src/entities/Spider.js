@@ -9,11 +9,14 @@ class Spider extends Enemy {
 
     init() {
         super.init();
+
         this.health = 150;
+        this.setSize(120, 90);
+        this.setOffset(30, 20);
+
         this.damage = 5;
         this.attackDamage = 20; // Damage from attacks
-        this.setSize(120, 90);
-        // this.setOffset(30, 20);
+        this.attackRange = 200;
 
         this.attackDelay = Phaser.Math.Between(0, 1000);
         this.timeFromLastAttack = 0;
@@ -28,7 +31,7 @@ class Spider extends Enemy {
 
         // Perform attack if player is in range and enough time has passed since last attack
         if (
-            this.isInAttackRange(300, 100) &&
+            this.isInAttackRange() &&
             time > this.timeFromLastAttack + this.attackDelay
         ) {
             this.attackPlayer("spider-attack");
@@ -59,7 +62,7 @@ class Spider extends Enemy {
     onAttackComplete(animation, frame) {
         if (animation.key === "spider-attack") {
             // Deal damage to the player (you can customize this part)
-            if (this.isInAttackRange(300, 25)) {
+            if (this.isInAttackRange()) {
                 this.scene.player.takesHit({ damage: this.attackDamage });
             }
 

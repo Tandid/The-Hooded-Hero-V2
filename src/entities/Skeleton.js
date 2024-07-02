@@ -9,10 +9,13 @@ class Skeleton extends Enemy {
 
     init() {
         super.init();
+
         this.health = 200;
+        this.setSize(120, 170);
+
         this.damage = 10;
         this.attackDamage = 30; // Damage from attacks
-        this.setSize(120, 170);
+        this.attackRange = 200;
 
         this.attackDelay = Phaser.Math.Between(0, 1000);
         this.timeFromLastAttack = 0;
@@ -27,7 +30,7 @@ class Skeleton extends Enemy {
 
         // Perform attack if player is in range and enough time has passed since last attack
         if (
-            this.isInAttackRange(400, 100) &&
+            this.isInAttackRange() &&
             time > this.timeFromLastAttack + this.attackDelay
         ) {
             this.attackPlayer("skeleton-attack");
@@ -58,7 +61,7 @@ class Skeleton extends Enemy {
     onAttackComplete(animation, frame) {
         if (animation.key === "skeleton-attack") {
             // Deal damage to the player (you can customize this part)
-            if (this.isInAttackRange(400, 25)) {
+            if (this.isInAttackRange()) {
                 this.scene.player.takesHit({ damage: this.attackDamage });
             }
 

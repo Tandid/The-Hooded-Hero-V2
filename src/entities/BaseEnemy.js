@@ -23,6 +23,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         // Initialize enemy properties and setup
         this.init();
         this.initEvents();
+
+        // Add custom debug text
+        this.debugText = this.scene.add
+            .text(500, -300, "", { font: "32px Arial", fill: "#0000ff" })
+            .setScrollFactor(0)
+            .setDepth(30);
+
+        this.graphics = this.scene.add.graphics().setDepth(30);
     }
 
     // Initialize properties and settings for the enemy
@@ -38,6 +46,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.verticalDistance = 100;
         this.detectionRadius = 500; // Radius to detect the player
         this.playerDetected = false; // Flag to indicate if the enemy is following the player
+        this.attackRange = 100;
 
         // Sound effect for when the enemy takes damage
         this.takeDamageSound = this.scene.sound.add("enemy-damage", {
@@ -108,6 +117,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         if (this.health < 40) {
             this.playLowHealthTween();
         }
+
+        this.addDebugger();
     }
 
     // Detect if the player is within the detection radius
@@ -137,31 +148,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     followPlayer() {
-        let offset = 180;
-        let stopDistance = 20; // Distance within which the enemy stops moving to avoid jittering
-
         if (this.canFly) {
-            const distanceToPlayer = Phaser.Math.Distance.Between(
-                this.x,
-                this.y,
-                this.player.x,
-                this.player.y
-            );
-
-            if (distanceToPlayer > stopDistance) {
-                this.scene.physics.moveToObject(this, this.player, 350);
-            } else {
-                this.setVelocity(0); // Stop moving when close to the player
-            }
-
-            this.setFlipX(this.player.x + offset < this.x);
+            this.scene.physics.moveToObject(this, this.player, 350);
+            this.setFlipX(this.player.x < this.x);
         } else {
-            if (this.player.x + offset < this.x) {
-                console.log("neg", this.player.x - this.x);
+            if (this.player.x < this.x) {
                 this.setVelocityX(-300);
                 this.setFlipX(true);
             } else {
-                console.log("pos", this.player.x - this.x);
                 this.setVelocityX(300);
                 this.setFlipX(false);
             }
@@ -260,7 +254,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Check if the player is within attack range
-    isInAttackRange(leftRange, rightRange) {
+    isInAttackRange() {
         if (!this.player) {
             return false;
         }
@@ -272,14 +266,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.player.y
         );
 
-        if (
-            (this.body.velocity.x >= 0 && distance <= rightRange) ||
-            (this.body.velocity.x < 0 && distance <= leftRange)
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return distance <= this.attackRange;
     }
 
     // Destroy the enemy instance
@@ -374,6 +361,28 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.y,
             this.detectionRadius
         );
+    }
+
+    addDebugger() {
+        // Update custom debug information if the body exists
+        if (this.body) {
+            this.debugText.setText(
+                `x: ${this.x.toFixed(2)}, y: ${this.y.toFixed(2)}\n` +
+                    `velocityX: ${this.body.velocity.x.toFixed(
+                        2
+                    )}, velocityY: ${this.body.velocity.y.toFixed(2)}\n` +
+                    `delta: ${
+                        this.scene.player.x.toFixed(2) - this.x.toFixed(2)
+                    }`
+            );
+
+            this.graphics.clear(); // Clear previous drawings
+            this.graphics.lineStyle(2, 0xff0000); // Line style: thickness (2 pixels), color (red)
+            this.graphics.beginPath();
+            this.graphics.moveTo(this.x, this.y);
+            this.graphics.lineTo(500, 100); // Fixed point example
+            this.graphics.strokePath();
+        }
     }
 }
 
