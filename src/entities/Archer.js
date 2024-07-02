@@ -13,7 +13,6 @@ class Archer extends Enemy {
         this.speed = 150;
         this.health = 200;
         this.setSize(120, 170);
-        this.setOffset(10, 15);
 
         this.damage = 20;
         this.attackRange = 1000;
@@ -74,14 +73,7 @@ class Archer extends Enemy {
         this.play(anim, true);
         this.projectiles.fireProjectile(this, "arrow");
 
-        this.once("animationcomplete", this.onAttackComplete, this);
-    }
-
-    onAttackComplete(animation, frame) {
-        if (animation.key === "archer-attack") {
-            this.isAttacking = false; // Reset attacking flag
-            this.off("animationcomplete", this.onAttackComplete, this); // Remove complete listener
-        }
+        this.isAttacking = false; // Reset attacking flag
     }
 }
 
