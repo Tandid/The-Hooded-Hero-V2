@@ -29,6 +29,7 @@ class PlayScene extends BaseScene {
         const layers = this.createLayers(map);
         const playerZones = this.getPlayerZones(layers.playerZones);
         const player = this.createPlayer(playerZones.start);
+        this.player = player;
         const enemies = this.createEnemies(
             layers.enemySpawns,
             layers.platformsColliders
@@ -126,46 +127,46 @@ class PlayScene extends BaseScene {
         const level = this.getCurrentLevel();
 
         this.forestBg = [
-            { key: "bg-forest-1", y: bgObject.y, depth: -10, scale: 1 },
-            { key: "bg-forest-2", y: 300, depth: -11, scale: 1 },
+            { key: "bg-forest-1", y: 300, depth: -10, scale: 1.3 },
+            { key: "bg-forest-2", y: 300, depth: -11, scale: 1.3 },
             { key: "bg-forest-3", y: 300, depth: -12, scale: 1 },
             { key: "mountain-bg", y: 200, depth: -13, scale: 1 },
             { key: "sky-bg", y: 0, depth: -14, scale: 1 },
         ];
 
+        this.caveBg = [
+            { key: "bg-cave-1", y: 0, depth: -10, scale: 1.7 },
+            { key: "bg-cave-2", y: 0, depth: -11, scale: 1.7 },
+            { key: "bg-cave-3", y: 0, depth: -12, scale: 1.3 },
+            { key: "bg-cave-4", y: 0, depth: -13, scale: 1.3 },
+            { key: "bg-cave-5", y: 0, depth: -14, scale: 1 },
+        ];
+
         const bgConfig = {
             1: this.forestBg,
-            2: [
-                { key: "bg-cave-1", y: bgObject.y, depth: -10, scale: 1.6 },
-                { key: "bg-cave-2", y: 0, depth: -11, scale: 1.5 },
-                { key: "bg-cave-3", y: 0, depth: -12, scale: 1.5 },
-                { key: "bg-cave-4", y: 0, depth: -13, scale: 1.5 },
-                { key: "bg-cave-5", y: 0, depth: -14, scale: 1.5 },
-            ],
-            3: [
-                { key: "bg-cave-1", y: bgObject.y, depth: -10, scale: 1.6 },
-                { key: "bg-cave-2", y: 0, depth: -11, scale: 1.5 },
-                { key: "bg-cave-3", y: 0, depth: -12, scale: 1.5 },
-                { key: "bg-cave-4", y: 0, depth: -13, scale: 1.5 },
-                { key: "bg-cave-5", y: 0, depth: -14, scale: 1.5 },
-            ],
+            2: this.caveBg,
+            3: this.caveBg,
         };
 
         const bgLayers = bgConfig[level];
         if (bgLayers) {
+            this.bgSprites = [];
+
             bgLayers.forEach(({ key, y, depth, scale }) => {
-                this.add
+                const sprite = this.add
                     .tileSprite(
                         0,
                         y,
                         this.config.width + 3000,
-                        this.config.height + 800,
+                        this.config.height + 1000,
                         key
                     )
                     .setOrigin(0.5, 0)
                     .setDepth(depth)
                     .setScale(scale)
                     .setScrollFactor(0, 1);
+
+                this.bgSprites.push(sprite);
             });
         }
     }
@@ -239,7 +240,7 @@ class PlayScene extends BaseScene {
         collectable.disableBody(true, true);
     }
 
-    createEnemies(spawnLayer, platformsColliders) {
+    createEnemies(spawnLayer, platformsColliders, player) {
         const enemies = new Enemies(this);
         const enemyTypes = enemies.getTypes();
 
@@ -321,8 +322,31 @@ class PlayScene extends BaseScene {
     }
 
     update() {
-        if (this.player && this.player.getBounds) {
-            this.checkGameStatus();
+        const level = this.getCurrentLevel();
+        if (this.bgSprites) {
+            if (level === 1) {
+                this.bgSprites[0].tilePositionX =
+                    this.cameras.main.scrollX * 0.3;
+                this.bgSprites[1].tilePositionX =
+                    this.cameras.main.scrollX * 0.2;
+                this.bgSprites[2].tilePositionX =
+                    this.cameras.main.scrollX * 0.3;
+                this.bgSprites[3].tilePositionX =
+                    this.cameras.main.scrollX * 0.2;
+                this.bgSprites[4].tilePositionX =
+                    this.cameras.main.scrollX * 0.1;
+            } else {
+                this.bgSprites[0].tilePositionX =
+                    this.cameras.main.scrollX * 0.4;
+                this.bgSprites[1].tilePositionX =
+                    this.cameras.main.scrollX * 0.3;
+                this.bgSprites[2].tilePositionX =
+                    this.cameras.main.scrollX * 0.3;
+                this.bgSprites[3].tilePositionX =
+                    this.cameras.main.scrollX * 0.2;
+                this.bgSprites[4].tilePositionX =
+                    this.cameras.main.scrollX * 0.2;
+            }
         }
     }
 

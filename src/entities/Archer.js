@@ -44,10 +44,6 @@ class Archer extends Enemy {
             this.attackDelay = this.getAttackDelay();
         }
 
-        if (!this.active) {
-            return;
-        }
-
         if (this.isPlayingAnims("archer-attack")) {
             return;
         }

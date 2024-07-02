@@ -23,33 +23,25 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         // Initialize enemy properties and setup
         this.init();
         this.initEvents();
-
-        // Initialize damage number properties
-        this.damageNumbers = scene.add.group();
-
-        // Initialize blinking properties
-        this.blinkTween = null;
     }
 
     // Initialize properties and settings for the enemy
     init() {
         this.gravity = 500;
-        this.speed = 150;
-        this.timeFromLastTurn = 0;
-        this.maxPatrolDistance = 1000;
+        this.speed = 200;
+        this.maxPatrolDistance = null;
         this.currentPatrolDistance = 0;
 
         this.health = 100;
         this.damage = 10;
 
+        this.verticalDistance = 100;
+        this.detectionRadius = 500; // Radius to detect the player
+        this.playerDetected = false; // Flag to indicate if the enemy is following the player
+
         // Sound effect for when the enemy takes damage
         this.takeDamageSound = this.scene.sound.add("enemy-damage", {
             volume: 0.1,
-        });
-
-        // Graphics object to visualize raycast for debugging
-        this.rayGraphics = this.scene.add.graphics({
-            lineStyle: { width: 2, color: 0xaa00aa },
         });
 
         // Set initial physics properties for the enemy
@@ -58,6 +50,24 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setImmovable(true);
         this.setOrigin(0.5, 1);
         this.setVelocityX(this.speed);
+
+        // Initialize damage number properties
+        this.damageNumbers = this.scene.add.group();
+
+        // Initialize blinking properties
+        this.blinkTween = null;
+
+        this.player = this.scene.player;
+        this.canFly = false;
+
+        // Graphics object to visualize raycast and detection radius for debugging
+        this.rayGraphics = this.scene.add.graphics({
+            lineStyle: { width: 2, color: 0xaa00aa },
+        });
+
+        this.detectionGraphics = this.scene.add.graphics({
+            lineStyle: { width: 2, color: 0xff0000 },
+        });
     }
 
     // Initialize events, such as the update loop for the enemy
@@ -65,25 +75,87 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
     }
 
+    // Set the platform colliders layer for the enemy
+    setPlatformColliders(platformCollidersLayer) {
+        this.platformCollidersLayer = platformCollidersLayer;
+    }
+
     // Update method called automatically by Phaser
-    update(time, delta) {
+    update() {
+        if (!this.active) {
+            return;
+        }
+
         // Check if the enemy has fallen below a certain point and destroy it if so
         if (this.getBounds().bottom > 1500) {
             this.destroyEnemy();
             return;
         }
 
-        // Perform patrolling behavior
-        this.patrol(time);
+        if (this.player) {
+            // Detect the player
+            this.detectPlayer();
+
+            // If following the player, move towards the player
+            if (this.playerDetected) {
+                this.followPlayer();
+            } else {
+                this.patrol();
+            }
+        }
 
         // Handle blinking when health is below 40%
         if (this.health < 40) {
-            this.startBlinking();
+            this.playLowHealthTween();
+        }
+    }
+
+    // Detect if the player is within the detection radius
+    detectPlayer() {
+        let distance = Phaser.Math.Distance.Between(
+            this.x,
+            this.y,
+            this.player.x,
+            this.player.y
+        );
+
+        console.log(this.player.x, this.player.y, this.x, this.y);
+
+        let verticalDistanceFromPlayer = Math.abs(
+            Math.floor(this.player.y - this.y)
+        );
+
+        // Check if the player is within the detection radius
+        if (
+            (this.canFly && distance <= this.detectionRadius) ||
+            (!this.canFly &&
+                distance <= this.detectionRadius &&
+                verticalDistanceFromPlayer <= this.verticalDistance)
+        ) {
+            this.playerDetected = true;
+        } else {
+            this.playerDetected = false;
+        }
+    }
+
+    // Move towards the player when detected
+    followPlayer() {
+        if (this.canFly) {
+            this.scene.physics.moveToObject(this, this.player, 350);
+            this.setFlipX(this.player.x < this.x);
+        } else {
+            if (this.player.x < this.x) {
+                this.setVelocityX(-300);
+                this.setFlipX(true);
+            } else {
+                this.setVelocityX(300);
+                this.setFlipX(false);
+            }
         }
     }
 
     // Perform patrolling behavior for the enemy
-    patrol(time) {
+    patrol() {
         // Skip patrolling if the enemy is not on the floor
         if (!this.body || !this.body.onFloor()) {
             return;
@@ -104,27 +176,26 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         // Change direction if no obstacles are ahead or maximum distance is reached
         if (
-            (!hasHit || this.currentPatrolDistance >= this.maxPatrolDistance) &&
-            this.timeFromLastTurn + 100 < time
+            !hasHit ||
+            this.currentPatrolDistance >=
+                (this.maxPatrolDistance || this.platformCollidersLayer.width)
         ) {
+            this.turnAround();
+        }
+
+        // Check if the enemy is stationary
+        if (this.body.velocity.x === 0) {
             this.turnAround();
         }
 
         // Display the raycast for debugging purposes if debug mode is enabled
         if (this.config.debug && ray) {
-            this.rayGraphics.clear();
-            this.rayGraphics.strokeLineShape(ray);
+            // Draw raycast
+            this.drawRayCast(ray);
+
+            // Draw detection radius for debugging
+            this.drawDetectionRadius();
         }
-    }
-
-    // Set the platform colliders layer for the enemy
-    setPlatformColliders(platformCollidersLayer) {
-        this.platformCollidersLayer = platformCollidersLayer;
-    }
-
-    // Placeholder method for future implementation where the enemy delivers a hit
-    deliversHit() {
-        // Currently not implemented
     }
 
     // Play a damage animation and effects when the enemy takes a hit
@@ -159,31 +230,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    // Destroy the enemy instance
-    destroyEnemy() {
-        // Remove update event listener, deactivate enemy, clear raycast graphics, and destroy
-        this.scene.events.removeListener(
-            Phaser.Scenes.Events.UPDATE,
-            this.update,
-            this
-        );
-        this.setActive(false);
-        this.rayGraphics.clear();
-        this.destroy();
-    }
-
-    // Play a damage animation tween effect
-    playDamageTween() {
-        return this.scene.tweens.add({
-            targets: this,
-            alpha: 50,
-            duration: 250,
-            ease: "Power1",
-            yoyo: true,
-            tint: 0x222222,
-        });
-    }
-
     // Perform actions when the enemy dies
     die() {
         // Disable physics and gravity
@@ -199,17 +245,53 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
+    // Check if the player is within attack range
+    isInAttackRange(leftRange, rightRange) {
+        if (!this.player) {
+            return false;
+        }
+
+        let distance = Phaser.Math.Distance.Between(
+            this.x,
+            this.y,
+            this.player.x,
+            this.player.y
+        );
+
+        if (
+            (this.body.velocity.x >= 0 && distance <= leftRange) ||
+            (this.body.velocity.x <= 0 && distance <= rightRange)
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Destroy the enemy instance
+    destroyEnemy() {
+        // Remove update event listener, deactivate enemy, clear raycast graphics, and destroy
+        this.scene.events.removeListener(
+            Phaser.Scenes.Events.UPDATE,
+            this.update,
+            this
+        );
+        this.setActive(false);
+        this.rayGraphics.clear();
+        this.detectionGraphics.clear();
+        this.destroy();
+    }
+
     // Perform a turn around action (change direction)
     turnAround() {
-        // Flip the enemy sprite horizontally and reverse its movement direction
-        this.setFlipX(!this.flipX);
+        // Reverse its movement direction
         this.setVelocityX((this.speed = -this.speed));
-        this.timeFromLastTurn = this.scene.time.now;
+        this.setFlipX(this.body.velocity.x < 0);
         this.currentPatrolDistance = 0;
     }
 
     // Start blinking effect when health is below 40%
-    startBlinking() {
+    playLowHealthTween() {
         if (!this.blinkTween) {
             this.blinkTween = this.scene.tweens.add({
                 targets: this,
@@ -223,6 +305,18 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    // Play a damage animation tween effect
+    playDamageTween() {
+        return this.scene.tweens.add({
+            targets: this,
+            alpha: 50,
+            duration: 250,
+            ease: "Power1",
+            yoyo: true,
+            tint: 0x222222,
+        });
+    }
+
     // Show damage number above the enemy
     showDamageNumber(damage) {
         const damageText = this.scene.add.text(
@@ -231,8 +325,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             `${damage}`,
             {
                 fontFamily: "customFont",
-                fontSize: 50,
-                color: "#ff0000",
+                fontSize: 75,
+                color: "#ffff00",
             }
         );
 
@@ -251,6 +345,21 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
                 damageText.destroy();
             },
         });
+    }
+
+    drawRayCast(ray) {
+        this.rayGraphics.clear();
+        this.rayGraphics.strokeLineShape(ray);
+    }
+
+    // Draw the detection radius for debugging purposes
+    drawDetectionRadius() {
+        this.detectionGraphics.clear();
+        this.detectionGraphics.strokeCircle(
+            this.x,
+            this.y,
+            this.detectionRadius
+        );
     }
 }
 
