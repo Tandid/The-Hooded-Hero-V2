@@ -25,6 +25,8 @@ class Boss extends Enemy {
             "axe-default"
         );
 
+        this.attackRange = 500;
+
         this.detectionRadius = 1000;
         this.verticalDistance = 500;
         this.isAttacking = false;
@@ -48,7 +50,7 @@ class Boss extends Enemy {
         }
 
         if (
-            this.isInAttackRange(300, 500) &&
+            this.isInAttackRange() &&
             time > this.timeFromLastAttack + this.attackDelay
         ) {
             this.attackPlayer("boss-melee");
@@ -82,7 +84,7 @@ class Boss extends Enemy {
     onAttackComplete(animation, frame) {
         if (animation.key === "boss-melee") {
             // Deal damage to the player (you can customize this part)
-            if (this.isInAttackRange(400, 600)) {
+            if (this.isInAttackRange()) {
                 this.scene.player.takesHit({ damage: this.damage });
             }
 
