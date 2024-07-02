@@ -119,8 +119,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.player.y
         );
 
-        console.log(this.player.x, this.player.y, this.x, this.y);
-
         let verticalDistanceFromPlayer = Math.abs(
             Math.floor(this.player.y - this.y)
         );
@@ -138,16 +136,32 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    // Move towards the player when detected
     followPlayer() {
+        let offset = 180;
+        let stopDistance = 20; // Distance within which the enemy stops moving to avoid jittering
+
         if (this.canFly) {
-            this.scene.physics.moveToObject(this, this.player, 350);
-            this.setFlipX(this.player.x < this.x);
+            const distanceToPlayer = Phaser.Math.Distance.Between(
+                this.x,
+                this.y,
+                this.player.x,
+                this.player.y
+            );
+
+            if (distanceToPlayer > stopDistance) {
+                this.scene.physics.moveToObject(this, this.player, 350);
+            } else {
+                this.setVelocity(0); // Stop moving when close to the player
+            }
+
+            this.setFlipX(this.player.x + offset < this.x);
         } else {
-            if (this.player.x < this.x) {
+            if (this.player.x + offset < this.x) {
+                console.log("neg", this.player.x - this.x);
                 this.setVelocityX(-300);
                 this.setFlipX(true);
             } else {
+                console.log("pos", this.player.x - this.x);
                 this.setVelocityX(300);
                 this.setFlipX(false);
             }
@@ -257,7 +271,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.player.x,
             this.player.y
         );
-        console.log(distance);
 
         if (
             (this.body.velocity.x >= 0 && distance <= rightRange) ||
