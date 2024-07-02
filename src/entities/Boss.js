@@ -1,5 +1,4 @@
 import initAnims from "../animations/entities/bossAnims.js";
-import BossMeleeWeapon from "../attacks/BossMeleeWeapon";
 import Enemy from "./BaseEnemy.js";
 
 class Boss extends Enemy {
@@ -10,30 +9,22 @@ class Boss extends Enemy {
 
     init() {
         super.init();
-        this.health = 700;
 
-        this.damage = 50;
-        this.setScale(1.3);
+        this.health = 700;
         this.setSize(180, 200);
         this.setOffset(300, 250);
-        this.timeFromLastAttack = 0;
-        this.attackDelay = this.getAttackDelay();
-        this.meleeWeapon = new BossMeleeWeapon(
-            this.scene,
-            500,
-            500,
-            "axe-default"
-        );
+        this.setScale(1.3);
 
+        this.damage = 20;
+        this.attackDamage = 50;
         this.attackRange = 500;
+        this.isAttacking = false;
 
         this.detectionRadius = 1000;
         this.verticalDistance = 300;
-        this.isAttacking = false;
-    }
 
-    getAttackDelay() {
-        return Phaser.Math.Between(2500, 3000);
+        this.timeFromLastAttack = 0;
+        this.attackDelay = Phaser.Math.Between(2500, 3000);
     }
 
     update(time, delta) {
@@ -87,7 +78,7 @@ class Boss extends Enemy {
         if (animation.key === "boss-melee" && frame.index === 13) {
             // Deal damage to the player (you can customize this part)
             if (this.isInAttackRange()) {
-                this.scene.player.takesHit({ damage: this.damage });
+                this.scene.player.takesHit({ damage: this.attackDamage });
             }
         }
     }
