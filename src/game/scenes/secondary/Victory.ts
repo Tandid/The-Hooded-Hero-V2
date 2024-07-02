@@ -3,9 +3,15 @@ import BaseScene from "../BaseScene";
 
 class VictoryScene extends BaseScene {
     victory: any;
+    score: number;
 
     constructor(config: any) {
         super("VictoryScene", config);
+    }
+
+    init(data: any) {
+        console.log({ Data: data.score });
+        this.score = data.score; // Store the score
     }
 
     create() {
@@ -82,6 +88,19 @@ class VictoryScene extends BaseScene {
             })
             .setOrigin(0.5, 0.5)
             .setColor("#D9B48FFF");
+
+        this.add
+            .text(
+                this.config.width / 2,
+                this.config.height / 2 + 50,
+                `${this.score}`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "50px",
+                }
+            )
+            .setOrigin(0, 0.5)
+            .setColor("#FFFFFF");
 
         this.createHomeButton();
         this.createRestartButton();

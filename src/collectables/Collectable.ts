@@ -8,7 +8,7 @@ class Collectable extends Phaser.Physics.Arcade.Sprite {
 
         scene.add.existing(this);
 
-        this.score = 5;
+        this.score = 1;
 
         this.setOrigin(0, 1);
 
