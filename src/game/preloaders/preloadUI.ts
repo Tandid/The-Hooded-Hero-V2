@@ -16,6 +16,8 @@ export function preloadUI(scene: Phaser.Scene) {
 
     scene.load.image("coin", "ui/Icons/icon_small_coin.png");
     scene.load.image("star", "ui/Icons/icon_big_star.png");
+    scene.load.image("star-full", "ui/Stage/star_full.png");
+    scene.load.image("star-shadow", "ui/Stage/star_shadow.png");
     scene.load.image("profile", "ui/Icons/icon_small_profile.png");
     scene.load.image("settings-button", "ui/Icons/icon_big_setting.png");
     scene.load.image("home", "ui/Icons/icon_small_home.png");

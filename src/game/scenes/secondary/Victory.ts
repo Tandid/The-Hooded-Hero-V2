@@ -44,26 +44,67 @@ class VictoryScene extends BaseScene {
             .setOrigin(0.5)
             .setScale(0.7);
 
+        // Empty Stars
         this.add
             .image(
-                this.config.width / 2 - 100,
-                this.config.height / 2 - 60,
-                "star"
+                this.config.width / 2 - 130,
+                this.config.height / 2 - 75,
+                "star-shadow"
             )
             .setOrigin(0.5)
-            .setScale(1.1);
+            .setScale(0.7);
+
+        // Full Stars
+
         this.add
             .image(
-                this.config.width / 2 + 100,
-                this.config.height / 2 - 60,
-                "star"
+                this.config.width / 2 - 130,
+                this.config.height / 2 - 75,
+                "star-full"
             )
             .setOrigin(0.5)
-            .setScale(1.1);
-        this.add
-            .image(this.config.width / 2, this.config.height / 2 - 85, "star")
-            .setOrigin(0.5)
-            .setScale(1.1);
+            .setScale(0.7);
+
+        if (this.score >= 5) {
+            this.add
+                .image(
+                    this.config.width / 2 + 130,
+                    this.config.height / 2 - 70,
+                    "star-full"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        } else {
+            this.add
+                .image(
+                    this.config.width / 2 + 130,
+                    this.config.height / 2 - 75,
+                    "star-shadow"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        }
+
+        if (this.score >= 10) {
+            this.add
+                .image(
+                    this.config.width / 2,
+                    this.config.height / 2 - 100,
+                    "star-full"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        } else {
+            this.add
+                .image(
+                    this.config.width / 2,
+                    this.config.height / 2 - 100,
+                    "star-shadow"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        }
+
         this.add
             .image(
                 this.config.width / 2,
@@ -72,6 +113,7 @@ class VictoryScene extends BaseScene {
             )
             .setOrigin(0.5)
             .setScale(0.5);
+
         this.add
             .image(
                 this.config.width / 2 - 50,
