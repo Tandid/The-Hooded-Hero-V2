@@ -311,9 +311,8 @@ class PlayScene extends BaseScene {
                 this.scene.start("CreditsScene");
                 return;
             }
-
             this.scene.stop("PlayScene");
-            this.scene.launch("VictoryScene");
+            this.scene.launch("VictoryScene", { score: this.score });
         });
     }
 

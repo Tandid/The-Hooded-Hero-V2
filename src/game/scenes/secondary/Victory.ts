@@ -3,9 +3,15 @@ import BaseScene from "../BaseScene";
 
 class VictoryScene extends BaseScene {
     victory: any;
+    score: number;
 
     constructor(config: any) {
         super("VictoryScene", config);
+    }
+
+    init(data: any) {
+        console.log({ Data: data.score });
+        this.score = data.score; // Store the score
     }
 
     create() {
@@ -38,26 +44,67 @@ class VictoryScene extends BaseScene {
             .setOrigin(0.5)
             .setScale(0.7);
 
+        // Empty Stars
         this.add
             .image(
-                this.config.width / 2 - 100,
-                this.config.height / 2 - 60,
-                "star"
+                this.config.width / 2 - 130,
+                this.config.height / 2 - 75,
+                "star-shadow"
             )
             .setOrigin(0.5)
-            .setScale(1.1);
+            .setScale(0.7);
+
+        // Full Stars
+
         this.add
             .image(
-                this.config.width / 2 + 100,
-                this.config.height / 2 - 60,
-                "star"
+                this.config.width / 2 - 130,
+                this.config.height / 2 - 75,
+                "star-full"
             )
             .setOrigin(0.5)
-            .setScale(1.1);
-        this.add
-            .image(this.config.width / 2, this.config.height / 2 - 85, "star")
-            .setOrigin(0.5)
-            .setScale(1.1);
+            .setScale(0.7);
+
+        if (this.score >= 5) {
+            this.add
+                .image(
+                    this.config.width / 2 + 130,
+                    this.config.height / 2 - 70,
+                    "star-full"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        } else {
+            this.add
+                .image(
+                    this.config.width / 2 + 130,
+                    this.config.height / 2 - 75,
+                    "star-shadow"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        }
+
+        if (this.score >= 10) {
+            this.add
+                .image(
+                    this.config.width / 2,
+                    this.config.height / 2 - 100,
+                    "star-full"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        } else {
+            this.add
+                .image(
+                    this.config.width / 2,
+                    this.config.height / 2 - 100,
+                    "star-shadow"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        }
+
         this.add
             .image(
                 this.config.width / 2,
@@ -66,6 +113,7 @@ class VictoryScene extends BaseScene {
             )
             .setOrigin(0.5)
             .setScale(0.5);
+
         this.add
             .image(
                 this.config.width / 2 - 50,
@@ -82,6 +130,19 @@ class VictoryScene extends BaseScene {
             })
             .setOrigin(0.5, 0.5)
             .setColor("#D9B48FFF");
+
+        this.add
+            .text(
+                this.config.width / 2,
+                this.config.height / 2 + 50,
+                `${this.score}`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "50px",
+                }
+            )
+            .setOrigin(0, 0.5)
+            .setColor("#FFFFFF");
 
         this.createHomeButton();
         this.createRestartButton();
