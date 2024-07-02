@@ -35,6 +35,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.health = 100;
         this.damage = 10;
 
+        this.verticalDistance = 100;
         this.detectionRadius = 500; // Radius to detect the player
         this.playerDetected = false; // Flag to indicate if the enemy is following the player
 
@@ -125,12 +126,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         );
 
         // Check if the player is within the detection radius
-        if (this.canFly && distance <= this.detectionRadius) {
-            this.playerDetected = true;
-        } else if (
-            !this.canFly &&
-            distance <= this.detectionRadius &&
-            verticalDistanceFromPlayer <= 100
+        if (
+            (this.canFly && distance <= this.detectionRadius) ||
+            (!this.canFly &&
+                distance <= this.detectionRadius &&
+                verticalDistanceFromPlayer <= this.verticalDistance)
         ) {
             this.playerDetected = true;
         } else {

@@ -70,7 +70,6 @@ class Bee extends Enemy {
         if (animation.key === "bee-attack") {
             // Deal damage to the player (you can customize this part)
             if (this.isInAttackRange(25, 250)) {
-                console.log("damage");
                 this.scene.player.takesHit({ damage: this.damage });
             }
 
