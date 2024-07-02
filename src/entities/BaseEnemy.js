@@ -37,7 +37,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     init() {
         this.gravity = 500;
         this.speed = 200;
-        this.maxPatrolDistance = null;
+        this.maxPatrolDistance = Phaser.Math.Between(2000, 4000);
         this.currentPatrolDistance = 0;
 
         this.health = 100;
@@ -162,7 +162,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    // Perform patrolling behavior for the enemy
     patrol() {
         // Skip patrolling if the enemy is not on the floor
         if (!this.body || !this.body.onFloor()) {
@@ -178,17 +177,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.platformCollidersLayer,
             {
                 precision: 1,
-                steepnes: 0.2,
+                steepness: 0.2,
             }
         );
 
         // Change direction if no obstacles are ahead or maximum distance is reached
-        if (
-            !hasHit ||
-            this.currentPatrolDistance >=
-                (this.maxPatrolDistance || this.platformCollidersLayer.width)
-        ) {
+        if (!hasHit || this.currentPatrolDistance >= this.maxPatrolDistance) {
             this.turnAround();
+            this.currentPatrolDistance = 0; // Reset patrol distance after turning around
         }
 
         // Check if the enemy is stationary
@@ -366,6 +362,15 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     addDebugger() {
         // Update custom debug information if the body exists
         if (this.body) {
+            const { hasHit } = this.raycast(
+                this.body,
+                this.platformCollidersLayer,
+                {
+                    precision: 1,
+                    steepnes: 0.2,
+                }
+            );
+
             this.debugText.setText(
                 `x: ${this.x.toFixed(2)}, y: ${this.y.toFixed(2)}\n` +
                     `velocityX: ${this.body.velocity.x.toFixed(
@@ -373,7 +378,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
                     )}, velocityY: ${this.body.velocity.y.toFixed(2)}\n` +
                     `delta: ${
                         this.scene.player.x.toFixed(2) - this.x.toFixed(2)
-                    }`
+                    }\n ` +
+                    `raycast: ${hasHit}, currentPatrolDistance: ${this.currentPatrolDistance}`
             );
 
             this.graphics.clear(); // Clear previous drawings
