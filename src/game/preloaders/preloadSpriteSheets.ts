@@ -106,11 +106,13 @@ export function preloadSpriteSheets(scene: Phaser.Scene) {
         frameHeight: 155,
         // spacing: 32,
     });
+
     scene.load.spritesheet("spider-attack", "enemyAttacks/spider-attack.png", {
         frameWidth: 184,
         frameHeight: 126,
         // spacing: 32,
     });
+
     scene.load.spritesheet(
         "skeleton-attack",
         "enemyAttacks/skeleton-attack.png",
