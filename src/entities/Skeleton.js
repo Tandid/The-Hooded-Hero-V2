@@ -9,14 +9,16 @@ class Skeleton extends Enemy {
 
     init() {
         super.init();
+
         this.health = 200;
-        this.damage = 30;
         this.setSize(120, 170);
 
-        this.attackDelay = Phaser.Math.Between(1000, 2000);
+        this.damage = 10;
+        this.attackDamage = 30; // Damage from attacks
+        this.attackRange = 200;
+
+        this.attackDelay = Phaser.Math.Between(0, 1000);
         this.timeFromLastAttack = 0;
-        this.attackRange = 25;
-        this.maxPatrolDistance = 500;
     }
 
     update(time, delta) {
@@ -33,7 +35,7 @@ class Skeleton extends Enemy {
         ) {
             this.attackPlayer("skeleton-attack");
             this.timeFromLastAttack = time;
-            this.attackDelay = Phaser.Math.Between(1000, 4000);
+            this.attackDelay = Phaser.Math.Between(1000, 2000);
         }
 
         if (this.isPlayingAnims("skeleton-attack")) {
@@ -52,8 +54,19 @@ class Skeleton extends Enemy {
         this.stop();
         this.play(anim);
 
-        // Deal damage to the player (you can customize this part)
-        this.scene.player.takesHit({ damage: this.damage });
+        // Add an event listener for the animation complete event
+        this.on("animationcomplete", this.onAttackComplete, this);
+    }
+
+    onAttackComplete(animation, frame) {
+        if (animation.key === "skeleton-attack") {
+            // Deal damage to the player (you can customize this part)
+            if (this.isInAttackRange()) {
+                this.scene.player.takesHit({ damage: this.attackDamage });
+            }
+
+            this.off("animationcomplete", this.onAttackComplete, this); // Remove the event listener
+        }
     }
 }
 

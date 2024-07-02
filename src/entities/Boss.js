@@ -25,8 +25,10 @@ class Boss extends Enemy {
             "axe-default"
         );
 
+        this.attackRange = 500;
+
         this.detectionRadius = 1000;
-        this.verticalDistance = 500;
+        this.verticalDistance = 300;
         this.isAttacking = false;
     }
 
@@ -48,7 +50,7 @@ class Boss extends Enemy {
         }
 
         if (
-            this.isInAttackRange(300, 500) &&
+            this.isInAttackRange() &&
             time > this.timeFromLastAttack + this.attackDelay
         ) {
             this.attackPlayer("boss-melee");
@@ -75,19 +77,26 @@ class Boss extends Enemy {
         this.stop();
         this.play(anim, true);
 
-        // Add an event listener for the animation complete event
-        this.on("animationcomplete", this.onAttackComplete, this);
+        // Add an event listener for the specific frame (frame 8 in this example)
+        this.on("animationupdate", this.onAttackFrame, this);
+        this.once("animationcomplete", this.onAttackComplete, this);
+    }
+
+    onAttackFrame(animation, frame) {
+        // Check if the animation is the boss-melee and it's frame 8
+        if (animation.key === "boss-melee" && frame.index === 13) {
+            // Deal damage to the player (you can customize this part)
+            if (this.isInAttackRange()) {
+                this.scene.player.takesHit({ damage: this.damage });
+            }
+        }
     }
 
     onAttackComplete(animation, frame) {
         if (animation.key === "boss-melee") {
-            // Deal damage to the player (you can customize this part)
-            if (this.isInAttackRange(400, 600)) {
-                this.scene.player.takesHit({ damage: this.damage });
-            }
-
             this.isAttacking = false; // Reset attacking flag
-            this.off("animationcomplete", this.onAttackComplete, this); // Remove the event listener
+            this.off("animationupdate", this.onAttackFrame, this); // Remove frame listener
+            this.off("animationcomplete", this.onAttackComplete, this); // Remove complete listener
         }
     }
 }

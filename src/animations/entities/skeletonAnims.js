@@ -16,9 +16,9 @@ export default (anims) => {
             key: "skeleton-attack",
             frames: anims.generateFrameNumbers("skeleton-attack", {
                 start: 0,
-                end: 5,
+                end: 6,
             }),
-            frameRate: 10,
+            frameRate: 6,
             repeat: 0,
         });
 

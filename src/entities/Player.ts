@@ -24,6 +24,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         // Initialize player properties and setup
         this.init();
         this.initEvents();
+
+        this.debugText = this.scene.add
+            .text(0, -300, "", { font: "32px Arial", fill: "#ff0000" })
+            .setScrollFactor(0)
+            .setDepth(30);
+
+        this.graphics = this.scene.add.graphics().setDepth(30);
     }
 
     // Initialization method to set up player properties and components
@@ -58,7 +65,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.body.setOffset(120, 60); // Offset collision body position
         this.body.setGravityY(this.gravity); // Set vertical gravity
         this.setCollideWorldBounds(true); // Enable collision with world bounds
-        this.setOrigin(0, 1); // Set sprite origin for correct positioning
+        this.setOrigin(0.5, 0.5); // Set sprite origin for correct positioning
     }
 
     // Method to initialize sound effects for player actions
@@ -137,6 +144,22 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         // Check if the player is out of bounds and handle movement
         this.checkOutOfBounds();
         this.handleMovement();
+
+        if (this.body) {
+            this.debugText.setText(
+                `x: ${this.x.toFixed(2)}, y: ${this.y.toFixed(2)}\n` +
+                    `velocityX: ${this.body.velocity.x.toFixed(
+                        2
+                    )}, velocityY: ${this.body.velocity.y.toFixed(2)}\n`
+            );
+
+            this.graphics.clear(); // Clear previous drawings
+            this.graphics.lineStyle(2, 0xff0000); // Line style: thickness (2 pixels), color (red)
+            this.graphics.beginPath();
+            this.graphics.moveTo(this.x, this.y);
+            this.graphics.lineTo(500, 100); // Fixed point example
+            this.graphics.strokePath();
+        }
     }
 
     // Method to check if the player is out of bounds and trigger appropriate actions
@@ -289,8 +312,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     // Show damage number above the enemy
     showDamageNumber(damage) {
         const damageText = this.scene.add.text(
-            this.x + 200,
-            this.y - 200,
+            this.x,
+            this.y - 100,
             `${damage}`,
             {
                 fontFamily: "customFont",
@@ -300,13 +323,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         );
 
         damageText.setOrigin(0.5, 0.5);
-        damageText.setDepth(1);
+        damageText.setDepth(3);
 
         this.damageNumbers.add(damageText);
 
         this.scene.tweens.add({
             targets: damageText,
-            y: damageText.y - 50,
+            y: damageText.y,
             alpha: 0,
             duration: 1000,
             ease: "Cubic.Out",
