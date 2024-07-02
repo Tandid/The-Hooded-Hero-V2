@@ -16,10 +16,10 @@ class Skeleton extends Enemy {
         this.damage = 10;
         this.attackDamage = 30; // Damage from attacks
         this.attackRange = 200;
+        this.isAttacking = false;
 
         this.attackDelay = Phaser.Math.Between(0, 1000);
         this.timeFromLastAttack = 0;
-        this.isAttacking = false;
     }
 
     update(time, delta) {
