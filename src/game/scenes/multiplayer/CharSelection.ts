@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import PlayerConfig from "../../../utils/PlayerConfig";
+import OnlinePlayerAnims from "../../../animations/entities/onlinePlayerAnims";
 import BaseScene from "../BaseScene";
 
 class CharSelectionScene extends BaseScene {
@@ -73,11 +73,11 @@ class CharSelectionScene extends BaseScene {
     }
 
     createSprite() {
-        const playerConfig = new PlayerConfig(this);
-        playerConfig.createPlayerAnimations("player-1");
-        playerConfig.createPlayerAnimations("player-2");
-        playerConfig.createPlayerAnimations("player-3");
-        playerConfig.createPlayerAnimations("player-4");
+        const playerAnims = new OnlinePlayerAnims(this);
+        playerAnims.createPlayerAnimations("player-1");
+        playerAnims.createPlayerAnimations("player-2");
+        playerAnims.createPlayerAnimations("player-3");
+        playerAnims.createPlayerAnimations("player-4");
 
         const charSpriteArr = ["player-1", "player-2", "player-3", "player-4"];
         charSpriteArr.forEach((key, i) => {

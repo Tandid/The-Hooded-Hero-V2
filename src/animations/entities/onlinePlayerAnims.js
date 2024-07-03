@@ -1,29 +1,37 @@
-let animationsInitialized = false;
+export default class OnlinePlayerAnims {
+    constructor(scene) {
+        this.scene = scene;
+    }
 
-export default (anims, key) => {
-    if (!animationsInitialized) {
-        anims.create({
+    createPlayerAnimations(key) {
+        const { scene } = this;
+
+        scene.anims.create({
             key: `idle-${key}`,
-            frames: anims.generateFrameNumbers(key, { start: 0, end: 8 }),
+            frames: scene.anims.generateFrameNumbers(key, { start: 0, end: 8 }),
             frameRate: 18,
             repeat: -1,
         });
 
-        anims.create({
+        scene.anims.create({
             key: `run-${key}`,
-            frames: anims.generateFrameNumbers(key, { start: 9, end: 17 }),
+            frames: scene.anims.generateFrameNumbers(key, {
+                start: 9,
+                end: 17,
+            }),
             frameRate: 18,
             repeat: -1,
         });
 
-        anims.create({
+        scene.anims.create({
             key: `jump-${key}`,
-            frames: anims.generateFrameNumbers(key, { start: 18, end: 19 }),
+            frames: scene.anims.generateFrameNumbers(key, {
+                start: 18,
+                end: 19,
+            }),
             frameRate: 1,
             repeat: -1,
         });
-
-        animationsInitialized = true;
     }
-};
+}
 
