@@ -145,21 +145,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.checkOutOfBounds();
         this.handleMovement();
 
-        if (this.body) {
-            this.debugText.setText(
-                `x: ${this.x.toFixed(0)}, y: ${this.y.toFixed(0)}\n` +
-                    `velocityX: ${this.body.velocity.x.toFixed(
-                        0
-                    )}, velocityY: ${this.body.velocity.y.toFixed(0)}\n`
-            );
-
-            this.graphics.clear(); // Clear previous drawings
-            this.graphics.lineStyle(2, 0xff0000); // Line style: thickness (2 pixels), color (red)
-            this.graphics.beginPath();
-            this.graphics.moveTo(this.x, this.y);
-            this.graphics.lineTo(500, 100); // Fixed point example
-            this.graphics.strokePath();
-        }
+        // this.addDebugger()
     }
 
     // Method to check if the player is out of bounds and trigger appropriate actions
@@ -390,6 +376,24 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             hitAnim.stop();
             this.clearTint();
         });
+    }
+
+    addDebugger() {
+        if (this.body) {
+            this.debugText.setText(
+                `x: ${this.x.toFixed(0)}, y: ${this.y.toFixed(0)}\n` +
+                    `velocityX: ${this.body.velocity.x.toFixed(
+                        0
+                    )}, velocityY: ${this.body.velocity.y.toFixed(0)}\n`
+            );
+
+            this.graphics.clear(); // Clear previous drawings
+            this.graphics.lineStyle(2, 0xff0000); // Line style: thickness (2 pixels), color (red)
+            this.graphics.beginPath();
+            this.graphics.moveTo(this.x, this.y);
+            this.graphics.lineTo(500, 100); // Fixed point example
+            this.graphics.strokePath();
+        }
     }
 }
 

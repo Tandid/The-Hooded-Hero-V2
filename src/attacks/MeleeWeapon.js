@@ -12,11 +12,11 @@ class MeleeWeapon extends Phaser.Physics.Arcade.Sprite {
         this.attackSpeed = 450;
         this.weaponAnim = weaponName + "-swing";
         this.wielder = null;
-        this.body.setSize(this.width - 50, this.height);
+        this.body.setSize(200, 120);
 
         this.effectManager = new EffectManager(this.scene);
 
-        this.setOrigin(0, 1);
+        // this.setOrigin(0, 0);
         this.setAlpha(0);
         this.setDepth(10);
 
@@ -41,9 +41,11 @@ class MeleeWeapon extends Phaser.Physics.Arcade.Sprite {
         if (this.wielder.lastDirection === Phaser.Physics.Arcade.FACING_RIGHT) {
             this.setFlipX(false);
             this.body.reset(this.wielder.x + 15, this.wielder.y);
+            this.setOffset(80, 60);
         } else {
             this.setFlipX(true);
             this.body.reset(this.wielder.x - 15, this.wielder.y);
+            this.setOffset(20, 60);
         }
     }
 
