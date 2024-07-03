@@ -39,6 +39,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.speed = 200;
         this.maxPatrolDistance = Phaser.Math.Between(2000, 4000);
         this.currentPatrolDistance = 0;
+        this.timeFromLastTurn = 0;
 
         this.health = 100;
         this.damage = 10;
@@ -57,7 +58,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.body.setGravityY(this.gravity);
         this.setCollideWorldBounds(true);
         this.setImmovable(true);
-        this.setOrigin(0.5, 1);
+        this.setOrigin(0.5, 0.5);
         this.setVelocityX(this.speed);
 
         // Initialize damage number properties
@@ -91,7 +92,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Update method called automatically by Phaser
-    update() {
+    update(time) {
         if (!this.active) {
             return;
         }
@@ -111,7 +112,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
                 if (this.playerDetected) {
                     this.followPlayer();
                 } else {
-                    this.patrol();
+                    this.patrol(time);
                 }
             }
         }
@@ -165,7 +166,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    patrol() {
+    patrol(time) {
         // Skip patrolling if the enemy is not on the floor
         if (!this.body || !this.body.onFloor()) {
             return;
@@ -185,14 +186,16 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         );
 
         // Change direction if no obstacles are ahead or maximum distance is reached
-        if (!hasHit || this.currentPatrolDistance >= this.maxPatrolDistance) {
-            this.turnAround();
-            this.currentPatrolDistance = 0; // Reset patrol distance after turning around
+        if (
+            (!hasHit || this.currentPatrolDistance >= this.maxPatrolDistance) &&
+            this.timeFromLastTurn + 100 < time
+        ) {
+            this.turnAround(time);
         }
 
         // Check if the enemy is stationary
         if (this.body.velocity.x === 0) {
-            this.turnAround();
+            this.turnAround(time);
         }
 
         // Display the raycast for debugging purposes if debug mode is enabled
@@ -283,11 +286,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Perform a turn around action (change direction)
-    turnAround() {
+    turnAround(time) {
         // Reverse its movement direction
         this.setVelocityX((this.speed = -this.speed));
         this.setFlipX(this.body.velocity.x < 0);
         this.currentPatrolDistance = 0;
+        this.timeFromLastTurn = time;
     }
 
     // Start blinking effect when health is below 40%
@@ -375,14 +379,15 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             );
 
             this.debugText.setText(
-                `x: ${this.x.toFixed(2)}, y: ${this.y.toFixed(2)}\n` +
+                `x: ${this.x.toFixed(0)}, y: ${this.y.toFixed(0)}\n` +
                     `velocityX: ${this.body.velocity.x.toFixed(
-                        2
-                    )}, velocityY: ${this.body.velocity.y.toFixed(2)}\n` +
-                    `delta: ${
-                        this.scene.player.x.toFixed(2) - this.x.toFixed(2)
-                    }\n ` +
-                    `raycast: ${hasHit}, currentPatrolDistance: ${this.currentPatrolDistance}`
+                        0
+                    )}, velocityY: ${this.body.velocity.y.toFixed(0)}\n` +
+                    `deltaX: ${
+                        this.scene.player.x.toFixed(0) - this.x.toFixed(0)
+                    }, deltaY: ${
+                        this.scene.player.y.toFixed(0) - this.y.toFixed(0)
+                    }`
             );
 
             this.graphics.clear(); // Clear previous drawings

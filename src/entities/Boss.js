@@ -34,6 +34,10 @@ class Boss extends Enemy {
             return;
         }
 
+        if (!this.body.onFloor()) {
+            return;
+        }
+
         if (this.isAttacking) {
             // Stop moving if attacking
             this.setVelocity(0, 0);
@@ -42,6 +46,7 @@ class Boss extends Enemy {
 
         if (
             this.isInAttackRange() &&
+            Math.abs(this.player.y - this.y) <= 200 &&
             time > this.timeFromLastAttack + this.attackDelay
         ) {
             this.attackPlayer("boss-melee");
@@ -74,10 +79,11 @@ class Boss extends Enemy {
     }
 
     onAttackFrame(animation, frame) {
+        let deltaY = Math.abs(this.player.y - this.y);
         // Check if the animation is the boss-melee and it's frame 8
         if (animation.key === "boss-melee" && frame.index === 13) {
             // Deal damage to the player (you can customize this part)
-            if (this.isInAttackRange()) {
+            if (this.isInAttackRange() && deltaY <= 200) {
                 this.scene.player.takesHit({ damage: this.attackDamage });
             }
         }
