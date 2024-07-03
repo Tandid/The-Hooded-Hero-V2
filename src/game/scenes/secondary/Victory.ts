@@ -4,6 +4,7 @@ import BaseScene from "../BaseScene";
 class VictoryScene extends BaseScene {
     victory: any;
     score: number;
+    scoreText: any;
 
     constructor(config: any) {
         super("VictoryScene", config);
@@ -119,18 +120,21 @@ class VictoryScene extends BaseScene {
             .setOrigin(0.5, 0.5)
             .setColor("#D9B48FFF");
 
-        this.add
+        // Create a text object to display the score
+        this.scoreText = this.add
             .text(
-                this.config.width / 2,
+                this.config.width / 2 + 50,
                 this.config.height / 2 + 50,
-                `${this.score}`,
+                `0`,
                 {
                     fontFamily: "customFont",
                     fontSize: "50px",
                 }
             )
-            .setOrigin(0, 0.5)
+            .setOrigin(0.5, 0.5)
             .setColor("#FFFFFF");
+
+        this.animateScore();
 
         this.createHomeButton();
         this.createRestartButton();
@@ -152,6 +156,24 @@ class VictoryScene extends BaseScene {
             ease: "Bounce.out",
             duration: 500,
             delay: requiredScore * 100, // Delay based on the required score to make them appear one by one
+        });
+    }
+
+    animateScore() {
+        let currentScore = 0;
+        const scoreIncrement = this.score / 100; // Number of increments to reach the final score
+
+        this.tweens.addCounter({
+            from: 0,
+            to: this.score,
+            duration: 500, // Adjust duration as needed
+            onUpdate: (tween) => {
+                currentScore = Math.floor(tween.getValue());
+                this.scoreText.setText(`${currentScore}`);
+            },
+            onComplete: () => {
+                this.scoreText.setText(`${this.score}`); // Ensure final score is displayed
+            },
         });
     }
 
