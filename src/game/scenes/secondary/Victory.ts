@@ -44,6 +44,35 @@ class VictoryScene extends BaseScene {
             .setOrigin(0.5)
             .setScale(0.7);
 
+        // Empty Stars
+
+        this.add
+            .image(
+                this.config.width / 2 - 130,
+                this.config.height / 2 - 75,
+                "star-shadow"
+            )
+            .setOrigin(0.5)
+            .setScale(0.7);
+
+        this.add
+            .image(
+                this.config.width / 2,
+                this.config.height / 2 - 100,
+                "star-shadow"
+            )
+            .setOrigin(0.5)
+            .setScale(0.7);
+
+        this.add
+            .image(
+                this.config.width / 2 + 130,
+                this.config.height / 2 - 75,
+                "star-shadow"
+            )
+            .setOrigin(0.5)
+            .setScale(0.7);
+
         // Add empty stars
         this.addStar(
             this.config.width / 2 - 130,
@@ -109,8 +138,10 @@ class VictoryScene extends BaseScene {
     }
 
     addStar(x: number, y: number, requiredScore: number, scale: number) {
-        const starKey =
-            this.score >= requiredScore ? "star-full" : "star-shadow";
+        const starKey = this.score >= requiredScore && "star-full";
+
+        if (!starKey) return;
+
         const star = this.add
             .image(x, y, starKey)
             .setOrigin(0.5)
