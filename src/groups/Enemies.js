@@ -3,6 +3,7 @@ import Archer from "../entities/Archer";
 import Bat from "../entities/Bat";
 import Bee from "../entities/Bee";
 import Boss from "../entities/Boss";
+import Crossbow from "../entities/Crossbow";
 import Mage from "../entities/Mage";
 import Shield from "../entities/Shield";
 import Skeleton from "../entities/Skeleton";
@@ -22,7 +23,7 @@ const ENEMY_TYPES = {
     Shield,
     Spear,
     Bat,
-    // Crossbow,
+    Crossbow,
 };
 
 class Enemies extends Phaser.GameObjects.Group {

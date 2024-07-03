@@ -6,9 +6,9 @@ export default (anims) => {
             key: "crossbow-attack",
             frames: anims.generateFrameNumbers("crossbow-attack", {
                 start: 0,
-                end: 13,
+                end: 6,
             }),
-            frameRate: 28,
+            frameRate: 14,
             repeat: 0,
         });
 
