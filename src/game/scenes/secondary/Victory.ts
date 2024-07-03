@@ -44,66 +44,25 @@ class VictoryScene extends BaseScene {
             .setOrigin(0.5)
             .setScale(0.7);
 
-        // Empty Stars
-        this.add
-            .image(
-                this.config.width / 2 - 130,
-                this.config.height / 2 - 75,
-                "star-shadow"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7);
-
-        // Full Stars
-
-        this.add
-            .image(
-                this.config.width / 2 - 130,
-                this.config.height / 2 - 75,
-                "star-full"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7);
-
-        if (this.score >= 5) {
-            this.add
-                .image(
-                    this.config.width / 2,
-                    this.config.height / 2 - 100,
-                    "star-full"
-                )
-                .setOrigin(0.5)
-                .setScale(0.7);
-        } else {
-            this.add
-                .image(
-                    this.config.width / 2,
-                    this.config.height / 2 - 100,
-                    "star-shadow"
-                )
-                .setOrigin(0.5)
-                .setScale(0.7);
-        }
-
-        if (this.score >= 10) {
-            this.add
-                .image(
-                    this.config.width / 2 + 130,
-                    this.config.height / 2 - 70,
-                    "star-full"
-                )
-                .setOrigin(0.5)
-                .setScale(0.7);
-        } else {
-            this.add
-                .image(
-                    this.config.width / 2 + 130,
-                    this.config.height / 2 - 75,
-                    "star-shadow"
-                )
-                .setOrigin(0.5)
-                .setScale(0.7);
-        }
+        // Add empty stars
+        this.addStar(
+            this.config.width / 2 - 130,
+            this.config.height / 2 - 75,
+            0,
+            0.7
+        );
+        this.addStar(
+            this.config.width / 2,
+            this.config.height / 2 - 100,
+            5,
+            0.7
+        );
+        this.addStar(
+            this.config.width / 2 + 130,
+            this.config.height / 2 - 75,
+            10,
+            0.7
+        );
 
         this.add
             .image(
@@ -147,6 +106,26 @@ class VictoryScene extends BaseScene {
         this.createHomeButton();
         this.createRestartButton();
         this.createPlayButton();
+    }
+
+    addStar(x: number, y: number, requiredScore: number, scale: number) {
+        const starKey =
+            this.score >= requiredScore ? "star-full" : "star-shadow";
+        const star = this.add
+            .image(x, y, starKey)
+            .setOrigin(0.5)
+            .setScale(0)
+            .setAlpha(0);
+
+        // Animate the star's appearance
+        this.tweens.add({
+            targets: star,
+            scale: scale,
+            alpha: 1,
+            ease: "Bounce.easeOut",
+            duration: 300,
+            delay: requiredScore * 100, // Delay based on the required score to make them appear one by one
+        });
     }
 
     createHomeButton() {
