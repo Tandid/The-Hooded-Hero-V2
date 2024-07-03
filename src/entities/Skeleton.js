@@ -11,11 +11,12 @@ class Skeleton extends Enemy {
         super.init();
 
         this.health = 200;
-        this.setSize(120, 170);
+        this.setSize(80, 150);
 
         this.damage = 10;
         this.attackDamage = 30; // Damage from attacks
         this.attackRange = 200;
+        this.isAttacking = false;
 
         this.attackDelay = Phaser.Math.Between(0, 1000);
         this.timeFromLastAttack = 0;
@@ -25,6 +26,12 @@ class Skeleton extends Enemy {
         super.update(time, delta);
 
         if (!this.active) {
+            return;
+        }
+
+        if (this.isAttacking) {
+            // Stop moving if attacking
+            this.setVelocity(0, 0);
             return;
         }
 
@@ -50,22 +57,28 @@ class Skeleton extends Enemy {
     }
 
     attackPlayer(anim) {
-        // Stop all animations and play attack animation
-        this.stop();
-        this.play(anim);
+        this.isAttacking = true; // Set attacking flag to true
 
-        // Add an event listener for the animation complete event
-        this.on("animationcomplete", this.onAttackComplete, this);
+        this.stop();
+        this.play(anim, true);
+
+        this.on("animationupdate", this.onAttackFrame, this);
+        this.once("animationcomplete", this.onAttackComplete, this);
+    }
+
+    onAttackFrame(animation, frame) {
+        if (animation.key === "skeleton-attack" && frame.index === 6) {
+            if (this.isInAttackRange()) {
+                this.scene.player.takesHit({ damage: this.attackDamage });
+            }
+        }
     }
 
     onAttackComplete(animation, frame) {
         if (animation.key === "skeleton-attack") {
-            // Deal damage to the player (you can customize this part)
-            if (this.isInAttackRange()) {
-                this.scene.player.takesHit({ damage: this.attackDamage });
-            }
-
-            this.off("animationcomplete", this.onAttackComplete, this); // Remove the event listener
+            this.isAttacking = false; // Reset attacking flag
+            this.off("animationupdate", this.onAttackFrame, this); // Remove frame listener
+            this.off("animationcomplete", this.onAttackComplete, this); // Remove complete listener
         }
     }
 }

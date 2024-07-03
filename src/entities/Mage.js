@@ -14,6 +14,7 @@ class Mage extends Enemy {
         this.health = 200;
         this.damage = 20;
         this.maxPatrolDistance = 0;
+        this.isStationary = true;
 
         this.projectiles = new ProjectileManager(this.scene, "fire-1");
         this.timeFromLastAttack = 0;

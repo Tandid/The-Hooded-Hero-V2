@@ -12,15 +12,20 @@ class Archer extends Enemy {
         super.init();
         this.speed = 150;
         this.health = 200;
+        this.setSize(120, 170);
+
         this.damage = 20;
+        this.attackRange = 1000;
+        this.isAttacking = false;
+
+        this.detectionRadius = 1000;
+
+        this.attackDelay = Phaser.Math.Between(2000, 4000);
+        this.timeFromLastAttack = 0;
 
         this.projectiles = new ProjectileManager(this.scene, "arrow");
-        this.timeFromLastAttack = 0;
-        this.attackDelay = this.getAttackDelay();
-        this.lastDirection = null;
 
-        this.setSize(120, 170);
-        // this.setOffset(10, 15);
+        this.lastDirection = null;
     }
 
     update(time, delta) {
@@ -30,18 +35,24 @@ class Archer extends Enemy {
             return;
         }
 
+        if (this.isAttacking) {
+            this.setVelocity(0, 0);
+            return;
+        }
+
         if (this.body.velocity.x > 0) {
             this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
         } else {
             this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
         }
 
-        if (this.timeFromLastAttack + this.attackDelay <= time) {
-            this.play("archer-attack", true);
-            this.projectiles.fireProjectile(this, "arrow");
-
+        if (
+            this.isInAttackRange() &&
+            time > this.timeFromLastAttack + this.attackDelay
+        ) {
+            this.attackPlayer("archer-attack");
             this.timeFromLastAttack = time;
-            this.attackDelay = this.getAttackDelay();
+            this.attackDelay = Phaser.Math.Between(1000, 2000);
         }
 
         if (this.isPlayingAnims("archer-attack")) {
@@ -55,8 +66,14 @@ class Archer extends Enemy {
         }
     }
 
-    getAttackDelay() {
-        return Phaser.Math.Between(1000, 4000);
+    attackPlayer(anim) {
+        this.isAttacking = true; // Set attacking flag to true
+
+        this.stop();
+        this.play(anim, true);
+        this.projectiles.fireProjectile(this, "arrow");
+
+        this.isAttacking = false; // Reset attacking flag
     }
 }
 

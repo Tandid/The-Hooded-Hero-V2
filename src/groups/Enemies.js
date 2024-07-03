@@ -16,6 +16,10 @@ const ENEMY_TYPES = {
     Bee,
     Spider,
     Boss,
+    // Shield,
+    // Spear,
+    // Crossbow,
+    // Bat,
 };
 
 class Enemies extends Phaser.GameObjects.Group {

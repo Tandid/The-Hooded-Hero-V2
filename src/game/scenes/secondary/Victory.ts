@@ -68,6 +68,26 @@ class VictoryScene extends BaseScene {
         if (this.score >= 5) {
             this.add
                 .image(
+                    this.config.width / 2,
+                    this.config.height / 2 - 100,
+                    "star-full"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        } else {
+            this.add
+                .image(
+                    this.config.width / 2,
+                    this.config.height / 2 - 100,
+                    "star-shadow"
+                )
+                .setOrigin(0.5)
+                .setScale(0.7);
+        }
+
+        if (this.score >= 10) {
+            this.add
+                .image(
                     this.config.width / 2 + 130,
                     this.config.height / 2 - 70,
                     "star-full"
@@ -79,26 +99,6 @@ class VictoryScene extends BaseScene {
                 .image(
                     this.config.width / 2 + 130,
                     this.config.height / 2 - 75,
-                    "star-shadow"
-                )
-                .setOrigin(0.5)
-                .setScale(0.7);
-        }
-
-        if (this.score >= 10) {
-            this.add
-                .image(
-                    this.config.width / 2,
-                    this.config.height / 2 - 100,
-                    "star-full"
-                )
-                .setOrigin(0.5)
-                .setScale(0.7);
-        } else {
-            this.add
-                .image(
-                    this.config.width / 2,
-                    this.config.height / 2 - 100,
                     "star-shadow"
                 )
                 .setOrigin(0.5)

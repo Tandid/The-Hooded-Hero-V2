@@ -37,8 +37,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     init() {
         this.gravity = 500;
         this.speed = 200;
-        this.maxPatrolDistance = null;
+        this.maxPatrolDistance = Phaser.Math.Between(2000, 4000);
         this.currentPatrolDistance = 0;
+        this.timeFromLastTurn = 0;
 
         this.health = 100;
         this.damage = 10;
@@ -57,7 +58,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.body.setGravityY(this.gravity);
         this.setCollideWorldBounds(true);
         this.setImmovable(true);
-        this.setOrigin(0.5, 1);
+        this.setOrigin(0.5, 0.5);
         this.setVelocityX(this.speed);
 
         // Initialize damage number properties
@@ -68,6 +69,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.player = this.scene.player;
         this.canFly = false;
+        this.isStationary = false;
 
         // Graphics object to visualize raycast and detection radius for debugging
         this.rayGraphics = this.scene.add.graphics({
@@ -90,13 +92,13 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Update method called automatically by Phaser
-    update() {
+    update(time) {
         if (!this.active) {
             return;
         }
 
         // Check if the enemy has fallen below a certain point and destroy it if so
-        if (this.getBounds().bottom > 1500) {
+        if (this.getBounds().bottom > 2000) {
             this.destroyEnemy();
             return;
         }
@@ -106,10 +108,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.detectPlayer();
 
             // If following the player, move towards the player
-            if (this.playerDetected) {
-                this.followPlayer();
-            } else {
-                this.patrol();
+            if (!this.isStationary) {
+                if (this.playerDetected) {
+                    this.followPlayer();
+                } else {
+                    this.patrol(time);
+                }
             }
         }
 
@@ -162,8 +166,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    // Perform patrolling behavior for the enemy
-    patrol() {
+    patrol(time) {
         // Skip patrolling if the enemy is not on the floor
         if (!this.body || !this.body.onFloor()) {
             return;
@@ -178,22 +181,21 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.platformCollidersLayer,
             {
                 precision: 1,
-                steepnes: 0.2,
+                steepness: 0.2,
             }
         );
 
         // Change direction if no obstacles are ahead or maximum distance is reached
         if (
-            !hasHit ||
-            this.currentPatrolDistance >=
-                (this.maxPatrolDistance || this.platformCollidersLayer.width)
+            (!hasHit || this.currentPatrolDistance >= this.maxPatrolDistance) &&
+            this.timeFromLastTurn + 100 < time
         ) {
-            this.turnAround();
+            this.turnAround(time);
         }
 
         // Check if the enemy is stationary
         if (this.body.velocity.x === 0) {
-            this.turnAround();
+            this.turnAround(time);
         }
 
         // Display the raycast for debugging purposes if debug mode is enabled
@@ -284,11 +286,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Perform a turn around action (change direction)
-    turnAround() {
+    turnAround(time) {
         // Reverse its movement direction
         this.setVelocityX((this.speed = -this.speed));
         this.setFlipX(this.body.velocity.x < 0);
         this.currentPatrolDistance = 0;
+        this.timeFromLastTurn = time;
     }
 
     // Start blinking effect when health is below 40%
@@ -366,13 +369,24 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     addDebugger() {
         // Update custom debug information if the body exists
         if (this.body) {
+            const { hasHit } = this.raycast(
+                this.body,
+                this.platformCollidersLayer,
+                {
+                    precision: 1,
+                    steepnes: 0.2,
+                }
+            );
+
             this.debugText.setText(
-                `x: ${this.x.toFixed(2)}, y: ${this.y.toFixed(2)}\n` +
+                `x: ${this.x.toFixed(0)}, y: ${this.y.toFixed(0)}\n` +
                     `velocityX: ${this.body.velocity.x.toFixed(
-                        2
-                    )}, velocityY: ${this.body.velocity.y.toFixed(2)}\n` +
-                    `delta: ${
-                        this.scene.player.x.toFixed(2) - this.x.toFixed(2)
+                        0
+                    )}, velocityY: ${this.body.velocity.y.toFixed(0)}\n` +
+                    `deltaX: ${
+                        this.scene.player.x.toFixed(0) - this.x.toFixed(0)
+                    }, deltaY: ${
+                        this.scene.player.y.toFixed(0) - this.y.toFixed(0)
                     }`
             );
 

@@ -147,10 +147,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         if (this.body) {
             this.debugText.setText(
-                `x: ${this.x.toFixed(2)}, y: ${this.y.toFixed(2)}\n` +
+                `x: ${this.x.toFixed(0)}, y: ${this.y.toFixed(0)}\n` +
                     `velocityX: ${this.body.velocity.x.toFixed(
-                        2
-                    )}, velocityY: ${this.body.velocity.y.toFixed(2)}\n`
+                        0
+                    )}, velocityY: ${this.body.velocity.y.toFixed(0)}\n`
             );
 
             this.graphics.clear(); // Clear previous drawings
