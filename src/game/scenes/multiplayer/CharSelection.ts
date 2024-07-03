@@ -3,9 +3,9 @@
 import PlayerConfig from "../../../utils/PlayerConfig";
 import BaseScene from "../BaseScene";
 
-class CharSelection extends BaseScene {
+class CharSelectionScene extends BaseScene {
     constructor(config: any) {
-        super("CharSelection", { ...config, canGoBack: true });
+        super("CharSelectionScene", { ...config, canGoBack: true });
     }
 
     create() {
@@ -59,7 +59,7 @@ class CharSelection extends BaseScene {
         closeBtn.on("pointerup", () => {
             this.selectFx.play();
             this.scene.wake("MainMenu");
-            this.scene.stop("CharSelection");
+            this.scene.stop("CharSelectionScene");
         });
 
         closeBtn.on("pointerover", () => {
@@ -119,7 +119,7 @@ class CharSelection extends BaseScene {
             });
 
             player.on("pointerup", () => {
-                this.scene.stop("CharSelection");
+                this.scene.stop("CharSelectionScene");
                 this.scene.start("LobbyScene", {
                     charSpriteKey: key,
                 });
@@ -128,5 +128,5 @@ class CharSelection extends BaseScene {
     }
 }
 
-export default CharSelection;
+export default CharSelectionScene;
 
