@@ -122,9 +122,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.playLowHealthTween();
         }
 
-        if (this.config.debug) {
-            this.addDebugger();
-        }
+        this.addDebugger();
     }
 
     // Detect if the player is within the detection radius

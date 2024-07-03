@@ -12,11 +12,12 @@ class Bat extends Enemy {
     init() {
         super.init();
         this.health = 120;
-        this.setSize(60, 120);
+        this.setScale(0.9);
+        this.setSize(100, 180);
         this.canFly = true;
 
-        this.damage = 5; // Damage from contact
-        this.attackDamage = 20; // Damage from attacks
+        this.damage = 10; // Damage from contact
+        this.attackDamage = 30; // Damage from attacks
         this.attackRange = 200;
 
         this.attackDelay = Phaser.Math.Between(0, 1000);
@@ -28,6 +29,14 @@ class Bat extends Enemy {
 
         if (!this.active) {
             return;
+        }
+
+        if (this.body.velocity.x > 0) {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
+            this.setOffset(100, 0);
+        } else {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
+            this.setOffset(70, 0);
         }
 
         // Perform attack if player is in range and enough time has passed since last attack
