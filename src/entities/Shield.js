@@ -11,11 +11,11 @@ class Shield extends Enemy {
         super.init();
 
         this.health = 200;
-        this.setSize(80, 150);
+        this.setSize(80, 160);
 
         this.damage = 10;
         this.attackDamage = 30; // Damage from attacks
-        this.attackRange = 200;
+        this.attackRange = 180;
         this.isAttacking = false;
 
         this.attackDelay = Phaser.Math.Between(0, 1000);
@@ -33,6 +33,14 @@ class Shield extends Enemy {
             // Stop moving if attacking
             this.setVelocity(0, 0);
             return;
+        }
+
+        if (this.body.velocity.x > 0) {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
+            this.setOffset(90, 0);
+        } else {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
+            this.setOffset(120, 0);
         }
 
         // Perform attack if player is in range and enough time has passed since last attack

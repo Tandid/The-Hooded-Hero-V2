@@ -6,9 +6,9 @@ export default (anims) => {
             key: "shield-run",
             frames: anims.generateFrameNumbers("shield-run", {
                 start: 0,
-                end: 9,
+                end: 6,
             }),
-            frameRate: 20,
+            frameRate: 12,
             repeat: -1,
         });
 
@@ -16,9 +16,9 @@ export default (anims) => {
             key: "shield-attack",
             frames: anims.generateFrameNumbers("shield-attack", {
                 start: 0,
-                end: 12,
+                end: 6,
             }),
-            frameRate: 26,
+            frameRate: 6,
             repeat: 0,
         });
 
