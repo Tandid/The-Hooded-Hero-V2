@@ -68,6 +68,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.player = this.scene.player;
         this.canFly = false;
+        this.isStationary = false;
 
         // Graphics object to visualize raycast and detection radius for debugging
         this.rayGraphics = this.scene.add.graphics({
@@ -106,10 +107,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.detectPlayer();
 
             // If following the player, move towards the player
-            if (this.playerDetected) {
-                this.followPlayer();
-            } else {
-                this.patrol();
+            if (!this.isStationary) {
+                if (this.playerDetected) {
+                    this.followPlayer();
+                } else {
+                    this.patrol();
+                }
             }
         }
 
