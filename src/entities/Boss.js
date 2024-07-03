@@ -11,8 +11,9 @@ class Boss extends Enemy {
         super.init();
 
         this.health = 700;
-        this.setSize(180, 200);
-        this.setOffset(300, 250);
+        this.setSize(180, 220);
+        this.setOrigin(0.5, 0.75);
+
         this.setScale(1.3);
 
         this.damage = 20;
@@ -32,6 +33,14 @@ class Boss extends Enemy {
 
         if (!this.active) {
             return;
+        }
+
+        if (this.body.velocity.x > 0) {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
+            this.setOffset(300, 240);
+        } else {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
+            this.setOffset(350, 240);
         }
 
         if (!this.body.onFloor()) {

@@ -11,6 +11,8 @@ class Slime extends Enemy {
         super.init();
         this.setSize(120, 100);
         this.setOffset(65, 50);
+        this.setScale(1.1);
+
         this.health = 100;
         this.damage = 10;
     }
@@ -19,6 +21,10 @@ class Slime extends Enemy {
         super.update(time, delta);
 
         if (!this.active) {
+            return;
+        }
+
+        if (!this.body.onFloor()) {
             return;
         }
 

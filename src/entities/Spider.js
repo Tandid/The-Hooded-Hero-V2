@@ -13,6 +13,7 @@ class Spider extends Enemy {
         this.health = 150;
         this.setSize(120, 90);
         this.setOffset(30, 20);
+        this.setScale(0.9);
 
         this.damage = 5;
         this.attackDamage = 20; // Damage from attacks
@@ -26,6 +27,10 @@ class Spider extends Enemy {
         super.update(time, delta);
 
         if (!this.active) {
+            return;
+        }
+
+        if (!this.body.onFloor()) {
             return;
         }
 

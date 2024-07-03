@@ -12,7 +12,8 @@ class Bee extends Enemy {
     init() {
         super.init();
         this.health = 120;
-        this.setSize(60, 120);
+        this.setSize(80, 180);
+        this.setScale(0.9);
         this.canFly = true;
 
         this.damage = 5; // Damage from contact

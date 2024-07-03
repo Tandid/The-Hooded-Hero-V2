@@ -10,8 +10,9 @@ class Spear extends Enemy {
     init() {
         super.init();
 
-        this.health = 200;
+        this.health = 300;
         this.setSize(80, 150);
+        this.setScale(1.1);
 
         this.damage = 10;
         this.attackDamage = 30; // Damage from attacks
@@ -29,18 +30,22 @@ class Spear extends Enemy {
             return;
         }
 
-        if (this.isAttacking) {
-            // Stop moving if attacking
-            this.setVelocity(0, 0);
-            return;
-        }
-
         if (this.body.velocity.x > 0) {
             this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
             this.setOffset(90, 0);
         } else {
             this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
             this.setOffset(180, 0);
+        }
+
+        if (!this.body.onFloor()) {
+            return;
+        }
+
+        if (this.isAttacking) {
+            // Stop moving if attacking
+            this.setVelocity(0, 0);
+            return;
         }
 
         // Perform attack if player is in range and enough time has passed since last attack
