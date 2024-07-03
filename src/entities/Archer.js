@@ -35,15 +35,19 @@ class Archer extends Enemy {
             return;
         }
 
-        if (this.isAttacking) {
-            this.setVelocity(0, 0);
-            return;
-        }
-
         if (this.body.velocity.x > 0) {
             this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
         } else {
             this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
+        }
+
+        if (!this.body.onFloor()) {
+            return;
+        }
+
+        if (this.isAttacking) {
+            this.setVelocity(0, 0);
+            return;
         }
 
         if (

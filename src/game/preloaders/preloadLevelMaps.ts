@@ -5,6 +5,6 @@ export function preloadLevelMaps(scene: Phaser.Scene) {
     // scene.load.tilemapTiledJSON("lobby", "levels/waitingScene.json");
 
     // For testing purposes
-    scene.load.tilemapTiledJSON("level_1", "levels/test_level.json");
+    // scene.load.tilemapTiledJSON("level_1", "levels/test_level.json");
 }
 

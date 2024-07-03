@@ -26,8 +26,10 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
 
         // Set body size if the projectile is not an arrow
         if (key !== "arrow") {
-            this.body.setCircle(25);
-            this.setScale(1.5);
+            this.body.setCircle(15);
+            this.setOffset(10, 15);
+            this.setRotation(Phaser.Math.DegToRad(90));
+            this.setScale(3);
         }
 
         // Set other properties such as damage and cooldown based on the projectile type

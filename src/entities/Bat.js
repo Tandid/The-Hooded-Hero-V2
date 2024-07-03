@@ -1,22 +1,23 @@
-import initAnims from "../animations/entities/spiderAnims";
+import Phaser from "phaser";
+import initAnims from "../animations/entities/batAnims";
 import Enemy from "./BaseEnemy";
 
-class Spider extends Enemy {
+class Bat extends Enemy {
     constructor(scene, x, y) {
-        super(scene, x, y, "spider");
+        super(scene, x, y, "bat");
         initAnims(scene.anims);
+        this.position = new Phaser.Math.Vector2(x, y); // Store position as a vector
     }
 
     init() {
         super.init();
-
-        this.health = 150;
-        this.setSize(120, 90);
-        this.setOffset(30, 20);
+        this.health = 120;
         this.setScale(0.9);
+        this.setSize(100, 180);
+        this.canFly = true;
 
-        this.damage = 5;
-        this.attackDamage = 20; // Damage from attacks
+        this.damage = 10; // Damage from contact
+        this.attackDamage = 30; // Damage from attacks
         this.attackRange = 200;
 
         this.attackDelay = Phaser.Math.Between(0, 1000);
@@ -30,8 +31,12 @@ class Spider extends Enemy {
             return;
         }
 
-        if (!this.body.onFloor()) {
-            return;
+        if (this.body.velocity.x > 0) {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
+            this.setOffset(100, 0);
+        } else {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
+            this.setOffset(70, 0);
         }
 
         // Perform attack if player is in range and enough time has passed since last attack
@@ -39,19 +44,19 @@ class Spider extends Enemy {
             this.isInAttackRange() &&
             time > this.timeFromLastAttack + this.attackDelay
         ) {
-            this.attackPlayer("spider-attack");
+            this.attackPlayer("bat-attack");
             this.timeFromLastAttack = time;
-            this.attackDelay = Phaser.Math.Between(1000, 2000);
+            this.attackDelay = Phaser.Math.Between(1000, 3000);
         }
 
-        if (this.isPlayingAnims("spider-attack")) {
+        if (this.isPlayingAnims("bat-attack")) {
             return;
         }
 
         if (this.health > 0) {
-            this.play("spider-run", true);
+            this.play("bat-fly", true);
         } else {
-            this.play("spider-die", true);
+            this.play("bat-die", true);
         }
     }
 
@@ -65,7 +70,7 @@ class Spider extends Enemy {
     }
 
     onAttackComplete(animation, frame) {
-        if (animation.key === "spider-attack") {
+        if (animation.key === "bat-attack") {
             // Deal damage to the player (you can customize this part)
             if (this.isInAttackRange()) {
                 this.scene.player.takesHit({ damage: this.attackDamage });
@@ -76,5 +81,5 @@ class Spider extends Enemy {
     }
 }
 
-export default Spider;
+export default Bat;
 

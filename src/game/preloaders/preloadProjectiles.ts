@@ -1,5 +1,7 @@
 // PROJECTILES
 export function preloadProjectiles(scene: Phaser.Scene) {
+    // CROSSBOW
+    scene.load.image("crossbow", "objects/crossbow.png");
     // ARROW
     scene.load.image("arrow", "weapons/arrow.png");
 
@@ -10,5 +12,8 @@ export function preloadProjectiles(scene: Phaser.Scene) {
         frameWidth: 48,
         frameHeight: 66,
     });
+
+    // CROSSBOW
+    scene.load.image("crossbow", "objects/crossbow.png");
 }
 

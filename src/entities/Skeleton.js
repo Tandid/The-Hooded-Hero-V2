@@ -29,6 +29,10 @@ class Skeleton extends Enemy {
             return;
         }
 
+        if (!this.body.onFloor()) {
+            return;
+        }
+
         if (this.isAttacking) {
             // Stop moving if attacking
             this.setVelocity(0, 0);
