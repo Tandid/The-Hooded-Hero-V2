@@ -147,6 +147,9 @@ class Controls extends BaseScene {
             this.selectFx.play();
             // this.scene.wake("MainMenu");
             this.scene.stop("Controls");
+            if (this.scene.isPaused("PlayScene")) {
+                this.scene.resume("PlayScene");
+            }
             this.game.canvas.classList.remove("custom-cursor");
         });
 
