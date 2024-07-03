@@ -2,9 +2,9 @@
 
 import BaseScene from "../BaseScene";
 
-class Credits extends BaseScene {
+class CreditsScene extends BaseScene {
     constructor(config: any) {
-        super("Credits", { ...config, canGoBack: true });
+        super("CreditsScene", { ...config, canGoBack: true });
     }
 
     create() {
@@ -16,7 +16,7 @@ class Credits extends BaseScene {
         this.createPage();
 
         setTimeout(() => this.cameras.main.fadeOut(500, 0, 0, 0), 4000);
-        setTimeout(() => this.scene.stop("Credits"), 5000);
+        setTimeout(() => this.scene.stop("CreditsScene"), 5000);
         setTimeout(() => this.scene.start("MainMenu"), 5000);
     }
 
@@ -51,5 +51,5 @@ class Credits extends BaseScene {
     }
 }
 
-export default Credits;
+export default CreditsScene;
 

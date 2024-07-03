@@ -20,7 +20,7 @@ import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
 import Contact from "./scenes/secondary/Contact";
 import Controls from "./scenes/secondary/Controls";
-import Credits from "./scenes/secondary/Credits";
+import CreditsScene from "./scenes/secondary/Credits";
 import GameOverScene from "./scenes/secondary/GameOver";
 import Loading from "./scenes/secondary/Loading";
 import PauseScene from "./scenes/secondary/Pause";
@@ -39,7 +39,6 @@ const SHARED_CONFIG = {
     width: WIDTH,
     height: HEIGHT,
     zoomFactor: ZOOM_FACTOR,
-    debug: true,
     leftTopCorner: {
         x: (WIDTH - WIDTH / ZOOM_FACTOR) / 2,
         y: (HEIGHT - HEIGHT / ZOOM_FACTOR) / 2,
@@ -66,7 +65,7 @@ const Scenes = [
     JoinRoomScene,
     Contact,
     Controls,
-    Credits,
+    CreditsScene,
     LevelSelect,
     Loading,
     GameOverScene,
@@ -86,7 +85,7 @@ const config: Phaser.Types.Core.GameConfig = {
     physics: {
         default: "arcade",
         arcade: {
-            debug: true,
+            debug: false,
             overlapBias: 8,
             tileBias: 32,
             fps: 60,
