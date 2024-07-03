@@ -96,7 +96,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
 
         // Check if the enemy has fallen below a certain point and destroy it if so
-        if (this.getBounds().bottom > 1500) {
+        if (this.getBounds().bottom > 2000) {
             this.destroyEnemy();
             return;
         }

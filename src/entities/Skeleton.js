@@ -11,7 +11,7 @@ class Skeleton extends Enemy {
         super.init();
 
         this.health = 200;
-        this.setSize(120, 170);
+        this.setSize(80, 150);
 
         this.damage = 10;
         this.attackDamage = 30; // Damage from attacks
