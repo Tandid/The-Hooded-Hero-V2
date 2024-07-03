@@ -207,10 +207,16 @@ class VictoryScene extends BaseScene {
             this.config.height / 2 + 150,
             "play-btn",
             () => {
-                this.scene.stop("VictoryScene");
-                this.registry.inc("level", 1);
-                this.registry.inc("unlocked-levels", 1);
-                EventEmitter.emit("RESTART_GAME");
+                if (this.registry.get("level") === this.config.lastLevel) {
+                    this.scene.stop("VictoryScene");
+                    this.scene.start("CreditsScene");
+                    this.scene.stop("PlayScene");
+                } else {
+                    this.scene.stop("VictoryScene");
+                    this.registry.inc("level", 1);
+                    this.registry.inc("unlocked-levels", 1);
+                    EventEmitter.emit("RESTART_GAME");
+                }
             }
         );
     }

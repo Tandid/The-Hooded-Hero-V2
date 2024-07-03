@@ -307,10 +307,6 @@ class PlayScene extends BaseScene {
         const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
             eolOverlap.active = false;
 
-            if (this.registry.get("level") === this.config.lastLevel) {
-                this.scene.start("CreditsScene");
-                return;
-            }
             this.scene.stop("PlayScene");
             this.scene.launch("VictoryScene", { score: this.score });
         });
