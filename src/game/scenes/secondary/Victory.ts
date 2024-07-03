@@ -142,19 +142,15 @@ class VictoryScene extends BaseScene {
 
         if (!starKey) return;
 
-        const star = this.add
-            .image(x, y, starKey)
-            .setOrigin(0.5)
-            .setScale(0)
-            .setAlpha(0);
+        const star = this.add.image(x, y, starKey).setOrigin(0.5).setAlpha(0);
 
         // Animate the star's appearance
         this.tweens.add({
             targets: star,
             scale: scale,
             alpha: 1,
-            ease: "Bounce.easeOut",
-            duration: 300,
+            ease: "Bounce.out",
+            duration: 500,
             delay: requiredScore * 100, // Delay based on the required score to make them appear one by one
         });
     }
