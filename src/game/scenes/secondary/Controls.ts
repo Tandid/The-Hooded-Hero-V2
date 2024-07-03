@@ -1,15 +1,39 @@
 import BaseScene from "../BaseScene";
 
 class Controls extends BaseScene {
+    inputBlock: Phaser.GameObjects.Rectangle;
+
     constructor(config: any) {
         super("Controls", { ...config, canGoBack: true });
     }
 
     create() {
         super.create();
-        super.createBackground();
+        this.createInputBlock();
 
         this.createPage();
+    }
+
+    createInputBlock() {
+        this.inputBlock = this.add
+            .rectangle(
+                this.config.width / 2,
+                this.config.height / 2,
+                this.config.width,
+                this.config.height,
+                0x000000,
+                50
+            )
+            .setOrigin(0.5)
+            .setInteractive()
+            .setDepth(-1);
+
+        this.inputBlock.on(
+            "pointerdown",
+            (pointer: any, localX: number, localY: number, event: any) => {
+                event.stopPropagation();
+            }
+        );
     }
 
     createPage() {
@@ -121,7 +145,7 @@ class Controls extends BaseScene {
 
         closeBtn.on("pointerup", () => {
             this.selectFx.play();
-            this.scene.wake("MainMenu");
+            // this.scene.wake("MainMenu");
             this.scene.stop("Controls");
             this.game.canvas.classList.remove("custom-cursor");
         });
