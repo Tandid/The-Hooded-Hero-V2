@@ -35,6 +35,14 @@ class Spear extends Enemy {
             return;
         }
 
+        if (this.body.velocity.x > 0) {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
+            this.setOffset(90, 0);
+        } else {
+            this.lastDirection = Phaser.Physics.Arcade.FACING_LEFT;
+            this.setOffset(180, 0);
+        }
+
         // Perform attack if player is in range and enough time has passed since last attack
         if (
             this.isInAttackRange() &&
@@ -67,7 +75,7 @@ class Spear extends Enemy {
     }
 
     onAttackFrame(animation, frame) {
-        if (animation.key === "spear-attack" && frame.index === 6) {
+        if (animation.key === "spear-attack" && frame.index === 9) {
             if (this.isInAttackRange()) {
                 this.scene.player.takesHit({ damage: this.attackDamage });
             }
