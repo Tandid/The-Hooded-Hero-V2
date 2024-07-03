@@ -139,7 +139,7 @@ export default class MainMenu extends BaseScene {
 
         controlsBtn.on("pointerup", () => {
             this.pageFlipFx.play();
-            this.scene.sleep("MainMenu");
+            // this.scene.sleep("MainMenu");
             this.scene.launch("Controls");
             this.hideTooltip();
             this.game.canvas.classList.remove("custom-cursor");

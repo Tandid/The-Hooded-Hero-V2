@@ -210,6 +210,30 @@ class PlayScene extends BaseScene {
         )
             .setScrollFactor(0)
             .setScale(1.2);
+
+        this.controlsButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 350,
+            "controls-btn",
+            () => {
+                this.scene.pause("PlayScene");
+                this.scene.sendToBack("PlayScene");
+                this.scene.launch("Controls");
+            }
+        )
+            .setScrollFactor(0)
+            .setScale(1);
+
+        this.debugButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 450,
+            "thunderbolt",
+            () => {
+                this.config.debug = !this.config.debug;
+            }
+        )
+            .setScrollFactor(0)
+            .setScale(1.2);
     }
 
     createGameEvents() {
@@ -307,10 +331,6 @@ class PlayScene extends BaseScene {
         const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
             eolOverlap.active = false;
 
-            if (this.registry.get("level") === this.config.lastLevel) {
-                this.scene.start("CreditsScene");
-                return;
-            }
             this.scene.stop("PlayScene");
             this.scene.launch("VictoryScene", { score: this.score });
         });
