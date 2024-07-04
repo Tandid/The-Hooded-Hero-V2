@@ -18,7 +18,7 @@ class WaitingScene extends BaseScene {
 
     init(data) {
         this.socket = data.socket;
-        this.roomInfo = data.roomInfo;
+        this.currentRoom = data.currentRoom;
         this.roomKey = data.roomKey;
         this.charSpriteKey = data.charSpriteKey;
         this.username = data.username;
@@ -55,7 +55,7 @@ class WaitingScene extends BaseScene {
             .text(
                 1200,
                 height / 5,
-                `${this.roomInfo.playerNum} player(s) in lobby`,
+                `${this.currentRoom.numPlayers} player(s) in lobby`,
                 {
                     fontFamily: "customFont",
                     fontSize: "100px",
@@ -70,7 +70,7 @@ class WaitingScene extends BaseScene {
                 1200,
                 height / 5 + 100,
                 `Waiting for ${
-                    this.requiredPlayers - this.roomInfo.playerNum
+                    this.requiredPlayers - this.currentRoom.numPlayers
                 } player(s)`,
                 {
                     fontFamily: "customFont",
@@ -106,18 +106,19 @@ class WaitingScene extends BaseScene {
             .setOrigin(0.5)
             .setDepth(2);
 
-        if (this.roomInfo.playerNum < this.requiredPlayers) {
+        if (this.currentRoom.numPlayers < this.requiredPlayers) {
             this.waitingForPlayers.setFontSize("100px");
         }
 
         // renders start button when there are 4 or more players in lobby;
-        if (this.roomInfo.playerNum >= this.requiredPlayers) {
+        if (this.currentRoom.numPlayers >= this.requiredPlayers) {
             this.startButton.setText("Start");
         }
 
-        Object.keys(this.roomInfo.players).forEach((playerId) => {
+        Object.keys(this.currentRoom.players).forEach((playerId) => {
             if (playerId !== this.socket.id) {
-                const { spriteKey, username } = this.roomInfo.players[playerId];
+                const { spriteKey, username } =
+                    this.currentRoom.players[playerId];
                 this.opponents[playerId] = new OnlinePlayer(
                     this,
                     playerZones.start.x,
@@ -144,15 +145,15 @@ class WaitingScene extends BaseScene {
         });
 
         this.socket.on("newPlayerJoined", ({ playerId, playerInfo }) => {
-            if (!this.roomInfo.players[playerId]) {
-                this.roomInfo.playerNum += 1;
-                this.roomInfo.players[playerId] = playerInfo; // { username, spriteKey }
+            if (!this.currentRoom.players[playerId]) {
+                this.currentRoom.numPlayers += 1;
+                this.currentRoom.players[playerId] = playerInfo; // { username, spriteKey }
                 this.opponents[playerId] = new OnlinePlayer(
                     this,
                     playerZones.start.x,
                     playerZones.start.y,
-                    this.roomInfo.players[playerId].spriteKey,
-                    this.roomInfo.players[playerId].username,
+                    this.currentRoom.players[playerId].spriteKey,
+                    this.currentRoom.players[playerId].username,
                     this.socket,
                     false
                 );
@@ -161,26 +162,26 @@ class WaitingScene extends BaseScene {
 
             console.log({ Opponent: this.opponents[playerId] });
 
-            if (this.roomInfo.playerNum === this.requiredPlayers) {
+            if (this.currentRoom.numPlayers === this.requiredPlayers) {
                 this.waitingForPlayers.setFontSize("0px");
                 this.startButton.setText("Start");
             }
 
             this.waitingForPlayers.setText(
                 `Waiting for ${
-                    this.requiredPlayers - this.roomInfo.playerNum
+                    this.requiredPlayers - this.currentRoom.numPlayers
                 } player(s)`
             );
 
             this.playerCounter.setText(
-                `${this.roomInfo.playerNum} player(s) in lobby`
+                `${this.currentRoom.numPlayers} player(s) in lobby`
             );
 
             this[`opponents${playerId}`] = this.add
                 .text(
                     this.opponents[playerId].x,
                     this.opponents[playerId].y,
-                    this.roomInfo.players[playerId].username,
+                    this.currentRoom.players[playerId].username,
                     {
                         fontSize: "40px",
                         fill: "#fff",
@@ -198,15 +199,15 @@ class WaitingScene extends BaseScene {
             }
 
             // remove opponent from player list
-            if (this.roomInfo.players[playerId]) {
-                delete this.roomInfo.players[playerId];
-                this.roomInfo.playerNum -= 1;
+            if (this.currentRoom.players[playerId]) {
+                delete this.currentRoom.players[playerId];
+                this.currentRoom.numPlayers -= 1;
 
                 // show waiting message if player num becomes lower than required num for starting game
-                if (this.roomInfo.playerNum < this.requiredPlayers) {
+                if (this.currentRoom.numPlayers < this.requiredPlayers) {
                     this.waitingForPlayers.setText(
                         `Waiting for ${
-                            this.requiredPlayers - this.roomInfo.playerNum
+                            this.requiredPlayers - this.currentRoom.numPlayers
                         } player(s)`
                     );
                     this.waitingForPlayers.setFontSize("100px");
@@ -216,7 +217,7 @@ class WaitingScene extends BaseScene {
 
             // update display for player num in the room
             this.playerCounter.setText(
-                `${this.roomInfo.playerNum} player(s) in lobby`
+                `${this.currentRoom.numPlayers} player(s) in lobby`
             );
         });
 
@@ -253,7 +254,7 @@ class WaitingScene extends BaseScene {
             countdown.setText(`${timeLeft}`);
         });
 
-        this.socket.on("loadNextStage", (roomInfo) => {
+        this.socket.on("loadNextStage", (roomData) => {
             this.socket.removeAllListeners();
             this.cameras.main.fadeOut(500, 0, 0, 0);
 
@@ -264,7 +265,7 @@ class WaitingScene extends BaseScene {
                     this.scene.stop("WaitingScene");
                     this.scene.start(nextStageKey, {
                         socket: this.socket,
-                        roomInfo,
+                        roomData,
                         charSpriteKey: this.charSpriteKey,
                         username: this.username,
                     });

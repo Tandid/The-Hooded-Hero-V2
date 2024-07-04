@@ -1,7 +1,7 @@
 class Room {
     constructor() {
         this.players = {};
-        this.playerNum = 0;
+        this.numPlayers = 0;
         this.countdown = 5;
         this.stageTimer = 5;
         this.isOpen = true;
@@ -13,13 +13,13 @@ class Room {
 
     addNewPlayer(socketId, spriteKey, username) {
         this.players[socketId] = { spriteKey, username };
-        this.playerNum += 1;
+        this.numPlayers += 1;
     }
 
     removePlayer(socketId) {
         if (this.players[socketId]) {
             delete this.players[socketId];
-            this.playerNum -= 1;
+            this.numPlayers -= 1;
         }
     }
 
@@ -59,10 +59,6 @@ class Room {
         this.resetTimer();
         this.resetStageTimer();
         this.resetAllStageStatus();
-    }
-
-    checkRoomStatus() {
-        return this.isOpen;
     }
 
     updateLoadedPlayerNum() {

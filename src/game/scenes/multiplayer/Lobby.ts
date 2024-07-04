@@ -311,12 +311,12 @@ export default class LobbyScene extends BaseScene {
         });
 
         // Player will go to stage scene afer receiving room info from server
-        this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
+        this.socket.on("roomReady", ({ currentRoom, roomKey }) => {
             this.socket.removeAllListeners();
             this.scene.stop("LobbyScene");
             this.scene.start("WaitingScene", {
                 socket: this.socket,
-                roomInfo,
+                currentRoom,
                 roomKey,
                 charSpriteKey: this.charSpriteKey,
                 username: this.username,

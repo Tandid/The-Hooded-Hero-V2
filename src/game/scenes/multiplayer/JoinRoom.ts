@@ -194,13 +194,13 @@ class JoinCustomRoomScene extends BaseScene {
         });
 
         // Room code success, go to the next scene
-        this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
+        this.socket.on("roomReady", ({ currentRoom, roomKey }) => {
             this.socket.removeAllListeners();
             //   this.game.music.stopAll();
             this.scene.stop("JoinCustomRoomScene");
             this.scene.start("WaitingScene", {
                 socket: this.socket,
-                roomInfo,
+                currentRoom,
                 roomKey,
                 charSpriteKey: this.charSpriteKey,
                 username: this.username,
