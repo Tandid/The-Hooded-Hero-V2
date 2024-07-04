@@ -1,14 +1,15 @@
 // @ts-nocheck
 
-import Phaser from "phaser";
-import OnlinePlayer from "../entities/OnlinePlayer";
+import OnlinePlayer from "../../../entities/OnlinePlayer";
+
 // import EventEmitter from "../events/Emitter";
 
 import initAnims from "../../../animations";
+import BaseScene from "../BaseScene";
 
-class WaitingScene extends Phaser.Scene {
+class WaitingScene extends BaseScene {
     constructor(config) {
-        super("WaitingScene");
+        super("WaitingScene", config);
         this.config = config;
         this.stageKey = "lobby";
         this.opponents = {};
@@ -20,17 +21,13 @@ class WaitingScene extends Phaser.Scene {
         this.roomInfo = data.roomInfo;
         this.roomKey = data.roomKey;
         this.charSpriteKey = data.charSpriteKey;
-        this.username = this.localStorage.getItem("username");
+        this.username = data.username;
         console.log({ Waiting: data });
     }
 
     create() {
+        super.create();
         const height = this.config.height;
-        this.cursorOverFx = this.sound.add("cursorOver");
-        this.cursorOverFx.volume = 0.4;
-
-        this.selectFx = this.sound.add("select");
-        this.selectFx.volume = 0.4;
 
         const map = this.createMap();
 

@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { Socket } from "socket.io-client";
-import OnlinePlayerAnims from "../../../animations/entities/onlinePlayerAnims";
+import initAnimations from "../../../animations/entities/onlinePlayerAnims";
 import BaseScene from "../BaseScene";
 
 class CharSelectionScene extends BaseScene {
@@ -80,14 +80,11 @@ class CharSelectionScene extends BaseScene {
     }
 
     createSprite() {
-        const playerAnims = new OnlinePlayerAnims(this);
-        playerAnims.createPlayerAnimations("player-1");
-        playerAnims.createPlayerAnimations("player-2");
-        playerAnims.createPlayerAnimations("player-3");
-        playerAnims.createPlayerAnimations("player-4");
-
         const charSpriteArr = ["player-1", "player-2", "player-3", "player-4"];
+
         charSpriteArr.forEach((key, i) => {
+            initAnimations(this.anims, key);
+
             const bg = this.add
                 .image(
                     this.config.width * 0.15 * (i + 1) + 150,
