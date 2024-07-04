@@ -116,6 +116,7 @@ class Room {
 //   room2: {...},
 //   ...
 // };
+
 const gameRooms = {};
 const staticRooms = [];
 const totalRoomNum = 5;

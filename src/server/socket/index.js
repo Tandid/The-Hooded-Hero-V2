@@ -14,6 +14,7 @@ const handleConnection = (socket, io) => {
 
     // Send back current static rooms status
     socket.on("checkStaticRooms", () => {
+        console.log("Backend: Check StaticRooms");
         socket.emit("staticRoomStatus", staticRooms);
     });
 

@@ -8,6 +8,12 @@ class CharSelectionScene extends BaseScene {
         super("CharSelectionScene", { ...config, canGoBack: true });
     }
 
+    init(data) {
+        // console.log(BaseScene.socket);
+        this.socket = data.socket;
+        console.log({ CharSelection: data.socket });
+    }
+
     create() {
         super.create();
         super.createBackground();
@@ -121,6 +127,7 @@ class CharSelectionScene extends BaseScene {
             player.on("pointerup", () => {
                 this.scene.stop("CharSelectionScene");
                 this.scene.start("LobbyScene", {
+                    socket: this.socket,
                     charSpriteKey: key,
                 });
             });

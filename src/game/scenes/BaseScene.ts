@@ -1,8 +1,8 @@
 import { GameObjects, Scene } from "phaser";
-import io, { Socket } from "socket.io-client";
+// import io, { Socket } from "socket.io-client";
 
 export default class BaseScene extends Scene {
-    socket: Socket;
+    // static socket: Socket;
     config: any;
 
     // Sound Effects
@@ -29,7 +29,9 @@ export default class BaseScene extends Scene {
 
     constructor(key: any, config: any) {
         super(key);
-        this.socket = io("http://localhost:3000");
+        // if (!BaseScene.socket) {
+        //     BaseScene.socket = io("http://localhost:3000");
+        // }
         this.config = config;
         this.screenCenter = [this.config.width / 2, this.config.height / 2];
         this.fontSize = 60;

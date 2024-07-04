@@ -15,6 +15,10 @@ const io = socketIo(server, {
 io.on("connection", (socket) => {
     console.log(`Client connected: ${socket.id}`);
 
+    socket.on("clientConnected", () => {
+        console.log(`Client ${socket.id} confirmed connection`);
+    });
+
     socket.on("disconnect", () => {
         console.log(`Client disconnected: ${socket.id}`);
     });
