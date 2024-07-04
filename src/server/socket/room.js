@@ -106,17 +106,6 @@ class Room {
     }
 }
 
-// store players info for each room:
-// gameRooms = {
-//   room1: {
-//     players: {},
-//     playerNum: 0,
-//     ...
-//   },
-//   room2: {...},
-//   ...
-// };
-
 const gameRooms = {};
 const staticRooms = [];
 const totalRoomNum = 5;

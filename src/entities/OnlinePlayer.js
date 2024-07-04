@@ -234,7 +234,7 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
             this.me &&
             (onFloor || this.jumpCount < this.consecutiveJumps)
         ) {
-            this.jumpSound.play();
+            this.jumpFx.play();
             this.setVelocityY(-1000);
             this.jumpCount++;
             if (this.socket) {

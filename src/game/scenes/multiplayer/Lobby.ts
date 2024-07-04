@@ -28,7 +28,7 @@ export default class LobbyScene extends BaseScene {
         this.socket.emit("createStaticRooms");
 
         // Create room buttons
-        this.createRoomBtns();
+        this.createNewRoomBtns();
         this.createJoinCustomRoomBtn();
         this.createNewRoomBtn();
 
@@ -63,7 +63,7 @@ export default class LobbyScene extends BaseScene {
         this.createCloseButton();
     }
 
-    createRoomBtns() {
+    createNewRoomBtns() {
         // render buttons for rooms in the open lobby
         const rooms = [];
         // when static rooms are created, for each room, create a panel
@@ -209,7 +209,7 @@ export default class LobbyScene extends BaseScene {
             .setScale(1, 0.5)
             .setDepth(2);
 
-        const createRoomButton = this.add
+        const createNewRoomButton = this.add
             .text(
                 this.config.width / 3,
                 this.config.height / 2 - 75,
@@ -223,19 +223,19 @@ export default class LobbyScene extends BaseScene {
             .setDepth(2)
             .setOrigin(0.5);
 
-        createRoomButton.setInteractive();
-        createRoomButton.on("pointerover", () => {
+        createNewRoomButton.setInteractive();
+        createNewRoomButton.on("pointerover", () => {
             this.cursorOverFx.play();
-            createRoomButton.setFill("#fff", 2);
+            createNewRoomButton.setFill("#fff", 2);
         });
-        createRoomButton.on("pointerout", () => {
-            createRoomButton.setFill("#000", 0);
+        createNewRoomButton.on("pointerout", () => {
+            createNewRoomButton.setFill("#000", 0);
         });
-        createRoomButton.on("pointerdown", () => {});
-        createRoomButton.on("pointerup", () => {
+        createNewRoomButton.on("pointerdown", () => {});
+        createNewRoomButton.on("pointerup", () => {
             this.selectFx.play();
             this.input.enabled = false;
-            this.socket.emit("createRoom");
+            this.socket.emit("createNewRoom");
         });
     }
 

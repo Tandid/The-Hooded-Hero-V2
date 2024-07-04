@@ -1,13 +1,5 @@
 const { Room, gameRooms, staticRooms } = require("./room");
 
-// Code generator for custom room
-const roomCodeGenerator = () => {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
-    return Array.from({ length: 4 }, () =>
-        chars.charAt(Math.floor(Math.random() * chars.length))
-    ).join("");
-};
-
 // Handle a new connection
 const handleConnection = (socket, io) => {
     console.log(`${socket.id} connected`);
@@ -18,7 +10,7 @@ const handleConnection = (socket, io) => {
     });
 
     // Handle room creation
-    socket.on("createRoom", () => {
+    socket.on("createNewRoom", () => {
         let code;
         do {
             code = roomCodeGenerator();
@@ -80,7 +72,6 @@ const setupGameListeners = (socket, io, roomInfo, roomKey) => {
     socket.on("passStage", (stageKey) =>
         passStage(io, roomInfo, roomKey, stageKey)
     );
-    socket.on("randomize", () => roomInfo.randomizeStages());
 };
 
 // Handle starting the timer
@@ -192,11 +183,18 @@ const stopAllListeners = (socket) => {
         "stageLoaded",
         "updatePlayer",
         "passStage",
-        "randomize",
         "leaveGame",
         "disconnecting",
     ];
     events.forEach((event) => socket.removeAllListeners(event));
+};
+
+// Code generator for custom room
+const roomCodeGenerator = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
+    return Array.from({ length: 4 }, () =>
+        chars.charAt(Math.floor(Math.random() * chars.length))
+    ).join("");
 };
 
 // Define socket functionality on server side

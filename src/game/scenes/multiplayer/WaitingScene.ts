@@ -110,11 +110,6 @@ class WaitingScene extends BaseScene {
             this.waitingForPlayers.setFontSize("100px");
         }
 
-        // sends message to randomize when first player joins lobby
-        if (this.roomInfo.playerNum === 1) {
-            this.socket.emit("randomize");
-        }
-
         // renders start button when there are 4 or more players in lobby;
         if (this.roomInfo.playerNum >= this.requiredPlayers) {
             this.startButton.setText("Start");
