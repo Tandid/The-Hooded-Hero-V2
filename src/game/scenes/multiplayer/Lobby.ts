@@ -1,9 +1,11 @@
 // @ts-nocheck
 
+import { Socket } from "socket.io-client";
 import BaseScene from "../BaseScene";
 
 export default class LobbyScene extends BaseScene {
     charSpriteKey: string;
+    socket: Socket;
 
     constructor(config: any) {
         super("LobbyScene", { ...config, canGoBack: true });
@@ -13,9 +15,6 @@ export default class LobbyScene extends BaseScene {
         this.charSpriteKey = data.charSpriteKey;
         console.log({ LobbyScene: data });
         this.socket = data.socket;
-
-        this.socket.emit("clientConnected");
-        this.socket.emit("checkStaticRooms");
     }
 
     create() {
@@ -32,65 +31,65 @@ export default class LobbyScene extends BaseScene {
         this.createNewRoomBtn();
 
         // Interactions with room buttons
-        // this.createRoomEventListeners();
+        this.createRoomEventListeners();
     }
 
-    // createRoomEventListeners() {
-    //     // Immediately join the custom room that was created
-    //     this.socket.on("roomCreated", (code) => {
-    //         this.socket.emit("joinRoom", {
-    //             roomKey: code,
-    //             spriteKey: this.charSpriteKey,
-    //             username: localStorage.getItem("username"),
-    //         });
-    //     });
+    createRoomEventListeners() {
+        // Immediately join the custom room that was created
+        this.socket.on("roomCreated", (code) => {
+            this.socket.emit("joinRoom", {
+                roomKey: code,
+                spriteKey: this.charSpriteKey,
+                username: localStorage.getItem("username"),
+            });
+        });
 
-    //     // Feedback if user clicks on closed room
-    //     this.socket.on("roomClosed", () => {
-    //         this.input.enabled = true;
-    //         const roomClosedText = this.add.text(
-    //             350,
-    //             40,
-    //             "This room is closed",
-    //             {
-    //                 fontFamily: "customFont",
-    //                 fontSize: "40px",
-    //                 fill: "#fff",
-    //             }
-    //         );
-    //         const roomClosedInterval = setInterval(() => {
-    //             roomClosedText.destroy();
-    //             clearInterval(roomClosedInterval);
-    //         }, 3000);
-    //     });
+        // Feedback if user clicks on closed room
+        this.socket.on("roomClosed", () => {
+            this.input.enabled = true;
+            const roomClosedText = this.add.text(
+                350,
+                40,
+                "This room is closed",
+                {
+                    fontFamily: "customFont",
+                    fontSize: "40px",
+                    fill: "#fff",
+                }
+            );
+            const roomClosedInterval = setInterval(() => {
+                roomClosedText.destroy();
+                clearInterval(roomClosedInterval);
+            }, 3000);
+        });
 
-    //     // Feedback if user clicks on full room
-    //     this.socket.on("roomFull", () => {
-    //         this.input.enabled = true;
-    //         const roomFullText = this.add.text(350, 40, "This room is full", {
-    //             fontFamily: "customFont",
-    //             fontSize: "40px",
-    //             fill: "#fff",
-    //         });
-    //         const roomFullInterval = setInterval(() => {
-    //             roomFullText.destroy();
-    //             clearInterval(roomFullInterval);
-    //         }, 3000);
-    //     });
+        // Feedback if user clicks on full room
+        this.socket.on("roomFull", () => {
+            this.input.enabled = true;
+            const roomFullText = this.add.text(350, 40, "This room is full", {
+                fontFamily: "customFont",
+                fontSize: "40px",
+                fill: "#fff",
+            });
+            const roomFullInterval = setInterval(() => {
+                roomFullText.destroy();
+                clearInterval(roomFullInterval);
+            }, 3000);
+        });
 
-    //     // Player will go to stage scene afer receiving room info from server
-    //     this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
-    //         this.socket.removeAllListeners();
-    //         this.scene.stop("LobbyScene");
-    //         this.scene.start("WaitingScene", {
-    //             socket: this.socket,
-    //             roomInfo,
-    //             roomKey,
-    //             charSpriteKey: this.charSpriteKey,
-    //             username: localStorage.getItem("username"),
-    //         });
-    //     });
-    // }
+        // Player will go to stage scene afer receiving room info from server
+        this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
+            this.socket.removeAllListeners();
+            this.scene.stop("LobbyScene");
+            this.scene.start("WaitingScene", {
+                socket: this.socket,
+                roomInfo,
+                roomKey,
+                charSpriteKey: this.charSpriteKey,
+                username: localStorage.getItem("username"),
+            });
+        });
+    }
 
     createPage() {
         this.add
@@ -123,7 +122,6 @@ export default class LobbyScene extends BaseScene {
         // render buttons for rooms in the open lobby
         const rooms = [];
         this.socket.on("staticRoomStatus", (staticRooms) => {
-            console.log("Hello");
             for (let i = 0; i < staticRooms.length; i++) {
                 this.add
                     .image(
@@ -192,18 +190,18 @@ export default class LobbyScene extends BaseScene {
             }
 
             // whenever a room closes/opens, the color of the button will update
-            // this.socket.on("updatedRooms", (staticRooms) => {
-            //     for (let i = 0; i < staticRooms.length; ++i) {
-            //         // render open lobbies with green font, and red if closed
-            //         if (rooms[i]) {
-            //             if (staticRooms[i].isOpen) {
-            //                 rooms[i].setFill("#15855b");
-            //             } else {
-            //                 rooms[i].setFill("#FF0000");
-            //             }
-            //         }
-            //     }
-            // });
+            this.socket.on("updatedRooms", (staticRooms) => {
+                for (let i = 0; i < staticRooms.length; ++i) {
+                    // render open lobbies with green font, and red if closed
+                    if (rooms[i]) {
+                        if (staticRooms[i].isOpen) {
+                            rooms[i].setFill("#15855b");
+                        } else {
+                            rooms[i].setFill("#FF0000");
+                        }
+                    }
+                }
+            });
         });
     }
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
+const setupSockets = require("./socket/index");
 
 const PORT = process.env.PORT || 3000;
 
@@ -12,17 +13,7 @@ const io = socketIo(server, {
     },
 });
 
-io.on("connection", (socket) => {
-    console.log(`Client connected: ${socket.id}`);
-
-    socket.on("clientConnected", () => {
-        console.log(`Client ${socket.id} confirmed connection`);
-    });
-
-    socket.on("disconnect", () => {
-        console.log(`Client disconnected: ${socket.id}`);
-    });
-});
+setupSockets(io);
 
 server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

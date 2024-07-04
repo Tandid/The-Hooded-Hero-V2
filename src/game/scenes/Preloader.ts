@@ -34,6 +34,8 @@ export default class Preloader extends Scene {
     init() {
         this.createPage();
         generateRandomHint(this, this.config.width, this.config.height);
+
+        localStorage.setItem("username", "Tandid"); // !! Delete later, this is for testing purposes
     }
 
     // Preload all assets here

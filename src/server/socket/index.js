@@ -1,4 +1,4 @@
-import { Room, gameRooms, staticRooms } from "./room";
+const { Room, gameRooms, staticRooms } = require("./room");
 
 // Code generator for custom room
 const roomCodeGenerator = () => {
@@ -201,7 +201,7 @@ const stopAllListeners = (socket) => {
 };
 
 // Define socket functionality on server side
-export default (io) => {
+module.exports = (io) => {
     io.on("connection", (socket) => handleConnection(socket, io));
 };
 

@@ -1,17 +1,18 @@
 // @ts-nocheck
 
+import { Socket } from "socket.io-client";
 import OnlinePlayerAnims from "../../../animations/entities/onlinePlayerAnims";
 import BaseScene from "../BaseScene";
 
 class CharSelectionScene extends BaseScene {
+    socket: Socket;
     constructor(config: any) {
         super("CharSelectionScene", { ...config, canGoBack: true });
     }
 
     init(data) {
-        // console.log(BaseScene.socket);
+        // console.log(BaseScene.socket); //!! This is in case I want to test static socket, but this might be bad later down the line
         this.socket = data.socket;
-        console.log({ CharSelection: data.socket });
     }
 
     create() {

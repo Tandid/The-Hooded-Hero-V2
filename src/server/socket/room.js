@@ -125,5 +125,5 @@ for (let i = 1; i <= totalRoomNum; ++i) {
     staticRooms.push(gameRooms[`room${i}`]);
 }
 
-export default { Room, gameRooms, staticRooms };
+module.exports = { Room, gameRooms, staticRooms };
 
