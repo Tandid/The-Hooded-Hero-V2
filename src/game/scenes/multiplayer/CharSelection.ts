@@ -13,6 +13,7 @@ class CharSelectionScene extends BaseScene {
     init(data) {
         // console.log(BaseScene.socket); //!! This is in case I want to test static socket, but this might be bad later down the line
         this.socket = data.socket;
+        initAnimations(this.anims);
     }
 
     create() {
@@ -83,8 +84,6 @@ class CharSelectionScene extends BaseScene {
         const charSpriteArr = ["player-1", "player-2", "player-3", "player-4"];
 
         charSpriteArr.forEach((key, i) => {
-            initAnimations(this.anims, key);
-
             const bg = this.add
                 .image(
                     this.config.width * 0.15 * (i + 1) + 150,

@@ -78,7 +78,7 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
 
     // Method to load and set up animations for the player
     initAnimations() {
-        initAnimations(this.scene.anims, this.spriteKey);
+        initAnimations(this.scene.anims);
     }
 
     // Method to set up repeating event to play footstep sound effects while the player is running
