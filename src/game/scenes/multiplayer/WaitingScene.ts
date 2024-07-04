@@ -242,11 +242,11 @@ class WaitingScene extends BaseScene {
         });
         this.startButton.on("pointerup", () => {
             this.input.enabled = false;
-            this.socket.emit("startTimer");
+            this.socket.emit("startCountdown");
             this.startButton.destroy();
         });
 
-        this.socket.on("timerUpdated", (timeLeft) => {
+        this.socket.on("updateCountdown", (timeLeft) => {
             if (this.startButton) {
                 this.startButton.destroy();
             }
@@ -254,7 +254,7 @@ class WaitingScene extends BaseScene {
             countdown.setText(`${timeLeft}`);
         });
 
-        this.socket.on("loadNextStage", (roomData) => {
+        this.socket.on("loadLevel", (roomData) => {
             this.socket.removeAllListeners();
             this.cameras.main.fadeOut(500, 0, 0, 0);
 

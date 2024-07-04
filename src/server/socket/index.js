@@ -62,7 +62,7 @@ const handleJoinRoom = (socket, io, { roomKey, spriteKey, username }) => {
 
 // Set up event listeners for game actions
 const setupGameListeners = (socket, io, currentRoom, roomKey) => {
-    socket.on("startTimer", () => startTimer(io, currentRoom, roomKey));
+    socket.on("startCountdown", () => startCountdown(io, currentRoom, roomKey));
     socket.on("stageLoaded", () => stageLoaded(io, currentRoom, roomKey));
     socket.on("updatePlayer", (moveState) => {
         socket
@@ -75,16 +75,16 @@ const setupGameListeners = (socket, io, currentRoom, roomKey) => {
 };
 
 // Handle starting the timer
-const startTimer = (io, currentRoom, roomKey) => {
+const startCountdown = (io, currentRoom, roomKey) => {
     const countdownInterval = setInterval(() => {
         if (currentRoom.countdown > 0) {
-            io.in(roomKey).emit("timerUpdated", currentRoom.countdown);
-            currentRoom.runTimer();
+            io.in(roomKey).emit("updateCountdown", currentRoom.countdown);
+            currentRoom.runCountdownTimer();
         } else {
             clearInterval(countdownInterval);
             currentRoom.closeRoom();
-            io.emit("updatedRooms", staticRooms);
-            io.in(roomKey).emit("loadNextStage", currentRoom);
+            io.emit("updateRooms", staticRooms);
+            io.in(roomKey).emit("loadLevel", currentRoom);
         }
     }, 1000);
 };
@@ -139,7 +139,7 @@ const handleLeaveGame = (socket, io) => {
     if (currentRoom.numPlayers === 0) {
         delete gameRooms[roomKey];
         currentRoom.openRoom();
-        io.emit("updatedRooms", staticRooms);
+        io.emit("updateRooms", staticRooms);
     } else {
         socket.to(roomKey).emit("playerLeft", { playerId: socket.id });
         socket.emit("gameLeft");
@@ -159,7 +159,7 @@ const handleDisconnecting = (socket, io) => {
     if (currentRoom.numPlayers === 0) {
         delete gameRooms[roomKey];
         currentRoom.openRoom();
-        io.emit("updatedRooms", staticRooms);
+        io.emit("updateRooms", staticRooms);
     } else {
         if (currentRoom.playersLoaded > 0) currentRoom.playersLoaded -= 1;
         currentRoom.countStageLimits();
@@ -186,7 +186,7 @@ const handleDisconnecting = (socket, io) => {
 // Stop all listeners for a socket
 const stopAllListeners = (socket) => {
     const events = [
-        "startTimer",
+        "startCountdown",
         "stageLoaded",
         "updatePlayer",
         "passStage",

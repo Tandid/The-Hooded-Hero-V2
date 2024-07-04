@@ -136,7 +136,7 @@ export default class LobbyScene extends BaseScene {
             }
 
             // whenever a room closes/opens, the color of the button will update
-            this.socket.on("updatedRooms", (staticRooms) => {
+            this.socket.on("updateRooms", (staticRooms) => {
                 for (let i = 0; i < staticRooms.length; ++i) {
                     // render open lobbies with green font, and red if closed
                     if (rooms[i]) {

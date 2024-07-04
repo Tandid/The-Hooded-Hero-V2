@@ -1,12 +1,15 @@
 class Room {
     constructor() {
+        this.isOpen = true;
+
         this.players = {};
         this.numPlayers = 0;
+        this.playersLoaded = 0;
+
         this.countdown = 5;
         this.stageTimer = 5;
-        this.isOpen = true;
+
         this.stage = "stage1";
-        this.playersLoaded = 0;
         this.stageWinners = [];
         this.winnerNum = 0;
     }
@@ -32,14 +35,21 @@ class Room {
         });
     }
 
-    runTimer() {
+    runCountdownTimer() {
         if (this.countdown > 0) {
             this.countdown -= 1;
         }
     }
 
-    resetTimer() {
+    openRoom() {
+        this.isOpen = true;
         this.countdown = 5;
+        this.resetStageTimer();
+        this.resetAllStageStatus();
+    }
+
+    closeRoom() {
+        this.isOpen = false;
     }
 
     runStageTimer() {
@@ -48,17 +58,6 @@ class Room {
 
     resetStageTimer() {
         this.stageTimer = 5;
-    }
-
-    closeRoom() {
-        this.isOpen = false;
-    }
-
-    openRoom() {
-        this.isOpen = true;
-        this.resetTimer();
-        this.resetStageTimer();
-        this.resetAllStageStatus();
     }
 
     updateLoadedPlayerNum() {
@@ -103,9 +102,12 @@ class Room {
 }
 
 const gameRooms = {};
+
 const staticRooms = [];
-const totalRoomNum = 5;
-for (let i = 1; i <= totalRoomNum; ++i) {
+
+const numStaticRooms = 5;
+
+for (let i = 1; i <= numStaticRooms; ++i) {
     gameRooms[`room${i}`] = new Room();
     staticRooms.push(gameRooms[`room${i}`]);
 }
