@@ -12,12 +12,13 @@ export default class LobbyScene extends BaseScene {
     }
 
     init(data: any) {
-        this.charSpriteKey = data.charSpriteKey;
-        console.log({ LobbyScene: data });
         this.socket = data.socket;
+        this.charSpriteKey = data.charSpriteKey;
+        this.username = localStorage.getItem("username");
+        console.log({ LobbyScene: data });
 
         // IMPORTANT: sends message to start room status communication chain
-        this.socket.emit("checkStaticRooms");
+        this.socket.emit("createStaticRooms");
     }
 
     create() {
@@ -30,7 +31,7 @@ export default class LobbyScene extends BaseScene {
 
         // Create room buttons
         this.createRoomBtns();
-        this.createJoinRoomBtn();
+        this.createJoinCustomRoomBtn();
         this.createNewRoomBtn();
 
         // Interactions with room buttons
@@ -43,7 +44,7 @@ export default class LobbyScene extends BaseScene {
             this.socket.emit("joinRoom", {
                 roomKey: code,
                 spriteKey: this.charSpriteKey,
-                username: localStorage.getItem("username"),
+                username: this.username,
             });
         });
 
@@ -89,7 +90,7 @@ export default class LobbyScene extends BaseScene {
                 roomInfo,
                 roomKey,
                 charSpriteKey: this.charSpriteKey,
-                username: localStorage.getItem("username"),
+                username: this.username,
             });
         });
     }
@@ -124,7 +125,8 @@ export default class LobbyScene extends BaseScene {
     createRoomBtns() {
         // render buttons for rooms in the open lobby
         const rooms = [];
-        this.socket.on("staticRoomStatus", (staticRooms) => {
+        // when static rooms are created, for each room, create a panel
+        this.socket.on("staticRoomsCreated", (staticRooms) => {
             for (let i = 0; i < staticRooms.length; i++) {
                 this.add
                     .image(
@@ -141,7 +143,7 @@ export default class LobbyScene extends BaseScene {
                         .text(
                             this.config.width * 0.7,
                             150 + 75 * (i + 1),
-                            `Room ${i + 1}`,
+                            `Server Room ${i + 1}`,
                             {
                                 fontFamily: "customFont",
                                 fontSize: "40px",
@@ -187,7 +189,7 @@ export default class LobbyScene extends BaseScene {
                     this.socket.emit("joinRoom", {
                         roomKey: `room${i + 1}`,
                         spriteKey: this.charSpriteKey,
-                        username: localStorage.getItem("username"),
+                        username: this.username,
                     });
                 });
             }
@@ -208,7 +210,7 @@ export default class LobbyScene extends BaseScene {
         });
     }
 
-    createJoinRoomBtn() {
+    createJoinCustomRoomBtn() {
         this.add
             .image(
                 this.config.width / 3,
@@ -247,10 +249,10 @@ export default class LobbyScene extends BaseScene {
             this.input.enabled = false;
             this.socket.removeAllListeners();
             this.scene.stop("LobbyScene");
-            this.scene.start("JoinRoomScene", {
+            this.scene.start("JoinCustomRoomScene", {
                 socket: this.socket,
                 charSpriteKey: this.charSpriteKey,
-                username: localStorage.getItem("username"),
+                username: this.username,
             });
         });
     }

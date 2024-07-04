@@ -10,12 +10,11 @@ const roomCodeGenerator = () => {
 
 // Handle a new connection
 const handleConnection = (socket, io) => {
-    console.log("Socket is connected");
+    console.log(`${socket.id} connected`);
 
     // Send back current static rooms status
-    socket.on("checkStaticRooms", () => {
-        console.log("Backend: Check StaticRooms");
-        socket.emit("staticRoomStatus", staticRooms);
+    socket.on("createStaticRooms", () => {
+        socket.emit("staticRoomsCreated", staticRooms);
     });
 
     // Handle room creation
@@ -43,7 +42,7 @@ const handleConnection = (socket, io) => {
 const handleJoinRoom = (socket, io, { roomKey, spriteKey, username }) => {
     const roomInfo = gameRooms[roomKey];
 
-    if (roomInfo && roomInfo.checkRoomStatus() && roomInfo.playerNum < 16) {
+    if (roomInfo && roomInfo.checkRoomStatus() && roomInfo.playerNum <= 4) {
         socket.join(roomKey);
         roomInfo.addNewPlayer(socket.id, spriteKey, username);
 
@@ -61,7 +60,7 @@ const handleJoinRoom = (socket, io, { roomKey, spriteKey, username }) => {
     } else {
         socket.emit(
             roomInfo
-                ? roomInfo.playerNum >= 16
+                ? roomInfo.playerNum >= 4
                     ? "roomFull"
                     : "roomClosed"
                 : "roomDoesNotExist"

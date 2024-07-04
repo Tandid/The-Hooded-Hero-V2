@@ -1,30 +1,102 @@
 // @ts-nocheck
 
-import { Socket } from "socket.io-client";
 import RexUIConfig from "../../../utils/RexUIConfig";
 import BaseScene from "../BaseScene";
 
-class JoinRoomScene extends BaseScene {
-    socket: Socket;
-    charSpriteKey: string;
-
-    constructor(config: any) {
-        super("JoinRoomScene", { ...config, canGoBack: true });
+class JoinCustomRoomScene extends BaseScene {
+    constructor(config) {
+        super("JoinCustomRoomScene", { ...config, canGoBack: true });
+        this.config = config;
     }
 
-    init(data: any) {
+    init(data) {
+        this.socket = data.socket;
         this.charSpriteKey = data.charSpriteKey;
+        this.username = data.username;
     }
 
     create() {
         super.create();
-        super.createBackground();
 
-        this.createPage();
-        this.handleSocketEvents();
-    }
+        this.cursorOver = this.sound.add("cursorOver");
+        this.cursorOver.volume = 0.4;
 
-    handleSocketEvents() {
+        this.select = this.sound.add("select");
+        this.select.volume = 0.4;
+
+        this.flute = this.sound.add("flute");
+        this.flute.volume = 0.4;
+
+        this.createCloseButton();
+
+        this.add
+            .image(this.config.width / 2, this.config.height / 2, "panel-2")
+            .setOrigin(0.5)
+            .setScale(0.7);
+
+        this.add
+            .text(
+                this.config.width / 2,
+                this.scale.height / 2 - 150,
+                "Enter Room Code",
+                {
+                    fontFamily: "customFont",
+                    fontSize: "72px",
+                    color: "#000",
+                }
+            )
+            .setOrigin(0.5);
+
+        const rexUIConfig = new RexUIConfig(this);
+        rexUIConfig.createTextBox(
+            this.config.width / 2,
+            this.config.height / 2 - 25,
+            {
+                fontFamily: "customFont",
+                textColor: 0xffffff,
+                fontSize: "40px",
+                fixedWidth: 300,
+                fixedHeight: 80,
+            }
+        );
+
+        const joinButton = this.add
+            .text(
+                this.config.width / 2,
+                this.config.height / 2 + 100,
+                "Join Room",
+                {
+                    fontFamily: "customFont",
+                    fontSize: "60px",
+                    fill: "#000",
+                }
+            )
+            .setOrigin(0.5);
+
+        joinButton.setInteractive();
+        joinButton.on("pointerover", () => {
+            joinButton.setFill("#fff");
+            this.cursorOver.play();
+        });
+        joinButton.on("pointerout", () => {
+            joinButton.setFill("#000");
+            this.cursorOver.stop();
+        });
+        joinButton.on("pointerdown", () => {
+            this.select.play();
+        });
+        joinButton.on("pointerup", () => {
+            this.input.enabled = false;
+            const textbox = rexUIConfig.scene.input.displayList.list.find(
+                (e) => e.type === "rexBBCodeText"
+            );
+            this.socket.emit("joinRoom", {
+                roomKey: textbox._text.toUpperCase(),
+                spriteKey: this.charSpriteKey,
+                username: this.username,
+            });
+        });
+
         this.socket.on("roomDoesNotExist", () => {
             this.input.enabled = true;
             const roomDNE = this.add
@@ -86,88 +158,13 @@ class JoinRoomScene extends BaseScene {
         this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
             this.socket.removeAllListeners();
             //   this.game.music.stopAll();
-            this.scene.stop("JoinRoomScene");
+            this.scene.stop("JoinCustomRoomScene");
             this.scene.start("WaitingScene", {
                 socket: this.socket,
                 roomInfo,
                 roomKey,
                 charSpriteKey: this.charSpriteKey,
-                username: localStorage.getItem("username"),
-            });
-        });
-    }
-
-    createPage() {
-        this.add
-            .image(this.config.width / 2, this.config.height / 2, "panel-2")
-            .setOrigin(0.5)
-            .setScale(0.7);
-
-        this.add
-            .text(
-                this.config.width / 2,
-                this.scale.height / 2 - 150,
-                "Enter Room Code",
-                {
-                    fontFamily: "customFont",
-                    fontSize: "72px",
-                    color: "#000",
-                }
-            )
-            .setOrigin(0.5);
-
-        const rexUIConfig = new RexUIConfig(this);
-        rexUIConfig.createTextBox(
-            this.config.width / 2,
-            this.config.height / 2 - 25,
-            {
-                fontFamily: "customFont",
-                textColor: 0xffffff,
-                fontSize: "40px",
-                fixedWidth: 300,
-                fixedHeight: 80,
-            }
-        );
-
-        this.createJoinButton();
-        this.createCloseButton();
-    }
-
-    createJoinButton() {
-        const joinButton = this.add
-            .text(
-                this.config.width / 2,
-                this.config.height / 2 + 100,
-                "Join Room",
-                {
-                    fontFamily: "customFont",
-                    fontSize: "60px",
-                    fill: "#000",
-                }
-            )
-            .setOrigin(0.5);
-
-        joinButton.setInteractive();
-        joinButton.on("pointerover", () => {
-            joinButton.setFill("#fff");
-            this.cursorOverFx.play();
-        });
-        joinButton.on("pointerout", () => {
-            joinButton.setFill("#000");
-            this.cursorOverFx.stop();
-        });
-        joinButton.on("pointerdown", () => {
-            this.selectFx.play();
-        });
-        joinButton.on("pointerup", () => {
-            this.input.enabled = false;
-            const textbox = rexUIConfig.scene.input.displayList.list.find(
-                (e) => e.type === "rexBBCodeText"
-            );
-            this.socket.emit("joinRoom", {
-                roomKey: textbox._text.toUpperCase(),
-                spriteKey: this.charSpriteKey,
-                username: localStorage.getItem("username"),
+                username: this.username,
             });
         });
     }
@@ -185,13 +182,13 @@ class JoinRoomScene extends BaseScene {
             .setDepth(2);
 
         closeBtn.on("pointerup", () => {
-            this.selectFx.play();
-            this.scene.wake("MainMenu");
-            this.scene.stop("JoinRoomScene");
+            this.select.play();
+            this.scene.wake("MenuScene");
+            this.scene.stop("JoinCustomRoomScene");
         });
 
         closeBtn.on("pointerover", () => {
-            this.cursorOverFx.play();
+            this.cursorOver.play();
             closeBtn.setTint(0xff6666);
         });
 
@@ -201,5 +198,5 @@ class JoinRoomScene extends BaseScene {
     }
 }
 
-export default JoinRoomScene;
+export default JoinCustomRoomScene;
 

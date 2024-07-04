@@ -16,7 +16,7 @@ import PlayScene from "./scenes/Play";
 import Preloader from "./scenes/Preloader";
 import SignupScene from "./scenes/Signup";
 import CharSelectionScene from "./scenes/multiplayer/CharSelection";
-import JoinRoomScene from "./scenes/multiplayer/JoinRoom";
+import JoinCustomRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
 import Contact from "./scenes/secondary/Contact";
 import Controls from "./scenes/secondary/Controls";
@@ -62,7 +62,7 @@ const Scenes = [
     CharSelectionScene,
     LobbyScene,
     SettingsScene,
-    JoinRoomScene,
+    JoinCustomRoomScene,
     Contact,
     Controls,
     CreditsScene,
