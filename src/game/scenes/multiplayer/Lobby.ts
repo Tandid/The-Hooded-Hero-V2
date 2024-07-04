@@ -16,9 +16,6 @@ export default class LobbyScene extends BaseScene {
         this.charSpriteKey = data.charSpriteKey;
         this.username = localStorage.getItem("username");
         console.log({ LobbyScene: data });
-
-        // IMPORTANT: sends message to start room status communication chain
-        this.socket.emit("createStaticRooms");
     }
 
     create() {
@@ -27,7 +24,8 @@ export default class LobbyScene extends BaseScene {
 
         this.createPage();
 
-        // Send message to start room status communication chain
+        // IMPORTANT: sends message to start room status communication chain
+        this.socket.emit("createStaticRooms");
 
         // Create room buttons
         this.createRoomBtns();
@@ -36,63 +34,6 @@ export default class LobbyScene extends BaseScene {
 
         // Interactions with room buttons
         this.createRoomEventListeners();
-    }
-
-    createRoomEventListeners() {
-        // Immediately join the custom room that was created
-        this.socket.on("roomCreated", (code) => {
-            this.socket.emit("joinRoom", {
-                roomKey: code,
-                spriteKey: this.charSpriteKey,
-                username: this.username,
-            });
-        });
-
-        // Feedback if user clicks on closed room
-        this.socket.on("roomClosed", () => {
-            this.input.enabled = true;
-            const roomClosedText = this.add.text(
-                350,
-                40,
-                "This room is closed",
-                {
-                    fontFamily: "customFont",
-                    fontSize: "40px",
-                    fill: "#fff",
-                }
-            );
-            const roomClosedInterval = setInterval(() => {
-                roomClosedText.destroy();
-                clearInterval(roomClosedInterval);
-            }, 3000);
-        });
-
-        // Feedback if user clicks on full room
-        this.socket.on("roomFull", () => {
-            this.input.enabled = true;
-            const roomFullText = this.add.text(350, 40, "This room is full", {
-                fontFamily: "customFont",
-                fontSize: "40px",
-                fill: "#fff",
-            });
-            const roomFullInterval = setInterval(() => {
-                roomFullText.destroy();
-                clearInterval(roomFullInterval);
-            }, 3000);
-        });
-
-        // Player will go to stage scene afer receiving room info from server
-        this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
-            this.socket.removeAllListeners();
-            this.scene.stop("LobbyScene");
-            this.scene.start("WaitingScene", {
-                socket: this.socket,
-                roomInfo,
-                roomKey,
-                charSpriteKey: this.charSpriteKey,
-                username: this.username,
-            });
-        });
     }
 
     createPage() {
@@ -323,6 +264,63 @@ export default class LobbyScene extends BaseScene {
 
         closeBtn.on("pointerout", () => {
             closeBtn.clearTint();
+        });
+    }
+
+    createRoomEventListeners() {
+        // Immediately join the custom room that was created
+        this.socket.on("roomCreated", (code) => {
+            this.socket.emit("joinRoom", {
+                roomKey: code,
+                spriteKey: this.charSpriteKey,
+                username: this.username,
+            });
+        });
+
+        // Feedback if user clicks on closed room
+        this.socket.on("roomClosed", () => {
+            this.input.enabled = true;
+            const roomClosedText = this.add.text(
+                350,
+                40,
+                "This room is closed",
+                {
+                    fontFamily: "customFont",
+                    fontSize: "40px",
+                    fill: "#fff",
+                }
+            );
+            const roomClosedInterval = setInterval(() => {
+                roomClosedText.destroy();
+                clearInterval(roomClosedInterval);
+            }, 3000);
+        });
+
+        // Feedback if user clicks on full room
+        this.socket.on("roomFull", () => {
+            this.input.enabled = true;
+            const roomFullText = this.add.text(350, 40, "This room is full", {
+                fontFamily: "customFont",
+                fontSize: "40px",
+                fill: "#fff",
+            });
+            const roomFullInterval = setInterval(() => {
+                roomFullText.destroy();
+                clearInterval(roomFullInterval);
+            }, 3000);
+        });
+
+        // Player will go to stage scene afer receiving room info from server
+        this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
+            this.socket.removeAllListeners();
+            this.scene.stop("LobbyScene");
+            this.scene.start("WaitingScene", {
+                socket: this.socket,
+                roomInfo,
+                roomKey,
+                charSpriteKey: this.charSpriteKey,
+                username: this.username,
+            });
         });
     }
 }

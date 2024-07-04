@@ -18,17 +18,17 @@ class JoinCustomRoomScene extends BaseScene {
     create() {
         super.create();
 
-        this.cursorOver = this.sound.add("cursorOver");
-        this.cursorOver.volume = 0.4;
+        this.createPage();
 
-        this.select = this.sound.add("select");
-        this.select.volume = 0.4;
+        const rexUIConfig = new RexUIConfig(this);
+        this.createInputTextBox(rexUIConfig);
 
-        this.flute = this.sound.add("flute");
-        this.flute.volume = 0.4;
+        this.createJoinRoomBtn(rexUIConfig);
 
-        this.createCloseButton();
+        this.createRoomEventListeners();
+    }
 
+    createPage() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)
@@ -47,7 +47,38 @@ class JoinCustomRoomScene extends BaseScene {
             )
             .setOrigin(0.5);
 
-        const rexUIConfig = new RexUIConfig(this);
+        this.createCloseButton();
+    }
+
+    createCloseButton() {
+        const closeBtn = this.add
+            .image(
+                this.config.width / 1.25 - 30,
+                this.config.height / 7 + 20,
+                "close-btn"
+            )
+            .setOrigin(0.5)
+            .setScale(0.7)
+            .setInteractive()
+            .setDepth(2);
+
+        closeBtn.on("pointerup", () => {
+            this.selectFx.play();
+            this.scene.wake("MainMenu");
+            this.scene.stop("JoinCustomRoomScene");
+        });
+
+        closeBtn.on("pointerover", () => {
+            this.cursorOverFx.play();
+            closeBtn.setTint(0xff6666);
+        });
+
+        closeBtn.on("pointerout", () => {
+            closeBtn.clearTint();
+        });
+    }
+
+    createInputTextBox(rexUIConfig) {
         rexUIConfig.createTextBox(
             this.config.width / 2,
             this.config.height / 2 - 25,
@@ -59,7 +90,9 @@ class JoinCustomRoomScene extends BaseScene {
                 fixedHeight: 80,
             }
         );
+    }
 
+    createJoinRoomBtn(rexUIConfig) {
         const joinButton = this.add
             .text(
                 this.config.width / 2,
@@ -76,14 +109,14 @@ class JoinCustomRoomScene extends BaseScene {
         joinButton.setInteractive();
         joinButton.on("pointerover", () => {
             joinButton.setFill("#fff");
-            this.cursorOver.play();
+            this.cursorOverFx.play();
         });
         joinButton.on("pointerout", () => {
             joinButton.setFill("#000");
-            this.cursorOver.stop();
+            this.cursorOverFx.stop();
         });
         joinButton.on("pointerdown", () => {
-            this.select.play();
+            this.selectFx.play();
         });
         joinButton.on("pointerup", () => {
             this.input.enabled = false;
@@ -96,7 +129,10 @@ class JoinCustomRoomScene extends BaseScene {
                 username: this.username,
             });
         });
+    }
 
+    createRoomEventListeners() {
+        // if user inputs a code that doesn't associate with any room, the room doesn't exist
         this.socket.on("roomDoesNotExist", () => {
             this.input.enabled = true;
             const roomDNE = this.add
@@ -117,6 +153,7 @@ class JoinCustomRoomScene extends BaseScene {
             }, 3000);
         });
 
+        // Room is closed
         this.socket.on("roomClosed", () => {
             this.input.enabled = true;
             const roomClosedText = this.add
@@ -137,6 +174,7 @@ class JoinCustomRoomScene extends BaseScene {
             }, 3000);
         });
 
+        // Room is full
         this.socket.on("roomFull", () => {
             this.input.enabled = true;
             const roomFullText = this.add.text(
@@ -155,6 +193,7 @@ class JoinCustomRoomScene extends BaseScene {
             }, 3000);
         });
 
+        // Room code success, go to the next scene
         this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
             this.socket.removeAllListeners();
             //   this.game.music.stopAll();
@@ -166,34 +205,6 @@ class JoinCustomRoomScene extends BaseScene {
                 charSpriteKey: this.charSpriteKey,
                 username: this.username,
             });
-        });
-    }
-
-    createCloseButton() {
-        const closeBtn = this.add
-            .image(
-                this.config.width / 1.25 - 30,
-                this.config.height / 7 + 20,
-                "close-btn"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
-
-        closeBtn.on("pointerup", () => {
-            this.select.play();
-            this.scene.wake("MenuScene");
-            this.scene.stop("JoinCustomRoomScene");
-        });
-
-        closeBtn.on("pointerover", () => {
-            this.cursorOver.play();
-            closeBtn.setTint(0xff6666);
-        });
-
-        closeBtn.on("pointerout", () => {
-            closeBtn.clearTint();
         });
     }
 }
