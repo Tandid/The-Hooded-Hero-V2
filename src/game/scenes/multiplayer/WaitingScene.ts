@@ -224,12 +224,8 @@ class WaitingScene extends BaseScene {
         this.socket.on("playerMoved", ({ playerId, moveState }) => {
             if (this.opponents[playerId]) {
                 this.opponents[playerId].updateOtherPlayer(moveState);
-                this[`opponents${playerId}`].setX(
-                    this.opponents[playerId].x + 90
-                );
-                this[`opponents${playerId}`].setY(
-                    this.opponents[playerId].y - 160
-                );
+                this[`opponents${playerId}`].setX(this.opponents[playerId].x);
+                this[`opponents${playerId}`].setY(this.opponents[playerId].y);
             }
         });
 
@@ -498,8 +494,8 @@ class WaitingScene extends BaseScene {
     }
 
     displayUsername() {
-        this.usernameText.setX(this.player.x + 90);
-        this.usernameText.setY(this.player.y - 160);
+        this.usernameText.setX(this.player.x);
+        this.usernameText.setY(this.player.y - 80);
     }
 }
 

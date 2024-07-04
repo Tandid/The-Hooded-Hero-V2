@@ -28,6 +28,13 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
 
         this.init();
         this.initEvents();
+
+        this.debugText = this.scene.add
+            .text(-300, -300, "", { font: "32px Arial", fill: "#ff0000" })
+            .setScrollFactor(0)
+            .setDepth(30);
+
+        this.graphics = this.scene.add.graphics().setDepth(30);
     }
 
     init() {
@@ -47,17 +54,11 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
         this.hasBeenHit = false;
         this.bounceVelocity = 400;
         this.lastDirection = Phaser.Physics.Arcade.FACING_RIGHT;
-
-        if (this.spriteKey === "player-1") {
-            this.body.setSize(120, 150);
-            this.body.setOffset(90, 40);
-        } else {
-            this.body.setSize(120, 150);
-        }
+        this.body.setSize(120, 150);
 
         this.body.setGravityY(this.gravity);
         this.setCollideWorldBounds(true);
-        this.setOrigin(0, 1);
+        // this.setOrigin(0.5, 1);
     }
 
     // Method to initialize sound effects for player actions
@@ -159,6 +160,8 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
         // Check if the player is out of bounds and handle movement
         this.checkOutOfBounds();
         this.handleMovement();
+
+        this.addDebugger();
     }
 
     // Method to check if the player is out of bounds and trigger appropriate actions
@@ -288,27 +291,43 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
                 this.facingLeft = true;
             }
             this.setVelocityX(-this.playerSpeed);
-            // this.play(`run-${this.spriteKey}`, true);
             console.log(moveState.x, moveState.y);
             this.setPosition(moveState.x, moveState.y);
         }
 
         // opponent moves right
-        else if (moveState.right) {
+        if (moveState.right) {
             if (this.facingLeft) {
                 this.flipX = !this.flipX;
                 this.facingLeft = false;
             }
             this.setVelocityX(this.playerSpeed);
-            // this.play(`run-${this.spriteKey}`, true);
             this.setPosition(moveState.x, moveState.y);
         }
 
         // neutral (opponent not moving)
-        else {
-            this.setVelocityX(0);
-            this.play(`idle-${this.spriteKey}`, true);
-            this.setPosition(moveState.x, moveState.y);
+        // else {
+        //     this.setVelocityX(0);
+        //     this.play(`idle-${this.spriteKey}`, true);
+        //     this.setPosition(moveState.x, moveState.y);
+        // }
+    }
+
+    addDebugger() {
+        if (this.body) {
+            this.debugText.setText(
+                `x: ${this.x.toFixed(0)}, y: ${this.y.toFixed(0)}\n` +
+                    `velocityX: ${this.body.velocity.x.toFixed(
+                        0
+                    )}, velocityY: ${this.body.velocity.y.toFixed(0)}\n`
+            );
+
+            this.graphics.clear(); // Clear previous drawings
+            this.graphics.lineStyle(2, 0xff0000); // Line style: thickness (2 pixels), color (red)
+            this.graphics.beginPath();
+            this.graphics.moveTo(this.x, this.y);
+            this.graphics.lineTo(500, 100); // Fixed point example
+            this.graphics.strokePath();
         }
     }
 }
