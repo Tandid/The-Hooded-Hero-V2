@@ -15,6 +15,9 @@ export default class LobbyScene extends BaseScene {
         this.charSpriteKey = data.charSpriteKey;
         console.log({ LobbyScene: data });
         this.socket = data.socket;
+
+        // IMPORTANT: sends message to start room status communication chain
+        this.socket.emit("checkStaticRooms");
     }
 
     create() {
