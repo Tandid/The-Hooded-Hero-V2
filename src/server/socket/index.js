@@ -9,7 +9,7 @@ const handleConnection = (socket, io) => {
         socket.emit("staticRoomsCreated", staticRooms);
     });
 
-    // Handle room creation
+    // Handle creation of new room, generate a random key
     socket.on("createNewRoom", () => {
         let code;
         do {
@@ -17,7 +17,7 @@ const handleConnection = (socket, io) => {
         } while (gameRooms[code]);
 
         gameRooms[code] = new Room();
-        socket.emit("roomCreated", code);
+        socket.emit("newRoomCreated", code);
     });
 
     // Handle room joining
@@ -32,8 +32,10 @@ const handleConnection = (socket, io) => {
 
 // Handle a player joining a room
 const handleJoinRoom = (socket, io, { roomKey, spriteKey, username }) => {
+    console.log(gameRooms[roomKey]);
     const roomInfo = gameRooms[roomKey];
 
+    // checkRoomStatus checks if Room.isOpen is true
     if (roomInfo && roomInfo.checkRoomStatus() && roomInfo.playerNum <= 4) {
         socket.join(roomKey);
         roomInfo.addNewPlayer(socket.id, spriteKey, username);

@@ -269,7 +269,7 @@ export default class LobbyScene extends BaseScene {
 
     createRoomEventListeners() {
         // Immediately join the custom room that was created
-        this.socket.on("roomCreated", (code) => {
+        this.socket.on("newRoomCreated", (code) => {
             this.socket.emit("joinRoom", {
                 roomKey: code,
                 spriteKey: this.charSpriteKey,
