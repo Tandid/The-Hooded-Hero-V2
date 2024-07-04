@@ -18,6 +18,7 @@ import SignupScene from "./scenes/Signup";
 import CharSelectionScene from "./scenes/multiplayer/CharSelection";
 import JoinCustomRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
+import WaitingScene from "./scenes/multiplayer/WaitingScene";
 import Contact from "./scenes/secondary/Contact";
 import Controls from "./scenes/secondary/Controls";
 import CreditsScene from "./scenes/secondary/Credits";
@@ -72,6 +73,7 @@ const Scenes = [
     VictoryScene,
     PauseScene,
     PlayScene,
+    WaitingScene,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);

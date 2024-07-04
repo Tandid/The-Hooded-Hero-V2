@@ -166,7 +166,7 @@ export default class LobbyScene extends BaseScene {
             .text(
                 this.config.width / 3,
                 this.config.height / 2 + 75,
-                "Join a Custom Room",
+                "Join Custom Room",
                 {
                     fontFamily: "customFont",
                     fontSize: "40px",
