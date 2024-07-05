@@ -13,6 +13,7 @@ class HeroSelectScene extends BaseScene {
     init(data) {
         // console.log(BaseScene.socket); //!! This is in case I want to test static socket, but this might be bad later down the line
         this.socket = data.socket;
+        console.log("HeroSelect", data);
         initAnimations(this.anims);
     }
 
