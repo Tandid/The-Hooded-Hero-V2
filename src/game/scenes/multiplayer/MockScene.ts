@@ -2,8 +2,8 @@
 
 import initAnims from "../../../animations";
 import OnlinePlayer from "../../../entities/OnlinePlayer";
+import EventEmitter from "../../../events/Emitter";
 import BaseScene from "../BaseScene";
-// import EventEmitter from "../events/Emitter";
 
 class MockScene extends BaseScene {
     constructor(config) {
@@ -26,16 +26,26 @@ class MockScene extends BaseScene {
     create() {
         super.create();
 
-        const map = this.createMap();
         initAnims(this.anims);
 
+        const map = this.createMap();
         const layers = this.createLayers(map);
         const playerZones = this.getPlayerZones(layers.playerZones);
         const player = this.createPlayer(playerZones.start);
+
         this.player = player;
         console.log({ Me: this.player });
 
         this.createBG(map);
+        this.setupFollowupCameraOn(player);
+        this.createPlayerColliders(player, {
+            colliders: {
+                platformsColliders: layers.platformsColliders,
+            },
+        });
+
+        this.createEndOfLevel(playerZones.end, player);
+        this.handleCheckpoints(playerZones.checkpoints, player);
 
         this.usernameText = this.add
             .text(this.player.x, this.player.y, this.username, {
@@ -45,15 +55,8 @@ class MockScene extends BaseScene {
             .setOrigin(0.5, 1)
             .setDepth(2);
 
-        this.createPlayerColliders(player, {
-            colliders: {
-                platformsColliders: layers.platformsColliders,
-            },
-        });
-
         this.setupUI();
-
-        this.setupFollowupCameraOn(player);
+        this.createGameEvents();
 
         Object.keys(this.currentRoom.players).forEach((playerId) => {
             if (playerId !== this.socket.id) {
@@ -304,6 +307,40 @@ class MockScene extends BaseScene {
             eolOverlap.active = false;
 
             console.log("Congrats, you reached the end of the level!");
+        });
+    }
+
+    handleCheckpoints(checkpoints, player) {
+        // Checkpoint overlap detection
+        checkpoints.forEach((checkpoint) => {
+            const checkpointMark = this.physics.add.sprite(
+                checkpoint.x,
+                checkpoint.y,
+                "checkpoint"
+            );
+
+            const checkpointOverlap = this.physics.add.overlap(
+                player,
+                checkpointMark,
+                () => {
+                    this.lastCheckpoint = checkpoint;
+                    console.log(
+                        `Player reached checkpoint: ${checkpoint.name}`
+                    );
+                }
+            );
+        });
+    }
+
+    createGameEvents() {
+        EventEmitter.on("RESPAWN", () => {
+            if (this.player && this.lastCheckpoint) {
+                this.player.setPosition(
+                    this.lastCheckpoint.x,
+                    this.lastCheckpoint.y
+                );
+                // Additional logic for resetting player state, animations, etc.
+            }
         });
     }
 

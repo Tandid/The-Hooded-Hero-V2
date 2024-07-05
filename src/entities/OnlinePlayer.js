@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import initAnimations from "../animations/entities/onlinePlayerAnims";
+import EventEmitter from "../events/Emitter";
 import anims from "../mixins/anims";
 import collidable from "../mixins/collidable";
 
@@ -168,7 +169,7 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
     checkOutOfBounds() {
         // Emit PLAYER_LOSE event if player's top boundary exceeds a certain threshold
         if (this.getBounds().top > this.scene.config.height * 2.5) {
-            EventEmitter.emit("PLAYER_LOSE");
+            EventEmitter.emit("RESPAWN");
         }
     }
 
