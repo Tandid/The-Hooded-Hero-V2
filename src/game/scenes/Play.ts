@@ -16,6 +16,7 @@ class PlayScene extends BaseScene {
     init() {
         this.score = 0;
         this.isPaused = false;
+        this.numOfLives = 3;
     }
 
     create({ gameStatus }) {
@@ -241,12 +242,19 @@ class PlayScene extends BaseScene {
 
     createGameEvents() {
         EventEmitter.on("RESPAWN", () => {
+            if (this.numOfLives <= 0) {
+                EventEmitter.emit("PLAYER_LOSE");
+            }
+            this.numOfLives -= 1;
+            console.log(this.numOfLives);
+
             if (this.player && this.lastCheckpoint) {
+                this.player.initHealthBar();
+
                 this.player.setPosition(
                     this.lastCheckpoint.x,
                     this.lastCheckpoint.y
                 );
-                // Additional logic for resetting player state, animations, etc.
             }
         });
 
