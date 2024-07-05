@@ -22,7 +22,7 @@ export default class LobbyScene extends BaseScene {
         super.create();
         super.createBackground();
 
-        this.createPage();
+        this.setupUI();
 
         // IMPORTANT: sends message to start room status communication chain
         this.socket.emit("createStaticRooms");
@@ -36,7 +36,7 @@ export default class LobbyScene extends BaseScene {
         this.createRoomEventListeners();
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)

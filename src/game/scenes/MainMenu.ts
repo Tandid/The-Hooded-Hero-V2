@@ -25,12 +25,12 @@ export default class MainMenu extends BaseScene {
 
         this.playBgMusic();
 
-        this.createPage();
+        this.setupUI();
 
         EventBus.emit("current-scene-ready", this); // Essential for changing scenes
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-1")
             .setOrigin(0.5)

@@ -23,13 +23,13 @@ class LevelSelect extends BaseScene {
 
         this.menu = [];
 
-        this.createPage();
+        this.setupUI();
         this.createLevelSelections();
 
         this.createMenu(this.menu, this.setupMenuEvents.bind(this));
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-3")
             .setOrigin(0.5)

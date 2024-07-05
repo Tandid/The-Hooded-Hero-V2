@@ -32,7 +32,7 @@ export default class Preloader extends Scene {
 
     // Init and create are similar, init starts before preload, while create starts after
     init() {
-        this.createPage();
+        this.setupUI();
         generateRandomHint(this, this.config.width, this.config.height);
 
         localStorage.setItem("username", "Tandid"); // !! Delete later, this is for testing purposes
@@ -61,7 +61,7 @@ export default class Preloader extends Scene {
         this.load.on("complete", this.loadingComplete, this);
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "logo")
             .setOrigin(0.5)

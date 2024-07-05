@@ -20,12 +20,12 @@ class SignupScene extends BaseScene {
     create() {
         super.create();
         this.cameras.main.fadeIn(500, 0, 0, 0);
-        this.createPage();
+        this.setupUI();
         this.createInputBox();
         this.createConfirmButton();
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)

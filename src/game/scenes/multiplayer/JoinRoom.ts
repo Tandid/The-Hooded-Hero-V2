@@ -18,7 +18,7 @@ class JoinCustomRoomScene extends BaseScene {
     create() {
         super.create();
 
-        this.createPage();
+        this.setupUI();
 
         const rexUIConfig = new RexUIConfig(this);
         this.createInputTextBox(rexUIConfig);
@@ -28,7 +28,7 @@ class JoinCustomRoomScene extends BaseScene {
         this.createRoomEventListeners();
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)

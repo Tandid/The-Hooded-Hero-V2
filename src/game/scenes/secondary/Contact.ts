@@ -9,7 +9,7 @@ export default class Contact extends BaseScene {
         super.create();
         super.createBackground();
 
-        this.createPage();
+        this.setupUI();
     }
 
     openLink(url: string) {
@@ -20,7 +20,7 @@ export default class Contact extends BaseScene {
         }
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)
