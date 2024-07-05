@@ -8,17 +8,23 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TextEditPlugin from "phaser3-rex-plugins/plugins/textedit-plugin.js";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
-// Scene Imports
+// Initial Scenes
 import Boot from "./scenes/Boot";
-import LevelSelect from "./scenes/LevelSelect";
 import MainMenu from "./scenes/MainMenu";
-import PlayScene from "./scenes/Play";
 import Preloader from "./scenes/Preloader";
 import SignupScene from "./scenes/Signup";
+
+// Story Mode Scenes
+import LevelSelect from "./scenes/LevelSelect";
+import PlayScene from "./scenes/Play";
+
+// Multiplayer Scenes
 import HeroSelectScene from "./scenes/multiplayer/HeroSelect";
 import JoinCustomRoomScene from "./scenes/multiplayer/JoinRoom";
-import LobbyScene from "./scenes/multiplayer/Lobby";
+import RoomSelectScene from "./scenes/multiplayer/RoomSelect";
 import WaitingScene from "./scenes/multiplayer/WaitingScene";
+
+// Secondary Scenes
 import Contact from "./scenes/secondary/Contact";
 import Controls from "./scenes/secondary/Controls";
 import CreditsScene from "./scenes/secondary/Credits";
@@ -61,7 +67,7 @@ const Scenes = [
     SignupScene,
     MainMenu,
     HeroSelectScene,
-    LobbyScene,
+    RoomSelectScene,
     SettingsScene,
     JoinCustomRoomScene,
     Contact,

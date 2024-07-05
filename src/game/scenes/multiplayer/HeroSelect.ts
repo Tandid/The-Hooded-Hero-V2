@@ -109,7 +109,7 @@ class HeroSelectScene extends BaseScene {
             player.on("pointerup", () => {
                 this.game.canvas.classList.remove("custom-cursor");
                 this.scene.stop("HeroSelectScene");
-                this.scene.start("LobbyScene", {
+                this.scene.start("RoomSelectScene", {
                     socket: this.socket,
                     charSpriteKey: key,
                 });

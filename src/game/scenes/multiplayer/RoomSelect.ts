@@ -3,19 +3,19 @@
 import { Socket } from "socket.io-client";
 import BaseScene from "../BaseScene";
 
-export default class LobbyScene extends BaseScene {
+export default class RoomSelectScene extends BaseScene {
     charSpriteKey: string;
     socket: Socket;
 
     constructor(config: any) {
-        super("LobbyScene", { ...config, canGoBack: true });
+        super("RoomSelectScene", { ...config, canGoBack: true });
     }
 
     init(data: any) {
         this.socket = data.socket;
         this.charSpriteKey = data.charSpriteKey;
         this.username = localStorage.getItem("username");
-        console.log({ LobbyScene: data });
+        console.log({ RoomSelectScene: data });
     }
 
     create() {
@@ -189,7 +189,7 @@ export default class LobbyScene extends BaseScene {
             this.selectFx.play();
             this.input.enabled = false;
             this.socket.removeAllListeners();
-            this.scene.stop("LobbyScene");
+            this.scene.stop("RoomSelectScene");
             this.scene.start("JoinCustomRoomScene", {
                 socket: this.socket,
                 charSpriteKey: this.charSpriteKey,
@@ -240,31 +240,16 @@ export default class LobbyScene extends BaseScene {
     }
 
     createCloseButton() {
-        const closeBtn = this.add
-            .image(
-                this.config.width / 1.1 - 20,
-                this.config.height / 7 + 20,
-                "close-btn"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
-
-        closeBtn.on("pointerup", () => {
-            this.selectFx.play();
-            this.scene.wake("MainMenu");
-            this.scene.stop("LobbyScene");
-        });
-
-        closeBtn.on("pointerover", () => {
-            this.cursorOverFx.play();
-            closeBtn.setTint(0xff6666);
-        });
-
-        closeBtn.on("pointerout", () => {
-            closeBtn.clearTint();
-        });
+        this.createButton(
+            this.config.width / 1.1 - 20,
+            this.config.height / 7 + 20,
+            "close-btn",
+            () => {
+                this.selectFx.play();
+                this.scene.wake("MainMenu");
+                this.scene.stop("RoomSelectScene");
+            }
+        );
     }
 
     createRoomEventListeners() {
@@ -313,7 +298,7 @@ export default class LobbyScene extends BaseScene {
         // Player will go to stage scene afer receiving room info from server
         this.socket.on("roomReady", ({ currentRoom, roomKey }) => {
             this.socket.removeAllListeners();
-            this.scene.stop("LobbyScene");
+            this.scene.stop("RoomSelectScene");
             this.scene.start("WaitingScene", {
                 socket: this.socket,
                 currentRoom,
