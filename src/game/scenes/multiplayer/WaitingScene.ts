@@ -27,7 +27,6 @@ class WaitingScene extends BaseScene {
 
     create() {
         super.create();
-        const height = this.config.height;
 
         const map = this.createMap();
 
@@ -39,56 +38,6 @@ class WaitingScene extends BaseScene {
         this.player = player;
         console.log({ Me: this.player });
 
-        this.createPlayerColliders(player, {
-            colliders: {
-                platformsColliders: layers.platformsColliders,
-            },
-        });
-
-        this.createBG(map);
-        this.createHomeButton();
-        this.createSettingsButton();
-        this.setupFollowupCameraOn(player);
-        this.createRoomKey();
-
-        this.playerCounter = this.add
-            .text(
-                1200,
-                height / 5,
-                `${this.currentRoom.numPlayers} player(s) in lobby`,
-                {
-                    fontFamily: "customFont",
-                    fontSize: "100px",
-                    fill: "#000",
-                }
-            )
-            .setOrigin(0.5)
-            .setDepth(2);
-
-        this.waitingForPlayers = this.add
-            .text(
-                1200,
-                height / 5 + 100,
-                `Waiting for ${
-                    this.requiredPlayers - this.currentRoom.numPlayers
-                } player(s)`,
-                {
-                    fontFamily: "customFont",
-                    fontSize: "0px",
-                    fill: "#fff",
-                }
-            )
-            .setOrigin(0.5);
-
-        this.startButton = this.add
-            .text(1200, height / 5 + 200, "", {
-                fontFamily: "customFont",
-                fontSize: "200px",
-                fill: "#000",
-            })
-            .setOrigin(0.5)
-            .setDepth(2);
-
         this.usernameText = this.add
             .text(this.player.x, this.player.y, this.username, {
                 fontSize: "40px",
@@ -97,23 +46,27 @@ class WaitingScene extends BaseScene {
             .setOrigin(0.5, 1)
             .setDepth(2);
 
+        this.createPlayerColliders(player, {
+            colliders: {
+                platformsColliders: layers.platformsColliders,
+            },
+        });
+
+        this.setupUI();
+
+        this.createBG(map);
+
+        this.setupFollowupCameraOn(player);
+        this.createRoomKey();
+
         const countdown = this.add
-            .text(1200, height / 5 + 200, `5`, {
+            .text(1200, this.config.height / 5 + 200, `5`, {
                 fontFamily: "customFont",
                 fontSize: "0px",
                 fill: "#fff",
             })
             .setOrigin(0.5)
             .setDepth(2);
-
-        if (this.currentRoom.numPlayers < this.requiredPlayers) {
-            this.waitingForPlayers.setFontSize("100px");
-        }
-
-        // renders start button when there are 4 or more players in lobby;
-        if (this.currentRoom.numPlayers >= this.requiredPlayers) {
-            this.startButton.setText("Start");
-        }
 
         Object.keys(this.currentRoom.players).forEach((playerId) => {
             if (playerId !== this.socket.id) {
@@ -229,19 +182,6 @@ class WaitingScene extends BaseScene {
             }
         });
 
-        this.startButton.setInteractive();
-        this.startButton.on("pointerover", () => {
-            this.startButton.setFill("#fff");
-        });
-        this.startButton.on("pointerout", () => {
-            this.startButton.setFill("#000");
-        });
-        this.startButton.on("pointerup", () => {
-            this.input.enabled = false;
-            this.socket.emit("startCountdown");
-            this.startButton.destroy();
-        });
-
         this.socket.on("updateCountdown", (timeLeft) => {
             if (this.startButton) {
                 this.startButton.destroy();
@@ -268,6 +208,77 @@ class WaitingScene extends BaseScene {
                 },
             });
         });
+    }
+
+    setupUI() {
+        this.createHomeButton();
+        this.createSettingsButton();
+        this.setupPlayerCounter();
+        this.createStartButton();
+    }
+
+    createStartButton() {
+        this.startButton = this.add
+            .text(1200, this.config.height / 5 + 200, "", {
+                fontFamily: "customFont",
+                fontSize: "200px",
+                fill: "#000",
+            })
+            .setOrigin(0.5)
+            .setDepth(2);
+
+        this.startButton.setInteractive();
+        this.startButton.on("pointerover", () => {
+            this.startButton.setFill("#fff");
+        });
+        this.startButton.on("pointerout", () => {
+            this.startButton.setFill("#000");
+        });
+        this.startButton.on("pointerup", () => {
+            this.input.enabled = false;
+            this.socket.emit("startCountdown");
+            this.startButton.destroy();
+        });
+
+        // renders start button when there are 4 or more players in lobby;
+        if (this.currentRoom.numPlayers >= this.requiredPlayers) {
+            this.startButton.setText("Start");
+        }
+    }
+
+    setupPlayerCounter() {
+        this.playerCounter = this.add
+            .text(
+                1200,
+                this.config.height / 5,
+                `${this.currentRoom.numPlayers} player(s) in lobby`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "100px",
+                    fill: "#000",
+                }
+            )
+            .setOrigin(0.5)
+            .setDepth(2);
+
+        this.waitingForPlayers = this.add
+            .text(
+                1200,
+                this.config.height / 5 + 100,
+                `Waiting for ${
+                    this.requiredPlayers - this.currentRoom.numPlayers
+                } player(s)`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "0px",
+                    fill: "#fff",
+                }
+            )
+            .setOrigin(0.5);
+
+        if (this.currentRoom.numPlayers < this.requiredPlayers) {
+            this.waitingForPlayers.setFontSize("100px");
+        }
     }
 
     createMap() {
