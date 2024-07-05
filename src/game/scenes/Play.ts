@@ -17,12 +17,11 @@ class PlayScene extends BaseScene {
         this.score = 0;
         this.isPaused = false;
         this.numOfLives = 3;
-        this.createLives();
     }
 
     create({ gameStatus }) {
         super.create();
-        this.hud = new Hud(this, 0, 0);
+        this.hud = new Hud(this, 0, 0, this.numOfLives);
         this.playBgMusic();
 
         const map = this.createMap();
@@ -241,28 +240,6 @@ class PlayScene extends BaseScene {
             .setScale(1.2);
     }
 
-    createLives() {
-        for (let i = 0; i < this.numOfLives; i++) {
-            this.add
-                .image(
-                    this.config.width + i * 80 - 1050,
-                    this.config.height - 320,
-                    "heart-empty"
-                )
-                .setScale(0.7)
-                .setScrollFactor(0, 1);
-
-            this.add
-                .image(
-                    this.config.width + i * 80 - 1050,
-                    this.config.height - 320,
-                    "heart-fill"
-                )
-                .setScale(0.7)
-                .setScrollFactor(0, 1);
-        }
-    }
-
     createGameEvents() {
         EventEmitter.on("RESPAWN", () => {
             if (this.numOfLives <= 0) {
@@ -270,6 +247,7 @@ class PlayScene extends BaseScene {
             }
             this.numOfLives -= 1;
             console.log(this.numOfLives);
+            this.hud.updateLives(this.numOfLives);
 
             if (this.player && this.lastCheckpoint) {
                 this.player.initHealthBar();
