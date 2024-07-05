@@ -17,6 +17,7 @@ class PlayScene extends BaseScene {
         this.score = 0;
         this.isPaused = false;
         this.numOfLives = 3;
+        this.createLives();
     }
 
     create({ gameStatus }) {
@@ -238,6 +239,28 @@ class PlayScene extends BaseScene {
         )
             .setScrollFactor(0)
             .setScale(1.2);
+    }
+
+    createLives() {
+        for (let i = 0; i < this.numOfLives; i++) {
+            this.add
+                .image(
+                    this.config.width + i * 80 - 1050,
+                    this.config.height - 320,
+                    "heart-empty"
+                )
+                .setScale(0.7)
+                .setScrollFactor(0, 1);
+
+            this.add
+                .image(
+                    this.config.width + i * 80 - 1050,
+                    this.config.height - 320,
+                    "heart-fill"
+                )
+                .setScale(0.7)
+                .setScrollFactor(0, 1);
+        }
     }
 
     createGameEvents() {
