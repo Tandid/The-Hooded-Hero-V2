@@ -15,7 +15,7 @@ import MainMenu from "./scenes/MainMenu";
 import PlayScene from "./scenes/Play";
 import Preloader from "./scenes/Preloader";
 import SignupScene from "./scenes/Signup";
-import CharSelectionScene from "./scenes/multiplayer/CharSelection";
+import HeroSelectScene from "./scenes/multiplayer/HeroSelect";
 import JoinCustomRoomScene from "./scenes/multiplayer/JoinRoom";
 import LobbyScene from "./scenes/multiplayer/Lobby";
 import WaitingScene from "./scenes/multiplayer/WaitingScene";
@@ -60,7 +60,7 @@ const Scenes = [
     Preloader,
     SignupScene,
     MainMenu,
-    CharSelectionScene,
+    HeroSelectScene,
     LobbyScene,
     SettingsScene,
     JoinCustomRoomScene,

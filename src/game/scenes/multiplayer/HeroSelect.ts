@@ -4,10 +4,10 @@ import { Socket } from "socket.io-client";
 import initAnimations from "../../../animations/entities/onlinePlayerAnims";
 import BaseScene from "../BaseScene";
 
-class CharSelectionScene extends BaseScene {
+class HeroSelectScene extends BaseScene {
     socket: Socket;
     constructor(config: any) {
-        super("CharSelectionScene", { ...config, canGoBack: true });
+        super("HeroSelectScene", { ...config, canGoBack: true });
     }
 
     init(data) {
@@ -53,31 +53,16 @@ class CharSelectionScene extends BaseScene {
     }
 
     createCloseButton() {
-        const closeBtn = this.add
-            .image(
-                this.config.width / 1.1 - 20,
-                this.config.height / 7 + 20,
-                "close-btn"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
-
-        closeBtn.on("pointerup", () => {
-            this.selectFx.play();
-            this.scene.wake("MainMenu");
-            this.scene.stop("CharSelectionScene");
-        });
-
-        closeBtn.on("pointerover", () => {
-            this.cursorOverFx.play();
-            closeBtn.setTint(0xff6666);
-        });
-
-        closeBtn.on("pointerout", () => {
-            closeBtn.clearTint();
-        });
+        this.createButton(
+            this.config.width / 1.1 - 20,
+            this.config.height / 7 + 20,
+            "close-btn",
+            () => {
+                this.selectFx.play();
+                this.scene.wake("MainMenu");
+                this.scene.stop("HeroSelectScene");
+            }
+        );
     }
 
     createSprite() {
@@ -90,7 +75,6 @@ class CharSelectionScene extends BaseScene {
                     this.config.height / 2 + 10,
                     "panel-4"
                 )
-                .setOrigin(0.5)
                 .setScale(0.43, 1.2);
 
             const player = this.add
@@ -99,18 +83,19 @@ class CharSelectionScene extends BaseScene {
                     this.config.height / 2,
                     key
                 )
-                .setScale(1)
                 .setInteractive();
 
             player.play(`idle-${key}`, true);
 
             player.on("pointerover", () => {
+                this.game.canvas.classList.add("custom-cursor");
                 player.play(`run-${key}`, true);
                 this.cursorOverFx.play();
                 bg.setTint("0xc2c2c2");
                 bg.setScale(0.45, 1.25);
             });
             player.on("pointerout", () => {
+                this.game.canvas.classList.remove("custom-cursor");
                 player.play(`idle-${key}`, true);
                 this.cursorOverFx.stop();
                 bg.clearTint();
@@ -122,7 +107,8 @@ class CharSelectionScene extends BaseScene {
             });
 
             player.on("pointerup", () => {
-                this.scene.stop("CharSelectionScene");
+                this.game.canvas.classList.remove("custom-cursor");
+                this.scene.stop("HeroSelectScene");
                 this.scene.start("LobbyScene", {
                     socket: this.socket,
                     charSpriteKey: key,
@@ -132,5 +118,5 @@ class CharSelectionScene extends BaseScene {
     }
 }
 
-export default CharSelectionScene;
+export default HeroSelectScene;
 

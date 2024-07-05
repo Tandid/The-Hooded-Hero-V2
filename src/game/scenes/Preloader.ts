@@ -110,7 +110,7 @@ export default class Preloader extends Scene {
         this.registry.set("unlocked-levels", 1);
         console.log("Registry contents:", this.registry.getAll());
 
-        this.scene.start("CharSelectionScene", { socket: this.socket });
+        this.scene.start("HeroSelectScene", { socket: this.socket });
     }
 }
 

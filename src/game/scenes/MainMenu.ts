@@ -11,7 +11,7 @@ export default class MainMenu extends BaseScene {
         super("MainMenu", config);
         this.menu = [
             { scene: "PlayScene", text: "Story Mode" },
-            { scene: "CharSelection", text: "Multiplayer" },
+            { scene: "HeroSelect", text: "Multiplayer" },
             { scene: "LevelSelect", text: "Levels" },
         ];
     }
