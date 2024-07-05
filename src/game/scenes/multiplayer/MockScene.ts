@@ -34,6 +34,7 @@ class MockScene extends BaseScene {
         const player = this.createPlayer(playerZones.start);
 
         this.player = player;
+        this.lastCheckpoint = playerZones.start;
         console.log({ Me: this.player });
 
         this.createBG(map);
