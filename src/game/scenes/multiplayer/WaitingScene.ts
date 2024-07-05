@@ -1,11 +1,9 @@
 // @ts-nocheck
 
-import OnlinePlayer from "../../../entities/OnlinePlayer";
-
-// import EventEmitter from "../events/Emitter";
-
 import initAnims from "../../../animations";
+import OnlinePlayer from "../../../entities/OnlinePlayer";
 import BaseScene from "../BaseScene";
+// import EventEmitter from "../events/Emitter";
 
 class WaitingScene extends BaseScene {
     constructor(config) {
@@ -29,7 +27,6 @@ class WaitingScene extends BaseScene {
         super.create();
 
         const map = this.createMap();
-
         initAnims(this.anims);
 
         const layers = this.createLayers(map);
@@ -37,6 +34,8 @@ class WaitingScene extends BaseScene {
         const player = this.createPlayer(playerZones.start);
         this.player = player;
         console.log({ Me: this.player });
+
+        this.createBG(map);
 
         this.usernameText = this.add
             .text(this.player.x, this.player.y, this.username, {
@@ -53,8 +52,6 @@ class WaitingScene extends BaseScene {
         });
 
         this.setupUI();
-
-        this.createBG(map);
 
         this.setupFollowupCameraOn(player);
         this.createRoomKey();
@@ -197,7 +194,7 @@ class WaitingScene extends BaseScene {
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
-                    const nextStageKey = "ComingSoonScene";
+                    const nextStageKey = "lobby";
                     this.scene.stop("WaitingScene");
                     this.scene.start(nextStageKey, {
                         socket: this.socket,
@@ -213,6 +210,7 @@ class WaitingScene extends BaseScene {
     setupUI() {
         this.createHomeButton();
         this.createSettingsButton();
+        this.createControlsButton();
         this.setupPlayerCounter();
         this.createStartButton();
     }
@@ -397,58 +395,46 @@ class WaitingScene extends BaseScene {
     }
 
     createSettingsButton() {
-        const settingsBtn = this.add
-            .image(
-                this.config.rightBottomCorner.x - 15,
-                this.config.rightBottomCorner.y - 10,
-                "settings-button"
-            )
-            .setOrigin(1)
+        this.settingsButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 50,
+            "settings-button",
+            () => {
+                this.scene.sendToBack("WaitingScene");
+                this.scene.launch("SettingsScene");
+            }
+        )
             .setScrollFactor(0)
-            .setScale(1)
-            .setInteractive();
-
-        settingsBtn.on("pointerup", () => {
-            this.scene.pause("WaitingScene");
-            this.scene.sendToBack("WaitingScene");
-            this.scene.launch("SettingsScene");
-        });
-
-        settingsBtn.on("pointerover", () => {
-            settingsBtn.setTint(0xc2c2c2);
-            this.cursorOverFx.play();
-        });
-        settingsBtn.on("pointerout", () => {
-            settingsBtn.clearTint();
-        });
+            .setScale(1.2);
     }
 
     createHomeButton() {
-        const homeBtn = this.add
-            .image(
-                this.config.rightBottomCorner.x - 15,
-                this.config.rightBottomCorner.y - 115,
-                "home-btn"
-            )
-            .setOrigin(1)
+        this.homeButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 150,
+            "home-btn",
+            () => {
+                this.selectFx.play();
+                this.scene.sendToBack("WaitingScene");
+                this.scene.launch("PauseScene");
+            }
+        )
             .setScrollFactor(0)
-            .setScale(0.9)
-            .setInteractive()
-            .setDepth(2);
+            .setScale(1.2);
+    }
 
-        homeBtn.on("pointerup", () => {
-            this.selectFx.play();
-            this.scene.pause("WaitingScene");
-            // this.scene.sendToBack("PlayScene");
-            this.scene.launch("PauseScene");
-        });
-        homeBtn.on("pointerover", () => {
-            homeBtn.setTint(0xc2c2c2);
-            this.cursorOverFx.play();
-        });
-        homeBtn.on("pointerout", () => {
-            homeBtn.clearTint();
-        });
+    createControlsButton() {
+        this.controlsButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 250,
+            "controls-btn",
+            () => {
+                this.scene.sendToBack("WaitingScene");
+                this.scene.launch("Controls");
+            }
+        )
+            .setScrollFactor(0)
+            .setScale(1);
     }
 
     createRoomKey() {
