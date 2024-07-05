@@ -67,61 +67,65 @@ export default class RoomSelectScene extends BaseScene {
         // render buttons for rooms in the open lobby
         const rooms = [];
         // when static rooms are created, for each room, create a panel
+
         this.socket.on("staticRoomsCreated", (staticRooms) => {
             for (let i = 0; i < staticRooms.length; i++) {
-                this.add
+                // Create room buttons for each static room
+                const panel = this.add
                     .image(
                         this.config.width * 0.7,
                         150 + 75 * (i + 1),
                         "panel-4"
                     )
-                    .setOrigin(0.5)
-                    .setScale(0.6, 0.4);
+                    .setScale(1, 0.4);
 
-                // render open lobbies with green font, and red if closed
-                if (staticRooms[i].isOpen) {
-                    rooms[i] = this.add
-                        .text(
-                            this.config.width * 0.7,
-                            150 + 75 * (i + 1),
-                            `Server Room ${i + 1}`,
-                            {
-                                fontFamily: "customFont",
-                                fontSize: "40px",
-                                fill: "#15855b",
-                            }
-                        )
-                        .setOrigin(0.5);
-                } else {
-                    rooms[i] = this.add
-                        .text(
-                            this.config.width * 0.7,
-                            150 + 75 * (i + 1),
-                            `Room ${i + 1}`,
-                            {
-                                fontFamily: "customFont",
-                                fontSize: "40px",
-                                fill: "#FF0000",
-                            }
-                        )
-                        .setOrigin(0.5);
-                }
+                const playersPerRoom = this.add
+                    .text(
+                        this.config.width * 0.8 + 20,
+                        150 + 75 * (i + 1),
+                        `(${staticRooms[i].numPlayers}/4)`,
+                        {
+                            fontFamily: "customFont",
+                            fontSize: "30px",
+                            fill: staticRooms[i].isOpen ? "#15855b" : "#FF0000",
+                        }
+                    )
+                    .setOrigin(0.5);
+
+                rooms[i] = this.add
+                    .text(
+                        this.config.width * 0.7 - 50,
+                        150 + 75 * (i + 1),
+                        `Server Room ${i + 1}`,
+                        {
+                            fontFamily: "customFont",
+                            fontSize: "40px",
+                            fill: staticRooms[i].isOpen ? "#15855b" : "#FF0000",
+                        }
+                    )
+                    .setOrigin(0.5);
 
                 rooms[i].setInteractive();
                 rooms[i].on("pointerover", () => {
                     this.cursorOverFx.play();
                     rooms[i].setFill("#FFF");
+                    this.game.canvas.classList.add("custom-cursor");
                 });
+
                 rooms[i].on("pointerout", () => {
+                    this.game.canvas.classList.remove("custom-cursor");
                     if (staticRooms[i].isOpen) {
                         rooms[i].setFill("#15855b");
                     }
                 });
+
                 rooms[i].on("pointerdown", () => {
                     rooms[i].setTint("0xc2c2c2");
                 });
+
                 rooms[i].on("pointerup", () => {
                     this.selectFx.play();
+                    this.game.canvas.classList.remove("custom-cursor");
                     this.input.enabled = false;
                     rooms[i].clearTint();
                     if (staticRooms[i].isOpen) {
@@ -152,91 +156,31 @@ export default class RoomSelectScene extends BaseScene {
     }
 
     createJoinCustomRoomBtn() {
-        this.add
-            .image(
-                this.config.width / 3,
-                this.config.height / 2 + 75,
-                "panel-4"
-            )
-            .setOrigin(0.5)
-            .setScale(1, 0.5)
-            .setDepth(2);
-
-        const joinCustomRoom = this.add
-            .text(
-                this.config.width / 3,
-                this.config.height / 2 + 75,
-                "Join Custom Room",
-                {
-                    fontFamily: "customFont",
-                    fontSize: "40px",
-                    fill: "#000",
-                }
-            )
-            .setDepth(2)
-            .setOrigin(0.5);
-
-        joinCustomRoom.setInteractive();
-        joinCustomRoom.on("pointerover", () => {
-            this.cursorOverFx.play();
-            joinCustomRoom.setFill("#fff", 2);
-        });
-        joinCustomRoom.on("pointerout", () => {
-            joinCustomRoom.setFill("#000", 0);
-        });
-        joinCustomRoom.on("pointerdown", () => {});
-        joinCustomRoom.on("pointerup", () => {
-            this.selectFx.play();
-            this.input.enabled = false;
-            this.socket.removeAllListeners();
-            this.scene.stop("RoomSelectScene");
-            this.scene.start("JoinCustomRoomScene", {
-                socket: this.socket,
-                charSpriteKey: this.charSpriteKey,
-                username: this.username,
-            });
-        });
+        this.createLongButton(
+            "Join Custom Room",
+            this.config.width / 3,
+            this.config.height / 2 + 75,
+            () => {
+                this.socket.removeAllListeners();
+                this.scene.stop("RoomSelectScene");
+                this.scene.start("JoinCustomRoomScene", {
+                    socket: this.socket,
+                    charSpriteKey: this.charSpriteKey,
+                    username: this.username,
+                });
+            }
+        );
     }
 
     createNewRoomBtn() {
-        this.add
-            .image(
-                this.config.width / 3,
-                this.config.height / 2 - 75,
-                "panel-4"
-            )
-            .setOrigin(0.5)
-            .setScale(1, 0.5)
-            .setDepth(2);
-
-        const createNewRoomButton = this.add
-            .text(
-                this.config.width / 3,
-                this.config.height / 2 - 75,
-                "Create New Room",
-                {
-                    fontFamily: "customFont",
-                    fontSize: "40px",
-                    fill: "#000",
-                }
-            )
-            .setDepth(2)
-            .setOrigin(0.5);
-
-        createNewRoomButton.setInteractive();
-        createNewRoomButton.on("pointerover", () => {
-            this.cursorOverFx.play();
-            createNewRoomButton.setFill("#fff", 2);
-        });
-        createNewRoomButton.on("pointerout", () => {
-            createNewRoomButton.setFill("#000", 0);
-        });
-        createNewRoomButton.on("pointerdown", () => {});
-        createNewRoomButton.on("pointerup", () => {
-            this.selectFx.play();
-            this.input.enabled = false;
-            this.socket.emit("createNewRoom");
-        });
+        this.createLongButton(
+            "Create New Room",
+            this.config.width / 3,
+            this.config.height / 2 - 75,
+            () => {
+                this.socket.emit("createNewRoom");
+            }
+        );
     }
 
     createCloseButton() {
@@ -265,34 +209,13 @@ export default class RoomSelectScene extends BaseScene {
         // Feedback if user clicks on closed room
         this.socket.on("roomClosed", () => {
             this.input.enabled = true;
-            const roomClosedText = this.add.text(
-                350,
-                40,
-                "This room is closed",
-                {
-                    fontFamily: "customFont",
-                    fontSize: "40px",
-                    fill: "#fff",
-                }
-            );
-            const roomClosedInterval = setInterval(() => {
-                roomClosedText.destroy();
-                clearInterval(roomClosedInterval);
-            }, 3000);
+            this.displayFeedbackMessage.call(this, "This room is closed");
         });
 
         // Feedback if user clicks on full room
         this.socket.on("roomFull", () => {
             this.input.enabled = true;
-            const roomFullText = this.add.text(350, 40, "This room is full", {
-                fontFamily: "customFont",
-                fontSize: "40px",
-                fill: "#fff",
-            });
-            const roomFullInterval = setInterval(() => {
-                roomFullText.destroy();
-                clearInterval(roomFullInterval);
-            }, 3000);
+            this.displayFeedbackMessage.call(this, "This room is full");
         });
 
         // Player will go to stage scene afer receiving room info from server
@@ -308,5 +231,21 @@ export default class RoomSelectScene extends BaseScene {
             });
         });
     }
+
+    // Helper function to display feedback messages
+    displayFeedbackMessage = (message) => {
+        const feedbackText = this.add
+            .text(this.config.width / 2, this.config.height - 75, message, {
+                fontFamily: "customFont",
+                fontSize: "40px",
+                fill: "#FF0000",
+            })
+            .setOrigin(0.5);
+
+        const feedbackInterval = setInterval(() => {
+            feedbackText.destroy();
+            clearInterval(feedbackInterval);
+        }, 3000);
+    };
 }
 

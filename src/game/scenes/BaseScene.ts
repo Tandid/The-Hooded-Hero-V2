@@ -206,6 +206,44 @@ export default class BaseScene extends Scene {
         return container;
     }
 
+    createLongButton(text: string, x: number, y: number, onClick: () => void) {
+        // Create the button background image
+        this.add
+            .image(x, y, "panel-4")
+            .setOrigin(0.5)
+            .setScale(1, 0.5)
+            .setDepth(2);
+
+        // Create the button text
+        const button = this.add
+            .text(x, y, text, {
+                fontFamily: "customFont",
+                fontSize: "40px",
+            })
+            .setDepth(2)
+            .setOrigin(0.5)
+            .setColor("#000000");
+
+        // Set button interactive and add hover effects
+        button.setInteractive();
+        button.on("pointerover", () => {
+            this.cursorOverFx.play();
+            button.setFill("#fff");
+            this.game.canvas.classList.add("custom-cursor");
+        });
+        button.on("pointerout", () => {
+            button.setFill("#000");
+            this.game.canvas.classList.remove("custom-cursor");
+        });
+        button.on("pointerdown", () => {});
+        button.on("pointerup", () => {
+            this.selectFx.play();
+            this.input.enabled = false;
+            onClick();
+            this.game.canvas.classList.remove("custom-cursor");
+        });
+    }
+
     update() {
         this.leaves?.forEach((leaf) => {
             leaf.y += 0.4;
