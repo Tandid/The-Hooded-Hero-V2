@@ -1,31 +1,23 @@
-import { Room, gameRooms, staticRooms } from "./room";
-
-// Code generator for custom room
-const roomCodeGenerator = () => {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
-    return Array.from({ length: 4 }, () =>
-        chars.charAt(Math.floor(Math.random() * chars.length))
-    ).join("");
-};
+const { Room, gameRooms, staticRooms } = require("./room");
 
 // Handle a new connection
 const handleConnection = (socket, io) => {
-    console.log("Socket is connected");
+    console.log(`${socket.id} connected`);
 
     // Send back current static rooms status
-    socket.on("checkStaticRooms", () => {
-        socket.emit("staticRoomStatus", staticRooms);
+    socket.on("createStaticRooms", () => {
+        socket.emit("staticRoomsCreated", staticRooms);
     });
 
-    // Handle room creation
-    socket.on("createRoom", () => {
+    // Handle creation of new room, generate a random key
+    socket.on("createNewRoom", () => {
         let code;
         do {
             code = roomCodeGenerator();
         } while (gameRooms[code]);
 
         gameRooms[code] = new Room();
-        socket.emit("roomCreated", code);
+        socket.emit("newRoomCreated", code);
     });
 
     // Handle room joining
@@ -40,27 +32,27 @@ const handleConnection = (socket, io) => {
 
 // Handle a player joining a room
 const handleJoinRoom = (socket, io, { roomKey, spriteKey, username }) => {
-    const roomInfo = gameRooms[roomKey];
+    const currentRoom = gameRooms[roomKey];
 
-    if (roomInfo && roomInfo.checkRoomStatus() && roomInfo.playerNum < 16) {
+    if (currentRoom && currentRoom.isOpen && currentRoom.numPlayers <= 4) {
         socket.join(roomKey);
-        roomInfo.addNewPlayer(socket.id, spriteKey, username);
+        currentRoom.addNewPlayer(socket.id, spriteKey, username);
 
         // Send all info of that room to player
-        socket.emit("roomInfo", { roomInfo, roomKey });
+        socket.emit("roomReady", { currentRoom, roomKey });
 
         // Send player info to other players in that room
         socket.to(roomKey).emit("newPlayerJoined", {
             playerId: socket.id,
-            playerInfo: roomInfo.players[socket.id],
+            playerInfo: currentRoom.players[socket.id],
         });
 
         // Set up event listeners for game actions
-        setupGameListeners(socket, io, roomInfo, roomKey);
+        setupGameListeners(socket, io, currentRoom, roomKey);
     } else {
         socket.emit(
-            roomInfo
-                ? roomInfo.playerNum >= 16
+            currentRoom
+                ? currentRoom.numPlayers >= 4
                     ? "roomFull"
                     : "roomClosed"
                 : "roomDoesNotExist"
@@ -69,44 +61,46 @@ const handleJoinRoom = (socket, io, { roomKey, spriteKey, username }) => {
 };
 
 // Set up event listeners for game actions
-const setupGameListeners = (socket, io, roomInfo, roomKey) => {
-    socket.on("startTimer", () => startTimer(io, roomInfo, roomKey));
-    socket.on("stageLoaded", () => stageLoaded(io, roomInfo, roomKey));
+const setupGameListeners = (socket, io, currentRoom, roomKey) => {
+    socket.on("startCountdown", () => startCountdown(io, currentRoom, roomKey));
+    socket.on("stageLoaded", () => stageLoaded(io, currentRoom, roomKey));
     socket.on("updatePlayer", (moveState) => {
         socket
             .to(roomKey)
             .emit("playerMoved", { playerId: socket.id, moveState });
     });
     socket.on("passStage", (stageKey) =>
-        passStage(io, roomInfo, roomKey, stageKey)
+        passStage(io, currentRoom, roomKey, stageKey)
     );
-    socket.on("randomize", () => roomInfo.randomizeStages());
 };
 
 // Handle starting the timer
-const startTimer = (io, roomInfo, roomKey) => {
+const startCountdown = (io, currentRoom, roomKey) => {
     const countdownInterval = setInterval(() => {
-        if (roomInfo.countdown > 0) {
-            io.in(roomKey).emit("timerUpdated", roomInfo.countdown);
-            roomInfo.runTimer();
+        if (currentRoom.countdown > 0) {
+            io.in(roomKey).emit("updateCountdown", currentRoom.countdown);
+            currentRoom.runCountdownTimer();
         } else {
             clearInterval(countdownInterval);
-            roomInfo.closeRoom();
-            io.emit("updatedRooms", staticRooms);
-            io.in(roomKey).emit("loadNextStage", roomInfo);
+            currentRoom.closeRoom();
+            io.emit("updateRooms", staticRooms);
+            io.in(roomKey).emit("loadLevel", currentRoom);
         }
     }, 1000);
 };
 
 // Handle stage loaded
-const stageLoaded = (io, roomInfo, roomKey) => {
-    roomInfo.updateLoadedPlayerNum();
+const stageLoaded = (io, currentRoom, roomKey) => {
+    currentRoom.updateLoadedPlayerNum();
 
-    if (roomInfo.playerNum === roomInfo.playersLoaded) {
+    if (currentRoom.numPlayers === currentRoom.playersLoaded) {
         const stageInterval = setInterval(() => {
-            if (roomInfo.stageTimer > 0) {
-                io.in(roomKey).emit("stageTimerUpdated", roomInfo.stageTimer);
-                roomInfo.runStageTimer();
+            if (currentRoom.stageTimer > 0) {
+                io.in(roomKey).emit(
+                    "stageTimerUpdated",
+                    currentRoom.stageTimer
+                );
+                currentRoom.runStageTimer();
             } else {
                 clearInterval(stageInterval);
                 io.in(roomKey).emit("startStage");
@@ -116,17 +110,17 @@ const stageLoaded = (io, roomInfo, roomKey) => {
 };
 
 // Handle passing a stage
-const passStage = (io, roomInfo, roomKey, stageKey) => {
-    if (!roomInfo.reachStageLimit(stageKey)) {
-        roomInfo.updateWinnerList(socket.id);
-        io.in(roomKey).emit("updateWinners", roomInfo.winnerNum);
+const passStage = (io, currentRoom, roomKey, stageKey) => {
+    if (!currentRoom.reachStageLimit(stageKey)) {
+        currentRoom.updateWinnerList(socket.id);
+        io.in(roomKey).emit("updateWinners", currentRoom.winnerNum);
     }
 
-    if (roomInfo.reachStageLimit(stageKey)) {
-        roomInfo.resetStageStatus();
-        roomInfo.updatePlayerList();
-        io.in(roomKey).emit("stageEnded", roomInfo);
-        roomInfo.resetWinnerList();
+    if (currentRoom.reachStageLimit(stageKey)) {
+        currentRoom.resetStageStatus();
+        currentRoom.updatePlayerList();
+        io.in(roomKey).emit("stageEnded", currentRoom);
+        currentRoom.resetWinnerList();
     }
 };
 
@@ -137,15 +131,15 @@ const handleLeaveGame = (socket, io) => {
     );
     if (!roomKey) return;
 
-    const roomInfo = gameRooms[roomKey];
+    const currentRoom = gameRooms[roomKey];
     stopAllListeners(socket);
     socket.leave(roomKey);
-    roomInfo.removePlayer(socket.id);
+    currentRoom.removePlayer(socket.id);
 
-    if (roomInfo.playerNum === 0) {
+    if (currentRoom.numPlayers === 0) {
         delete gameRooms[roomKey];
-        roomInfo.openRoom();
-        io.emit("updatedRooms", staticRooms);
+        currentRoom.openRoom();
+        io.emit("updateRooms", staticRooms);
     } else {
         socket.to(roomKey).emit("playerLeft", { playerId: socket.id });
         socket.emit("gameLeft");
@@ -159,28 +153,32 @@ const handleDisconnecting = (socket, io) => {
     );
     if (!roomKey) return;
 
-    const roomInfo = gameRooms[roomKey];
-    roomInfo.removePlayer(socket.id);
+    const currentRoom = gameRooms[roomKey];
+    currentRoom.removePlayer(socket.id);
 
-    if (roomInfo.playerNum === 0) {
+    if (currentRoom.numPlayers === 0) {
         delete gameRooms[roomKey];
-        roomInfo.openRoom();
-        io.emit("updatedRooms", staticRooms);
+        currentRoom.openRoom();
+        io.emit("updateRooms", staticRooms);
     } else {
-        if (roomInfo.playersLoaded > 0) roomInfo.playersLoaded -= 1;
-        roomInfo.countStageLimits();
-        roomInfo.removeWinner(socket.id);
+        if (currentRoom.playersLoaded > 0) currentRoom.playersLoaded -= 1;
+        currentRoom.countStageLimits();
+        currentRoom.removeWinner(socket.id);
         socket.to(roomKey).emit("playerLeft", {
             playerId: socket.id,
-            newStageLimits: roomInfo.stageLimits,
-            winnerNum: roomInfo.winnerNum,
+            newStageLimits: currentRoom.stageLimits,
+            winnerNum: currentRoom.winnerNum,
         });
 
-        if (roomInfo.reachStageLimit(roomInfo.stages[roomInfo.stageIdx])) {
-            roomInfo.resetStageStatus();
-            roomInfo.updatePlayerList();
-            io.in(roomKey).emit("stageEnded", roomInfo);
-            roomInfo.resetWinnerList();
+        if (
+            currentRoom.reachStageLimit(
+                currentRoom.stages[currentRoom.stageIdx]
+            )
+        ) {
+            currentRoom.resetStageStatus();
+            currentRoom.updatePlayerList();
+            io.in(roomKey).emit("stageEnded", currentRoom);
+            currentRoom.resetWinnerList();
         }
     }
 };
@@ -188,19 +186,26 @@ const handleDisconnecting = (socket, io) => {
 // Stop all listeners for a socket
 const stopAllListeners = (socket) => {
     const events = [
-        "startTimer",
+        "startCountdown",
         "stageLoaded",
         "updatePlayer",
         "passStage",
-        "randomize",
         "leaveGame",
         "disconnecting",
     ];
     events.forEach((event) => socket.removeAllListeners(event));
 };
 
+// Code generator for custom room
+const roomCodeGenerator = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
+    return Array.from({ length: 4 }, () =>
+        chars.charAt(Math.floor(Math.random() * chars.length))
+    ).join("");
+};
+
 // Define socket functionality on server side
-export default (io) => {
+module.exports = (io) => {
     io.on("connection", (socket) => handleConnection(socket, io));
 };
 

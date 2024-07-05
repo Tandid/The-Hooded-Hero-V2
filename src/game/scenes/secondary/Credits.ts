@@ -13,14 +13,14 @@ class CreditsScene extends BaseScene {
 
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
-        this.createPage();
+        this.setupUI();
 
         setTimeout(() => this.cameras.main.fadeOut(500, 0, 0, 0), 4000);
         setTimeout(() => this.scene.stop("CreditsScene"), 5000);
         setTimeout(() => this.scene.start("MainMenu"), 5000);
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .text(
                 this.config.width / 2,

@@ -152,7 +152,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     checkOutOfBounds() {
         // Emit PLAYER_LOSE event if player's top boundary exceeds a certain threshold
         if (this.getBounds().top > this.scene.config.height * 2.5) {
-            EventEmitter.emit("PLAYER_LOSE");
+            EventEmitter.emit("RESPAWN");
         }
     }
 
@@ -355,7 +355,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         // Trigger PLAYER_LOSE event if player health drops to zero
         if (this.health <= 0) {
-            EventEmitter.emit("PLAYER_LOSE");
+            EventEmitter.emit("RESPAWN");
             return;
         } else {
             this.showDamageNumber(source.damage);

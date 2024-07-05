@@ -11,7 +11,7 @@ class Controls extends BaseScene {
         super.create();
         this.createInputBlock();
 
-        this.createPage();
+        this.setupUI();
     }
 
     createInputBlock() {
@@ -36,7 +36,7 @@ class Controls extends BaseScene {
         );
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)

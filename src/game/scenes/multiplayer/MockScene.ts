@@ -2,14 +2,14 @@
 
 import initAnims from "../../../animations";
 import OnlinePlayer from "../../../entities/OnlinePlayer";
+import EventEmitter from "../../../events/Emitter";
 import BaseScene from "../BaseScene";
-// import EventEmitter from "../events/Emitter";
 
-class WaitingScene extends BaseScene {
+class MockScene extends BaseScene {
     constructor(config) {
-        super("WaitingScene", config);
+        super("MockScene", config);
         this.config = config;
-        this.stageKey = "lobby";
+        this.stageKey = "level_online";
         this.opponents = {};
         this.requiredPlayers = 1;
     }
@@ -26,16 +26,27 @@ class WaitingScene extends BaseScene {
     create() {
         super.create();
 
-        const map = this.createMap();
         initAnims(this.anims);
 
+        const map = this.createMap();
         const layers = this.createLayers(map);
         const playerZones = this.getPlayerZones(layers.playerZones);
         const player = this.createPlayer(playerZones.start);
+
         this.player = player;
+        this.lastCheckpoint = playerZones.start;
         console.log({ Me: this.player });
 
         this.createBG(map);
+        this.setupFollowupCameraOn(player);
+        this.createPlayerColliders(player, {
+            colliders: {
+                platformsColliders: layers.platformsColliders,
+            },
+        });
+
+        this.createEndOfLevel(playerZones.end, player);
+        this.handleCheckpoints(playerZones.checkpoints, player);
 
         this.usernameText = this.add
             .text(this.player.x, this.player.y, this.username, {
@@ -45,25 +56,8 @@ class WaitingScene extends BaseScene {
             .setOrigin(0.5, 1)
             .setDepth(2);
 
-        this.createPlayerColliders(player, {
-            colliders: {
-                platformsColliders: layers.platformsColliders,
-            },
-        });
-
         this.setupUI();
-
-        this.setupFollowupCameraOn(player);
-        this.createRoomKey();
-
-        const countdown = this.add
-            .text(1200, this.config.height / 5 + 200, `5`, {
-                fontFamily: "customFont",
-                fontSize: "0px",
-                fill: "#fff",
-            })
-            .setOrigin(0.5)
-            .setDepth(2);
+        this.createGameEvents();
 
         Object.keys(this.currentRoom.players).forEach((playerId) => {
             if (playerId !== this.socket.id) {
@@ -94,83 +88,6 @@ class WaitingScene extends BaseScene {
             }
         });
 
-        this.socket.on("newPlayerJoined", ({ playerId, playerInfo }) => {
-            if (!this.currentRoom.players[playerId]) {
-                this.currentRoom.numPlayers += 1;
-                this.currentRoom.players[playerId] = playerInfo; // { username, spriteKey }
-                this.opponents[playerId] = new OnlinePlayer(
-                    this,
-                    playerZones.start.x,
-                    playerZones.start.y,
-                    this.currentRoom.players[playerId].spriteKey,
-                    this.currentRoom.players[playerId].username,
-                    this.socket,
-                    false
-                );
-                this.opponents[playerId].body.setAllowGravity(false);
-            }
-
-            console.log({ Opponent: this.opponents[playerId] });
-
-            if (this.currentRoom.numPlayers === this.requiredPlayers) {
-                this.waitingForPlayers.setFontSize("0px");
-                this.startButton.setText("Start");
-            }
-
-            this.waitingForPlayers.setText(
-                `Waiting for ${
-                    this.requiredPlayers - this.currentRoom.numPlayers
-                } player(s)`
-            );
-
-            this.playerCounter.setText(
-                `${this.currentRoom.numPlayers} player(s) in lobby`
-            );
-
-            this[`opponents${playerId}`] = this.add
-                .text(
-                    this.opponents[playerId].x,
-                    this.opponents[playerId].y,
-                    this.currentRoom.players[playerId].username,
-                    {
-                        fontSize: "40px",
-                        fill: "#fff",
-                    }
-                )
-                .setOrigin(0.5, 1);
-        });
-
-        this.socket.on("playerLeft", ({ playerId }) => {
-            // remove opponent from opponent list
-            if (this.opponents[playerId]) {
-                this.opponents[playerId].destroy(); // remove opponent's game object
-                delete this.opponents[playerId]; // remove opponent's key-value pair
-                this[`opponents${playerId}`].destroy(); // remove opponent's name
-            }
-
-            // remove opponent from player list
-            if (this.currentRoom.players[playerId]) {
-                delete this.currentRoom.players[playerId];
-                this.currentRoom.numPlayers -= 1;
-
-                // show waiting message if player num becomes lower than required num for starting game
-                if (this.currentRoom.numPlayers < this.requiredPlayers) {
-                    this.waitingForPlayers.setText(
-                        `Waiting for ${
-                            this.requiredPlayers - this.currentRoom.numPlayers
-                        } player(s)`
-                    );
-                    this.waitingForPlayers.setFontSize("100px");
-                    this.startButton.setText("");
-                }
-            }
-
-            // update display for player num in the room
-            this.playerCounter.setText(
-                `${this.currentRoom.numPlayers} player(s) in lobby`
-            );
-        });
-
         this.socket.on("playerMoved", ({ playerId, moveState }) => {
             if (this.opponents[playerId]) {
                 this.opponents[playerId].updateOtherPlayer(moveState);
@@ -178,105 +95,12 @@ class WaitingScene extends BaseScene {
                 this[`opponents${playerId}`].setY(this.opponents[playerId].y);
             }
         });
-
-        this.socket.on("updateCountdown", (timeLeft) => {
-            if (this.startButton) {
-                this.startButton.destroy();
-            }
-            countdown.setFontSize("100px");
-            countdown.setText(`${timeLeft}`);
-        });
-
-        this.socket.on("loadLevel", (currentRoom) => {
-            this.socket.removeAllListeners();
-            this.cameras.main.fadeOut(500, 0, 0, 0);
-
-            this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    const nextStageKey = "MockScene";
-                    this.scene.stop("WaitingScene");
-                    this.scene.start(nextStageKey, {
-                        socket: this.socket,
-                        currentRoom: this.currentRoom,
-                        charSpriteKey: this.charSpriteKey,
-                        username: this.username,
-                    });
-                },
-            });
-        });
     }
 
     setupUI() {
         this.createHomeButton();
         this.createSettingsButton();
         this.createControlsButton();
-        this.setupPlayerCounter();
-        this.createStartButton();
-    }
-
-    createStartButton() {
-        this.startButton = this.add
-            .text(1200, this.config.height / 5 + 200, "", {
-                fontFamily: "customFont",
-                fontSize: "200px",
-                fill: "#000",
-            })
-            .setOrigin(0.5)
-            .setDepth(2);
-
-        this.startButton.setInteractive();
-        this.startButton.on("pointerover", () => {
-            this.startButton.setFill("#fff");
-        });
-        this.startButton.on("pointerout", () => {
-            this.startButton.setFill("#000");
-        });
-        this.startButton.on("pointerup", () => {
-            this.input.enabled = false;
-            this.socket.emit("startCountdown");
-            this.startButton.destroy();
-        });
-
-        // renders start button when there are 4 or more players in lobby;
-        if (this.currentRoom.numPlayers >= this.requiredPlayers) {
-            this.startButton.setText("Start");
-        }
-    }
-
-    setupPlayerCounter() {
-        this.playerCounter = this.add
-            .text(
-                1200,
-                this.config.height / 5,
-                `${this.currentRoom.numPlayers} player(s) in lobby`,
-                {
-                    fontFamily: "customFont",
-                    fontSize: "100px",
-                    fill: "#000",
-                }
-            )
-            .setOrigin(0.5)
-            .setDepth(2);
-
-        this.waitingForPlayers = this.add
-            .text(
-                1200,
-                this.config.height / 5 + 100,
-                `Waiting for ${
-                    this.requiredPlayers - this.currentRoom.numPlayers
-                } player(s)`,
-                {
-                    fontFamily: "customFont",
-                    fontSize: "0px",
-                    fill: "#fff",
-                }
-            )
-            .setOrigin(0.5);
-
-        if (this.currentRoom.numPlayers < this.requiredPlayers) {
-            this.waitingForPlayers.setFontSize("100px");
-        }
     }
 
     createMap() {
@@ -400,7 +224,7 @@ class WaitingScene extends BaseScene {
             this.config.rightBottomCorner.y - 50,
             "settings-button",
             () => {
-                this.scene.sendToBack("WaitingScene");
+                this.scene.sendToBack("MockScene");
                 this.scene.launch("SettingsScene");
             }
         )
@@ -415,7 +239,7 @@ class WaitingScene extends BaseScene {
             "home-btn",
             () => {
                 this.selectFx.play();
-                this.scene.sendToBack("WaitingScene");
+                this.scene.sendToBack("MockScene");
                 this.scene.launch("PauseScene");
             }
         )
@@ -429,29 +253,12 @@ class WaitingScene extends BaseScene {
             this.config.rightBottomCorner.y - 250,
             "controls-btn",
             () => {
-                this.scene.sendToBack("WaitingScene");
+                this.scene.sendToBack("MockScene");
                 this.scene.launch("Controls");
             }
         )
             .setScrollFactor(0)
             .setScale(1);
-    }
-
-    createRoomKey() {
-        if (this.roomKey.length === 4) {
-            this.add
-                .text(
-                    100,
-                    this.config.height + 600,
-                    `Room Code: ${this.roomKey}`,
-                    {
-                        fontFamily: "customFont",
-                        fontSize: "80px",
-                        fill: "#fff",
-                    }
-                )
-                .setDepth(2);
-        }
     }
 
     createPlayer(start) {
@@ -475,7 +282,8 @@ class WaitingScene extends BaseScene {
         this.physics.world.setBounds(0, 0, width + mapOffset, height * 3);
         this.cameras.main
             .setBounds(0, 0, width + mapOffset, height + 1000)
-            .setZoom(0.5);
+            .setZoom(0.5)
+            .startFollow(player);
     }
 
     getPlayerZones(playerZonesLayer) {
@@ -483,7 +291,58 @@ class WaitingScene extends BaseScene {
         return {
             start: playerZones.find((zone) => zone.name === "startZone"),
             end: playerZones.find((zone) => zone.name === "endZone"),
+            checkpoints: playerZones.filter((zone) =>
+                zone.name.startsWith("checkpoint")
+            ),
         };
+    }
+
+    createEndOfLevel(end, player) {
+        const endOfLevel = this.physics.add
+            .sprite(end.x, end.y, "end")
+            .setAlpha(0)
+            .setSize(5, 200)
+            .setOrigin(0.5, 1);
+
+        const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
+            eolOverlap.active = false;
+
+            console.log("Congrats, you reached the end of the level!");
+        });
+    }
+
+    handleCheckpoints(checkpoints, player) {
+        // Checkpoint overlap detection
+        checkpoints.forEach((checkpoint) => {
+            const checkpointMark = this.physics.add.sprite(
+                checkpoint.x,
+                checkpoint.y,
+                "checkpoint"
+            );
+
+            const checkpointOverlap = this.physics.add.overlap(
+                player,
+                checkpointMark,
+                () => {
+                    this.lastCheckpoint = checkpoint;
+                    console.log(
+                        `Player reached checkpoint: ${checkpoint.name}`
+                    );
+                }
+            );
+        });
+    }
+
+    createGameEvents() {
+        EventEmitter.on("RESPAWN", () => {
+            if (this.player && this.lastCheckpoint) {
+                this.player.setPosition(
+                    this.lastCheckpoint.x,
+                    this.lastCheckpoint.y
+                );
+                // Additional logic for resetting player state, animations, etc.
+            }
+        });
     }
 
     update() {
@@ -496,5 +355,5 @@ class WaitingScene extends BaseScene {
     }
 }
 
-export default WaitingScene;
+export default MockScene;
 

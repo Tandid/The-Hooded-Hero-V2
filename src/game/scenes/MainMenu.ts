@@ -11,13 +11,18 @@ export default class MainMenu extends BaseScene {
         super("MainMenu", config);
         this.menu = [
             { scene: "PlayScene", text: "Story Mode" },
-            { scene: "CharSelection", text: "Multiplayer" },
+            { scene: "HeroSelectScene", text: "Multiplayer" },
             { scene: "LevelSelect", text: "Levels" },
         ];
     }
 
+    init(data) {
+        this.socket = data.socket;
+        console.log("MainMenu", data);
+        console.log(this.socket);
+    }
+
     create() {
-        console.log("MainMenu", this.socket);
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
         super.create();
@@ -25,12 +30,12 @@ export default class MainMenu extends BaseScene {
 
         this.playBgMusic();
 
-        this.createPage();
+        this.setupUI();
 
         EventBus.emit("current-scene-ready", this); // Essential for changing scenes
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-1")
             .setOrigin(0.5)
@@ -214,7 +219,7 @@ export default class MainMenu extends BaseScene {
             } else {
                 this.selectFx.play();
                 this.scene.sleep("MainMenu");
-                this.scene.launch(menuItem.scene);
+                this.scene.launch(menuItem.scene, { socket: this.socket });
             }
         });
 
