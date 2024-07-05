@@ -17,7 +17,6 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
             left: false,
             right: false,
             space: false,
-            shift: false,
         };
 
         scene.add.existing(this);
@@ -203,7 +202,6 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
                 this.moveState.y = this.y;
                 this.moveState.left = true;
                 this.moveState.right = false;
-                this.moveState.up = false;
                 this.socket.emit("updatePlayer", this.moveState);
             }
         } else if (right.isDown && this.me) {
@@ -215,7 +213,6 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
                 this.moveState.y = this.y;
                 this.moveState.left = false;
                 this.moveState.right = true;
-                this.moveState.up = false;
                 this.socket.emit("updatePlayer", this.moveState);
             }
         } else {
@@ -225,7 +222,6 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
                 this.moveState.y = this.y;
                 this.moveState.left = false;
                 this.moveState.right = false;
-                this.moveState.up = false;
                 this.socket.emit("updatePlayer", this.moveState);
             }
         }
@@ -244,8 +240,6 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
             if (this.socket) {
                 this.moveState.x = this.x;
                 this.moveState.y = this.y;
-                this.moveState.left = false;
-                this.moveState.right = false;
                 this.moveState.space = true;
                 this.socket.emit("updatePlayer", this.moveState);
             }
@@ -261,14 +255,6 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
     handleRunning(shift, onFloor) {
         if (shift.isDown && onFloor && this.me) {
             this.playerSpeed = 650;
-            if (this.socket) {
-                this.moveState.x = this.x;
-                this.moveState.y = this.y;
-                this.moveState.left = false;
-                this.moveState.right = false;
-                this.moveState.shift = true;
-                this.socket.emit("updatePlayer", this.moveState);
-            }
         } else {
             this.playerSpeed = 500;
         }
@@ -285,18 +271,18 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
     }
 
     updateOtherPlayer(moveState) {
-        // opponent moves left
+        // Handle left movement
         if (moveState.left) {
             if (!this.facingLeft) {
                 this.flipX = !this.flipX;
                 this.facingLeft = true;
             }
+
             this.setVelocityX(-this.playerSpeed);
-            console.log(moveState.x, moveState.y);
             this.setPosition(moveState.x, moveState.y);
         }
 
-        // opponent moves right
+        // Handle right movement
         if (moveState.right) {
             if (this.facingLeft) {
                 this.flipX = !this.flipX;
@@ -306,21 +292,36 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
             this.setPosition(moveState.x, moveState.y);
         }
 
-        // neutral (opponent not moving)
-        // else {
+        // Handle jump
+        if (moveState.space) {
+            this.setVelocityY(-this.jumpSpeed); // Assuming jumpSpeed is defined
+            this.setPosition(moveState.x, moveState.y);
+        }
+
+        // // Neutral state (opponent not moving)
+        // if (!moveState.left && !moveState.right && !moveState.space) {
+        //     if (this.anims.currentAnim?.key !== `idle-${this.spriteKey}`) {
+        //         this.anims.stop();
+        //         this.play(`idle-${this.spriteKey}`, true);
+        //     }
         //     this.setVelocityX(0);
-        //     this.play(`idle-${this.spriteKey}`, true);
         //     this.setPosition(moveState.x, moveState.y);
         // }
     }
 
     addDebugger() {
         if (this.body) {
+            // this.debugText.setText(
+            //     `x: ${this.x.toFixed(0)}, y: ${this.y.toFixed(0)}\n` +
+            //         `velocityX: ${this.body.velocity.x.toFixed(
+            //             0
+            //         )}, velocityY: ${this.body.velocity.y.toFixed(0)}\n`
+            // );
+
             this.debugText.setText(
-                `x: ${this.x.toFixed(0)}, y: ${this.y.toFixed(0)}\n` +
-                    `velocityX: ${this.body.velocity.x.toFixed(
-                        0
-                    )}, velocityY: ${this.body.velocity.y.toFixed(0)}\n`
+                `x: ${this.moveState.x}, y: ${this.moveState.y}\n` +
+                    `left: ${this.moveState.left}, right: ${this.moveState.right}\n` +
+                    `jump: ${this.moveState.space}`
             );
 
             this.graphics.clear(); // Clear previous drawings
