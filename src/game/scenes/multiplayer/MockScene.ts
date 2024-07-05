@@ -5,9 +5,9 @@ import OnlinePlayer from "../../../entities/OnlinePlayer";
 import BaseScene from "../BaseScene";
 // import EventEmitter from "../events/Emitter";
 
-class WaitingScene extends BaseScene {
+class MockScene extends BaseScene {
     constructor(config) {
-        super("WaitingScene", config);
+        super("MockScene", config);
         this.config = config;
         this.stageKey = "lobby";
         this.opponents = {};
@@ -54,16 +54,6 @@ class WaitingScene extends BaseScene {
         this.setupUI();
 
         this.setupFollowupCameraOn(player);
-        this.createRoomKey();
-
-        const countdown = this.add
-            .text(1200, this.config.height / 5 + 200, `5`, {
-                fontFamily: "customFont",
-                fontSize: "0px",
-                fill: "#fff",
-            })
-            .setOrigin(0.5)
-            .setDepth(2);
 
         Object.keys(this.currentRoom.players).forEach((playerId) => {
             if (playerId !== this.socket.id) {
@@ -92,52 +82,6 @@ class WaitingScene extends BaseScene {
                     )
                     .setOrigin(0.5, 1);
             }
-        });
-
-        this.socket.on("newPlayerJoined", ({ playerId, playerInfo }) => {
-            if (!this.currentRoom.players[playerId]) {
-                this.currentRoom.numPlayers += 1;
-                this.currentRoom.players[playerId] = playerInfo; // { username, spriteKey }
-                this.opponents[playerId] = new OnlinePlayer(
-                    this,
-                    playerZones.start.x,
-                    playerZones.start.y,
-                    this.currentRoom.players[playerId].spriteKey,
-                    this.currentRoom.players[playerId].username,
-                    this.socket,
-                    false
-                );
-                this.opponents[playerId].body.setAllowGravity(false);
-            }
-
-            console.log({ Opponent: this.opponents[playerId] });
-
-            if (this.currentRoom.numPlayers === this.requiredPlayers) {
-                this.waitingForPlayers.setFontSize("0px");
-                this.startButton.setText("Start");
-            }
-
-            this.waitingForPlayers.setText(
-                `Waiting for ${
-                    this.requiredPlayers - this.currentRoom.numPlayers
-                } player(s)`
-            );
-
-            this.playerCounter.setText(
-                `${this.currentRoom.numPlayers} player(s) in lobby`
-            );
-
-            this[`opponents${playerId}`] = this.add
-                .text(
-                    this.opponents[playerId].x,
-                    this.opponents[playerId].y,
-                    this.currentRoom.players[playerId].username,
-                    {
-                        fontSize: "40px",
-                        fill: "#fff",
-                    }
-                )
-                .setOrigin(0.5, 1);
         });
 
         this.socket.on("playerLeft", ({ playerId }) => {
@@ -178,105 +122,12 @@ class WaitingScene extends BaseScene {
                 this[`opponents${playerId}`].setY(this.opponents[playerId].y);
             }
         });
-
-        this.socket.on("updateCountdown", (timeLeft) => {
-            if (this.startButton) {
-                this.startButton.destroy();
-            }
-            countdown.setFontSize("100px");
-            countdown.setText(`${timeLeft}`);
-        });
-
-        this.socket.on("loadLevel", (currentRoom) => {
-            this.socket.removeAllListeners();
-            this.cameras.main.fadeOut(500, 0, 0, 0);
-
-            this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    const nextStageKey = "MockScene";
-                    this.scene.stop("WaitingScene");
-                    this.scene.start(nextStageKey, {
-                        socket: this.socket,
-                        currentRoom: this.currentRoom,
-                        charSpriteKey: this.charSpriteKey,
-                        username: this.username,
-                    });
-                },
-            });
-        });
     }
 
     setupUI() {
         this.createHomeButton();
         this.createSettingsButton();
         this.createControlsButton();
-        this.setupPlayerCounter();
-        this.createStartButton();
-    }
-
-    createStartButton() {
-        this.startButton = this.add
-            .text(1200, this.config.height / 5 + 200, "", {
-                fontFamily: "customFont",
-                fontSize: "200px",
-                fill: "#000",
-            })
-            .setOrigin(0.5)
-            .setDepth(2);
-
-        this.startButton.setInteractive();
-        this.startButton.on("pointerover", () => {
-            this.startButton.setFill("#fff");
-        });
-        this.startButton.on("pointerout", () => {
-            this.startButton.setFill("#000");
-        });
-        this.startButton.on("pointerup", () => {
-            this.input.enabled = false;
-            this.socket.emit("startCountdown");
-            this.startButton.destroy();
-        });
-
-        // renders start button when there are 4 or more players in lobby;
-        if (this.currentRoom.numPlayers >= this.requiredPlayers) {
-            this.startButton.setText("Start");
-        }
-    }
-
-    setupPlayerCounter() {
-        this.playerCounter = this.add
-            .text(
-                1200,
-                this.config.height / 5,
-                `${this.currentRoom.numPlayers} player(s) in lobby`,
-                {
-                    fontFamily: "customFont",
-                    fontSize: "100px",
-                    fill: "#000",
-                }
-            )
-            .setOrigin(0.5)
-            .setDepth(2);
-
-        this.waitingForPlayers = this.add
-            .text(
-                1200,
-                this.config.height / 5 + 100,
-                `Waiting for ${
-                    this.requiredPlayers - this.currentRoom.numPlayers
-                } player(s)`,
-                {
-                    fontFamily: "customFont",
-                    fontSize: "0px",
-                    fill: "#fff",
-                }
-            )
-            .setOrigin(0.5);
-
-        if (this.currentRoom.numPlayers < this.requiredPlayers) {
-            this.waitingForPlayers.setFontSize("100px");
-        }
     }
 
     createMap() {
@@ -400,7 +251,7 @@ class WaitingScene extends BaseScene {
             this.config.rightBottomCorner.y - 50,
             "settings-button",
             () => {
-                this.scene.sendToBack("WaitingScene");
+                this.scene.sendToBack("MockScene");
                 this.scene.launch("SettingsScene");
             }
         )
@@ -415,7 +266,7 @@ class WaitingScene extends BaseScene {
             "home-btn",
             () => {
                 this.selectFx.play();
-                this.scene.sendToBack("WaitingScene");
+                this.scene.sendToBack("MockScene");
                 this.scene.launch("PauseScene");
             }
         )
@@ -429,29 +280,12 @@ class WaitingScene extends BaseScene {
             this.config.rightBottomCorner.y - 250,
             "controls-btn",
             () => {
-                this.scene.sendToBack("WaitingScene");
+                this.scene.sendToBack("MockScene");
                 this.scene.launch("Controls");
             }
         )
             .setScrollFactor(0)
             .setScale(1);
-    }
-
-    createRoomKey() {
-        if (this.roomKey.length === 4) {
-            this.add
-                .text(
-                    100,
-                    this.config.height + 600,
-                    `Room Code: ${this.roomKey}`,
-                    {
-                        fontFamily: "customFont",
-                        fontSize: "80px",
-                        fill: "#fff",
-                    }
-                )
-                .setDepth(2);
-        }
     }
 
     createPlayer(start) {
@@ -496,5 +330,5 @@ class WaitingScene extends BaseScene {
     }
 }
 
-export default WaitingScene;
+export default MockScene;
 

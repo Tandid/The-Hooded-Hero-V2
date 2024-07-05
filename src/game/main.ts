@@ -21,6 +21,7 @@ import PlayScene from "./scenes/Play";
 // Multiplayer Scenes
 import HeroSelectScene from "./scenes/multiplayer/HeroSelect";
 import JoinCustomRoomScene from "./scenes/multiplayer/JoinRoom";
+import MockScene from "./scenes/multiplayer/MockScene";
 import RoomSelectScene from "./scenes/multiplayer/RoomSelect";
 import WaitingScene from "./scenes/multiplayer/WaitingScene";
 
@@ -80,6 +81,7 @@ const Scenes = [
     PauseScene,
     PlayScene,
     WaitingScene,
+    MockScene,
 ];
 
 const createScene = (Scene: any) => new Scene(SHARED_CONFIG);
