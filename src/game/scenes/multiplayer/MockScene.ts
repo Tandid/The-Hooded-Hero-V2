@@ -9,7 +9,7 @@ class MockScene extends BaseScene {
     constructor(config) {
         super("MockScene", config);
         this.config = config;
-        this.stageKey = "lobby";
+        this.stageKey = "level_online";
         this.opponents = {};
         this.requiredPlayers = 1;
     }
@@ -82,37 +82,6 @@ class MockScene extends BaseScene {
                     )
                     .setOrigin(0.5, 1);
             }
-        });
-
-        this.socket.on("playerLeft", ({ playerId }) => {
-            // remove opponent from opponent list
-            if (this.opponents[playerId]) {
-                this.opponents[playerId].destroy(); // remove opponent's game object
-                delete this.opponents[playerId]; // remove opponent's key-value pair
-                this[`opponents${playerId}`].destroy(); // remove opponent's name
-            }
-
-            // remove opponent from player list
-            if (this.currentRoom.players[playerId]) {
-                delete this.currentRoom.players[playerId];
-                this.currentRoom.numPlayers -= 1;
-
-                // show waiting message if player num becomes lower than required num for starting game
-                if (this.currentRoom.numPlayers < this.requiredPlayers) {
-                    this.waitingForPlayers.setText(
-                        `Waiting for ${
-                            this.requiredPlayers - this.currentRoom.numPlayers
-                        } player(s)`
-                    );
-                    this.waitingForPlayers.setFontSize("100px");
-                    this.startButton.setText("");
-                }
-            }
-
-            // update display for player num in the room
-            this.playerCounter.setText(
-                `${this.currentRoom.numPlayers} player(s) in lobby`
-            );
         });
 
         this.socket.on("playerMoved", ({ playerId, moveState }) => {
@@ -309,7 +278,8 @@ class MockScene extends BaseScene {
         this.physics.world.setBounds(0, 0, width + mapOffset, height * 3);
         this.cameras.main
             .setBounds(0, 0, width + mapOffset, height + 1000)
-            .setZoom(0.5);
+            .setZoom(0.5)
+            .startFollow(player);
     }
 
     getPlayerZones(playerZonesLayer) {
@@ -317,7 +287,24 @@ class MockScene extends BaseScene {
         return {
             start: playerZones.find((zone) => zone.name === "startZone"),
             end: playerZones.find((zone) => zone.name === "endZone"),
+            checkpoints: playerZones.filter((zone) =>
+                zone.name.startsWith("checkpoint")
+            ),
         };
+    }
+
+    createEndOfLevel(end, player) {
+        const endOfLevel = this.physics.add
+            .sprite(end.x, end.y, "end")
+            .setAlpha(0)
+            .setSize(5, 200)
+            .setOrigin(0.5, 1);
+
+        const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
+            eolOverlap.active = false;
+
+            console.log("Congrats, you reached the end of the level!");
+        });
     }
 
     update() {
