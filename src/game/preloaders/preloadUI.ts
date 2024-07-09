@@ -29,6 +29,7 @@ export function preloadUI(scene: Phaser.Scene) {
     scene.load.image("small-left", "ui/Icons/icon_small_left.png");
     scene.load.image("controls-btn", "ui/Icons/icon_big_book.png");
     scene.load.image("contacts-btn", "ui/Icons/icon_small_message.png");
+    scene.load.image("trophy", "ui/Status/trophy.svg");
 
     scene.load.image("next-btn", "ui/Icons/icon_small_next.png");
     scene.load.image("prev-btn", "ui/Icons/icon_small_prev.png");

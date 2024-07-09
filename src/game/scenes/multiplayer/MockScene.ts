@@ -12,6 +12,7 @@ class MockScene extends BaseScene {
         this.stageKey = "level_online";
         this.opponents = {};
         this.requiredPlayers = 1;
+        this.rankings = [];
     }
 
     init(data) {
@@ -94,6 +95,10 @@ class MockScene extends BaseScene {
                 this[`opponents${playerId}`].setX(this.opponents[playerId].x);
                 this[`opponents${playerId}`].setY(this.opponents[playerId].y);
             }
+        });
+
+        this.socket.on("playerFinished", ({ playerId }) => {
+            this.handlePlayerFinish(playerId);
         });
     }
 
@@ -306,13 +311,22 @@ class MockScene extends BaseScene {
 
         const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
             eolOverlap.active = false;
+            this.handlePlayerFinish(this.socket.id);
+        });
 
-            console.log("Congrats, you reached the end of the level!");
+        Object.keys(this.opponents).forEach((playerId) => {
+            const opponentEndOverlap = this.physics.add.overlap(
+                this.opponents[playerId],
+                endOfLevel,
+                () => {
+                    opponentEndOverlap.active = false;
+                    this.handlePlayerFinish(playerId);
+                }
+            );
         });
     }
 
     handleCheckpoints(checkpoints, player) {
-        // Checkpoint overlap detection
         checkpoints.forEach((checkpoint) => {
             const checkpointMark = this.physics.add.sprite(
                 checkpoint.x,
@@ -333,6 +347,33 @@ class MockScene extends BaseScene {
         });
     }
 
+    handlePlayerFinish(playerId) {
+        if (!this.rankings.find((entry) => entry.id === playerId)) {
+            const playerData = {
+                id: playerId,
+                username:
+                    playerId === this.socket.id
+                        ? this.username
+                        : this.currentRoom.players[playerId].username,
+            };
+
+            this.rankings.push(playerData);
+            console.log(`Player finished: ${JSON.stringify(playerData)}`);
+            console.log(this.rankings);
+
+            if (
+                this.rankings.length ===
+                Object.keys(this.currentRoom.players).length
+            ) {
+                this.time.delayedCall(2000, () => {
+                    this.scene.start("RankingScene", {
+                        ranking: this.rankings,
+                    });
+                });
+            }
+        }
+    }
+
     createGameEvents() {
         EventEmitter.on("RESPAWN", () => {
             if (this.player && this.lastCheckpoint) {
@@ -340,7 +381,6 @@ class MockScene extends BaseScene {
                     this.lastCheckpoint.x,
                     this.lastCheckpoint.y
                 );
-                // Additional logic for resetting player state, animations, etc.
             }
         });
     }
