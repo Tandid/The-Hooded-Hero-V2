@@ -64,7 +64,7 @@ class Room {
         this.playersLoaded += 1;
     }
 
-    updateWinnerList(socketId) {
+    updateWinnerList(socketId, username) {
         // only add player as winner if they haven't been added yet
         if (!this.stageWinners.includes(socketId)) {
             this.stageWinners.push(socketId);

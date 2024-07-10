@@ -70,8 +70,8 @@ const setupGameListeners = (socket, io, currentRoom, roomKey) => {
     });
 
     socket.on("stageLoaded", () => stageLoaded(io, currentRoom, roomKey));
-    socket.on("passStage", (stageKey) =>
-        passStage(io, currentRoom, roomKey, stageKey)
+    socket.on("passStage", ({ playerId, username }) =>
+        passStage(io, currentRoom, roomKey, playerId, username)
     );
 };
 
@@ -111,10 +111,11 @@ const stageLoaded = (io, currentRoom, roomKey) => {
 };
 
 // Handle passing a stage
-const passStage = (io, currentRoom, roomKey, stageKey) => {
+const passStage = (io, currentRoom, roomKey, playerId, username) => {
     if (!currentRoom.reachStageLimit(2)) {
-        currentRoom.updateWinnerList(socket.id);
+        currentRoom.updateWinnerList(playerId);
         io.in(roomKey).emit("updateWinners", currentRoom.winnerNum);
+        console.log(currentRoom.stageWinners);
     }
 
     if (currentRoom.reachStageLimit(2)) {

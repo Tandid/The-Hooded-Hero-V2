@@ -144,66 +144,44 @@ class MockScene extends BaseScene {
             );
         });
 
-        // // stage ended when num of players reach the stage limit
-        // this.socket.on("stageEnded", (roomInfo) => {
-        //     this.socket.removeAllListeners();
-        //     this.stageEnded = true;
-        //     const { stageWinners } = roomInfo;
-        //     const playerWon = stageWinners.includes(this.socket.id);
+        // stage ended when num of players reach the stage limit
+        this.socket.on("stageEnded", (roomInfo) => {
+            this.socket.removeAllListeners();
+            this.stageEnded = true;
+            const { stageWinners } = roomInfo;
 
-        //     // get loser list
-        //     this.losers = this.roomInfo.players;
-        //     Object.keys(this.losers).forEach((playerId) => {
-        //         if (stageWinners.includes(playerId)) {
-        //             if (this.losers[playerId]) {
-        //                 delete this.losers[playerId];
-        //             }
-        //         }
-        //     });
+            this.time.addEvent({
+                delay: 5000,
+                loop: false,
+                repeat: 0,
+                callback: () => {
+                    this.socket.emit("leaveGame");
+                    this.socket.on("gameLeft", () => {
+                        this.socket.removeAllListeners();
+                        this.scene.stop(this.stageKey);
+                        this.scene.start("RankingScene", {
+                            rankings: stageWinners,
+                        });
+                    });
+                },
+            });
+        });
 
-        //     this.stageMessage.setText("WE GOT A WINNER!").setFontSize(80);
-
-        //     this.time.addEvent({
-        //         delay: 2000,
-        //         callback: () => {
-        //             this.cameras.main.fadeOut(1000, 0, 0, 0);
-        //         },
-        //     });
-
-        //     this.time.addEvent({
-        //         delay: 5000,
-        //         loop: false,
-        //         repeat: 0,
-        //         callback: () => {
-        //             this.socket.emit("leaveGame");
-        //             this.socket.on("gameLeft", () => {
-        //                 this.socket.removeAllListeners();
-        //                 this.scene.stop(this.stageKey);
-        //                 this.scene.start("RankingScene", {
-        //                     winner: this.roomInfo.players[stageWinners[0]],
-        //                     losers: this.losers,
-        //                     playerWon,
-        //                 });
-        //             });
-        //         },
-        //     });
-        // });
-
-        // // remove opponent when they leave the room (i.e. disconnected from the server)
-        // this.socket.on(
-        //     "playerLeft",
-        //     ({ playerId, newStageLimits, winnerNum }) => {
-        //         if (this.opponents[playerId]) {
-        //             this.opponents[playerId].destroy(); // remove opponent's game object
-        //             delete this.opponents[playerId]; // remove opponent's key-value pair
-        //             this[`opponents${playerId}`].destroy(); // remove opponent's name
-        //             this.stageLimit = newStageLimits[this.stageKey];
-        //             this.stageLimitText.setText(
-        //                 `Stage Limit: ${winnerNum}/${this.stageLimit}`
-        //             );
-        //         }
-        //     }
-        // );
+        // remove opponent when they leave the room (i.e. disconnected from the server)
+        this.socket.on(
+            "playerLeft",
+            ({ playerId, newStageLimits, winnerNum }) => {
+                if (this.opponents[playerId]) {
+                    this.opponents[playerId].destroy(); // remove opponent's game object
+                    delete this.opponents[playerId]; // remove opponent's key-value pair
+                    this[`opponents${playerId}`].destroy(); // remove opponent's name
+                    this.stageLimit = newStageLimits[this.stageKey];
+                    this.stageLimitText.setText(
+                        `Stage Limit: ${winnerNum}/${this.stageLimit}`
+                    );
+                }
+            }
+        );
     }
 
     setupUI() {
@@ -429,21 +407,13 @@ class MockScene extends BaseScene {
             .setOrigin(0.5, 1);
 
         const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
-            eolOverlap.active = false;
-            // this.handlePlayerFinish(this.socket.id);
-            // this.socket.emit("playerFinished", this.socket.id); // Emit to server
-        });
-
-        Object.keys(this.opponents).forEach((playerId) => {
-            const opponentEndOverlap = this.physics.add.overlap(
-                this.opponents[playerId],
-                endOfLevel,
-                () => {
-                    opponentEndOverlap.active = false;
-                    // this.handlePlayerFinish(playerId);
-                    // this.socket.emit("playerFinished", playerId); // Emit to server
-                }
-            );
+            if (this.stageEnded || this.stagePassed) return;
+            console.log("stage passed");
+            this.stagePassed = true;
+            this.socket.emit("passStage", {
+                playerId: this.socket.id,
+                username: this.username,
+            });
         });
     }
 
