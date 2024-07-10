@@ -2,6 +2,7 @@ import Phaser from "phaser";
 
 class HealthBar {
     constructor(scene, x, y, scale = 1, health) {
+        this.scene = scene;
         this.bar = new Phaser.GameObjects.Graphics(scene);
 
         this.x = x / scale;
@@ -17,6 +18,16 @@ class HealthBar {
         this.pixelPerHealth = this.size.width / this.value;
 
         scene.add.existing(this.bar);
+
+        this.healthText = this.scene.add
+            .text(this.x, this.y, `${health}`, {
+                fontSize: `32px`,
+                color: "#000",
+            })
+            .setOrigin(0.5)
+            .setScrollFactor(0)
+            .setDepth(1); // Set depth to ensure it's above the bar
+
         this.draw(this.x, this.y, this.scale);
     }
 
@@ -63,6 +74,10 @@ class HealthBar {
                 height - margin
             );
         }
+
+        // Update the health text position and value
+        this.healthText.setText(`${this.value}`);
+        this.healthText.setPosition(x + 100, y - 140);
 
         return this.bar.setScrollFactor(0, 0).setScale(scale);
     }
