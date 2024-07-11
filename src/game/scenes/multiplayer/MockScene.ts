@@ -3,6 +3,7 @@
 import initAnims from "../../../animations";
 import OnlinePlayer from "../../../entities/OnlinePlayer";
 import EventEmitter from "../../../events/Emitter";
+import Enemies from "../../../groups/Enemies";
 import BaseScene from "../BaseScene";
 
 class MockScene extends BaseScene {
@@ -11,7 +12,11 @@ class MockScene extends BaseScene {
         this.config = config;
         this.stageKey = "level_online";
         this.opponents = {};
-        this.requiredPlayers = 1;
+        this.stageLoaded = false;
+        this.stageStart = false;
+        this.stagePassed = false;
+        this.stageEnded = false;
+        this.rankings = [];
     }
 
     init(data) {
@@ -24,7 +29,15 @@ class MockScene extends BaseScene {
     }
 
     create() {
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
+
+        this.cameras.main.on("camerafadeincomplete", () => {
+            this.socket.emit("stageLoaded");
+        });
+
         super.create();
+
+        this.resetStageStatus();
 
         initAnims(this.anims);
 
@@ -35,18 +48,28 @@ class MockScene extends BaseScene {
 
         this.player = player;
         this.lastCheckpoint = playerZones.start;
+        const enemies = this.createEnemies(
+            layers.enemySpawns,
+            layers.platformsColliders
+        );
         console.log({ Me: this.player });
 
-        this.createBG(map);
-        this.setupFollowupCameraOn(player);
+        this.createEnemyColliders(enemies, {
+            platformsColliders: layers.platformsColliders,
+            player,
+        });
+
         this.createPlayerColliders(player, {
             colliders: {
                 platformsColliders: layers.platformsColliders,
             },
         });
 
+        this.createBG(map);
         this.createEndOfLevel(playerZones.end, player);
+
         this.handleCheckpoints(playerZones.checkpoints, player);
+        this.setupFollowupCameraOn(player);
 
         this.usernameText = this.add
             .text(this.player.x, this.player.y, this.username, {
@@ -59,6 +82,22 @@ class MockScene extends BaseScene {
         this.setupUI();
         this.createGameEvents();
 
+        // Creates countdown text
+        this.playerCountdown = this.add
+            .text(
+                this.config.width / 2,
+                this.config.height / 5 + 200,
+                `Waiting for all players...`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "100px",
+                    fill: "#fff",
+                }
+            )
+            .setOrigin(0.5, 0.5)
+            .setScrollFactor(0);
+
+        // Creates opponents
         Object.keys(this.currentRoom.players).forEach((playerId) => {
             if (playerId !== this.socket.id) {
                 const { spriteKey, username } =
@@ -88,6 +127,20 @@ class MockScene extends BaseScene {
             }
         });
 
+        // update stage count down timer
+        this.socket.on("stageTimerUpdated", (time) => {
+            this.playerCountdown.setFontSize("100px");
+            this.playerCountdown.setText(`${time}`);
+        });
+
+        // all players start the stage at the same time
+        this.socket.on("startStage", () => {
+            this.playerCountdown.setText("GO!");
+            this.stageStart = true;
+            this.time.delayedCall(1000, () => this.playerCountdown.destroy());
+        });
+
+        // Opponent movements updated
         this.socket.on("playerMoved", ({ playerId, moveState }) => {
             if (this.opponents[playerId]) {
                 this.opponents[playerId].updateOtherPlayer(moveState);
@@ -95,12 +148,72 @@ class MockScene extends BaseScene {
                 this[`opponents${playerId}`].setY(this.opponents[playerId].y);
             }
         });
+
+        this.socket.on("updateWinners", (winnerNum) => {
+            this.stageLimitText.setText(
+                `Stage Limit: ${winnerNum}/${this.stageLimit}`
+            );
+        });
+
+        // stage ended when num of players reach the stage limit
+        this.socket.on("stageEnded", (roomInfo) => {
+            this.socket.removeAllListeners();
+            this.stageEnded = true;
+            const { stageWinners } = roomInfo;
+
+            this.time.addEvent({
+                delay: 5000,
+                loop: false,
+                repeat: 0,
+                callback: () => {
+                    this.socket.emit("leaveGame");
+                    this.socket.on("gameLeft", () => {
+                        this.socket.removeAllListeners();
+                        this.scene.stop(this.stageKey);
+                        this.scene.start("RankingScene", {
+                            rankings: stageWinners,
+                        });
+                    });
+                },
+            });
+        });
+
+        // remove opponent when they leave the room (i.e. disconnected from the server)
+        this.socket.on(
+            "playerLeft",
+            ({ playerId, newStageLimits, winnerNum }) => {
+                if (this.opponents[playerId]) {
+                    this.opponents[playerId].destroy(); // remove opponent's game object
+                    delete this.opponents[playerId]; // remove opponent's key-value pair
+                    this[`opponents${playerId}`].destroy(); // remove opponent's name
+                    this.stageLimit = newStageLimits[this.stageKey];
+                    this.stageLimitText.setText(
+                        `Stage Limit: ${winnerNum}/${this.stageLimit}`
+                    );
+                }
+            }
+        );
     }
 
     setupUI() {
         this.createHomeButton();
         this.createSettingsButton();
         this.createControlsButton();
+
+        this.setStageLimit();
+        this.stageLimitText = this.add
+            .text(
+                this.config.width / 2,
+                this.config.height / 2 - 600,
+                `Winners: 0/${this.stageLimit}`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "50px",
+                    fill: "#fff",
+                }
+            )
+            .setScrollFactor(0)
+            .setOrigin(0.5, 0.5);
     }
 
     createMap() {
@@ -137,6 +250,8 @@ class MockScene extends BaseScene {
         ]);
         const playerZones = map.getObjectLayer("player_zones");
 
+        const enemySpawns = map.getObjectLayer("enemy_spawns");
+
         platformsColliders
             .setCollisionByProperty({ collides: true })
             .setAlpha(0);
@@ -146,6 +261,7 @@ class MockScene extends BaseScene {
             platforms,
             platformsColliders,
             playerZones,
+            enemySpawns,
         };
     }
 
@@ -273,6 +389,36 @@ class MockScene extends BaseScene {
         );
     }
 
+    createEnemies(spawnLayer, platformsColliders, player) {
+        const enemies = new Enemies(this);
+        const enemyTypes = enemies.getTypes();
+
+        spawnLayer.objects.forEach((spawnPoint) => {
+            const EnemyType = enemyTypes[spawnPoint.type];
+            if (EnemyType) {
+                const enemy = new EnemyType(this, spawnPoint.x, spawnPoint.y);
+                enemy.setPlatformColliders(platformsColliders);
+                enemies.add(enemy);
+            }
+        });
+
+        return enemies;
+    }
+
+    onPlayerCollision(enemy, player) {
+        player.takesHit(enemy);
+    }
+
+    onHit(entity, source) {
+        entity.takesHit(source);
+    }
+
+    createEnemyColliders(enemies, colliders) {
+        enemies
+            .addCollider(colliders.platformsColliders)
+            .addCollider(colliders.player, this.onPlayerCollision);
+    }
+
     createPlayerColliders(player, { colliders }) {
         player.addCollider(colliders.platformsColliders);
     }
@@ -305,14 +451,17 @@ class MockScene extends BaseScene {
             .setOrigin(0.5, 1);
 
         const eolOverlap = this.physics.add.overlap(player, endOfLevel, () => {
-            eolOverlap.active = false;
-
-            console.log("Congrats, you reached the end of the level!");
+            if (this.stageEnded || this.stagePassed) return;
+            console.log("stage passed");
+            this.stagePassed = true;
+            this.socket.emit("passStage", {
+                playerId: this.socket.id,
+                username: this.username,
+            });
         });
     }
 
     handleCheckpoints(checkpoints, player) {
-        // Checkpoint overlap detection
         checkpoints.forEach((checkpoint) => {
             const checkpointMark = this.physics.add.sprite(
                 checkpoint.x,
@@ -340,7 +489,6 @@ class MockScene extends BaseScene {
                     this.lastCheckpoint.x,
                     this.lastCheckpoint.y
                 );
-                // Additional logic for resetting player state, animations, etc.
             }
         });
     }
@@ -352,6 +500,19 @@ class MockScene extends BaseScene {
     displayUsername() {
         this.usernameText.setX(this.player.x);
         this.usernameText.setY(this.player.y - 80);
+    }
+
+    resetStageStatus() {
+        this.opponents = {};
+        this.stageLoaded = false;
+        this.stageStart = false;
+        this.stagePassed = false;
+        this.stageEnded = false;
+        // this.hurt = false;
+    }
+
+    setStageLimit() {
+        this.stageLimit = 2;
     }
 }
 

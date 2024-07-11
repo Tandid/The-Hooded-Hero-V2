@@ -63,14 +63,15 @@ const handleJoinRoom = (socket, io, { roomKey, spriteKey, username }) => {
 // Set up event listeners for game actions
 const setupGameListeners = (socket, io, currentRoom, roomKey) => {
     socket.on("startCountdown", () => startCountdown(io, currentRoom, roomKey));
-    socket.on("stageLoaded", () => stageLoaded(io, currentRoom, roomKey));
     socket.on("updatePlayer", (moveState) => {
         socket
             .to(roomKey)
             .emit("playerMoved", { playerId: socket.id, moveState });
     });
-    socket.on("passStage", (stageKey) =>
-        passStage(io, currentRoom, roomKey, stageKey)
+
+    socket.on("stageLoaded", () => stageLoaded(io, currentRoom, roomKey));
+    socket.on("passStage", ({ playerId, username }) =>
+        passStage(io, currentRoom, roomKey, playerId, username)
     );
 };
 
@@ -110,15 +111,16 @@ const stageLoaded = (io, currentRoom, roomKey) => {
 };
 
 // Handle passing a stage
-const passStage = (io, currentRoom, roomKey, stageKey) => {
-    if (!currentRoom.reachStageLimit(stageKey)) {
-        currentRoom.updateWinnerList(socket.id);
+const passStage = (io, currentRoom, roomKey, playerId, username) => {
+    if (!currentRoom.reachStageLimit(2)) {
+        currentRoom.updateWinnerList(playerId);
         io.in(roomKey).emit("updateWinners", currentRoom.winnerNum);
+        console.log(currentRoom.stageWinners);
     }
 
-    if (currentRoom.reachStageLimit(stageKey)) {
+    if (currentRoom.reachStageLimit(2)) {
         currentRoom.resetStageStatus();
-        currentRoom.updatePlayerList();
+        // currentRoom.updatePlayerList();
         io.in(roomKey).emit("stageEnded", currentRoom);
         currentRoom.resetWinnerList();
     }

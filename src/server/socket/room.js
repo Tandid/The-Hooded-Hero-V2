@@ -6,8 +6,8 @@ class Room {
         this.numPlayers = 0;
         this.playersLoaded = 0;
 
-        this.countdown = 5;
-        this.stageTimer = 5;
+        this.countdown = 1;
+        this.stageTimer = 3;
 
         this.stage = "stage1";
         this.stageWinners = [];
@@ -26,14 +26,14 @@ class Room {
         }
     }
 
-    updatePlayerList() {
-        // update player list based on winner list for next stage
-        Object.keys(this.players).forEach((playerId) => {
-            if (!this.stageWinners.includes(playerId)) {
-                this.removePlayer(playerId);
-            }
-        });
-    }
+    // updatePlayerList() {
+    //     // update player list based on winner list for next stage
+    //     Object.keys(this.players).forEach((playerId) => {
+    //         if (!this.stageWinners.includes(playerId)) {
+    //             this.removePlayer(playerId);
+    //         }
+    //     });
+    // }
 
     runCountdownTimer() {
         if (this.countdown > 0) {
@@ -64,7 +64,7 @@ class Room {
         this.playersLoaded += 1;
     }
 
-    updateWinnerList(socketId) {
+    updateWinnerList(socketId, username) {
         // only add player as winner if they haven't been added yet
         if (!this.stageWinners.includes(socketId)) {
             this.stageWinners.push(socketId);
@@ -80,8 +80,8 @@ class Room {
         }
     }
 
-    reachStageLimit(stageKey) {
-        return this.winnerNum >= this.stageLimits[stageKey];
+    reachStageLimit(num) {
+        return this.winnerNum >= num;
     }
 
     resetStageStatus() {

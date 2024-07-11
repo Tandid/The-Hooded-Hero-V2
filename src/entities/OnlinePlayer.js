@@ -161,7 +161,7 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
         this.checkOutOfBounds();
         this.handleMovement();
 
-        this.addDebugger();
+        // this.addDebugger();
     }
 
     // Method to check if the player is out of bounds and trigger appropriate actions
