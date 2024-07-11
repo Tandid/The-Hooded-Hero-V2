@@ -3,6 +3,7 @@
 import initAnims from "../../../animations";
 import OnlinePlayer from "../../../entities/OnlinePlayer";
 import EventEmitter from "../../../events/Emitter";
+import Enemies from "../../../groups/Enemies";
 import BaseScene from "../BaseScene";
 
 class MockScene extends BaseScene {
@@ -47,18 +48,28 @@ class MockScene extends BaseScene {
 
         this.player = player;
         this.lastCheckpoint = playerZones.start;
+        const enemies = this.createEnemies(
+            layers.enemySpawns,
+            layers.platformsColliders
+        );
         console.log({ Me: this.player });
 
-        this.createBG(map);
-        this.setupFollowupCameraOn(player);
+        this.createEnemyColliders(enemies, {
+            platformsColliders: layers.platformsColliders,
+            player,
+        });
+
         this.createPlayerColliders(player, {
             colliders: {
                 platformsColliders: layers.platformsColliders,
             },
         });
 
+        this.createBG(map);
         this.createEndOfLevel(playerZones.end, player);
+
         this.handleCheckpoints(playerZones.checkpoints, player);
+        this.setupFollowupCameraOn(player);
 
         this.usernameText = this.add
             .text(this.player.x, this.player.y, this.username, {
@@ -239,6 +250,8 @@ class MockScene extends BaseScene {
         ]);
         const playerZones = map.getObjectLayer("player_zones");
 
+        const enemySpawns = map.getObjectLayer("enemy_spawns");
+
         platformsColliders
             .setCollisionByProperty({ collides: true })
             .setAlpha(0);
@@ -248,6 +261,7 @@ class MockScene extends BaseScene {
             platforms,
             platformsColliders,
             playerZones,
+            enemySpawns,
         };
     }
 
@@ -373,6 +387,36 @@ class MockScene extends BaseScene {
             this.socket,
             true
         );
+    }
+
+    createEnemies(spawnLayer, platformsColliders, player) {
+        const enemies = new Enemies(this);
+        const enemyTypes = enemies.getTypes();
+
+        spawnLayer.objects.forEach((spawnPoint) => {
+            const EnemyType = enemyTypes[spawnPoint.type];
+            if (EnemyType) {
+                const enemy = new EnemyType(this, spawnPoint.x, spawnPoint.y);
+                enemy.setPlatformColliders(platformsColliders);
+                enemies.add(enemy);
+            }
+        });
+
+        return enemies;
+    }
+
+    onPlayerCollision(enemy, player) {
+        player.takesHit(enemy);
+    }
+
+    onHit(entity, source) {
+        entity.takesHit(source);
+    }
+
+    createEnemyColliders(enemies, colliders) {
+        enemies
+            .addCollider(colliders.platformsColliders)
+            .addCollider(colliders.player, this.onPlayerCollision);
     }
 
     createPlayerColliders(player, { colliders }) {
