@@ -25,7 +25,7 @@ class MockScene extends BaseScene {
         this.roomKey = data.roomKey;
         this.charSpriteKey = data.charSpriteKey;
         this.username = data.username;
-        console.log({ Waiting: data });
+        console.log({ OnlinePlayScene: data });
     }
 
     create() {
@@ -39,20 +39,20 @@ class MockScene extends BaseScene {
 
         this.resetStageStatus();
 
+        const map = this.createMap();
         initAnims(this.anims);
 
-        const map = this.createMap();
         const layers = this.createLayers(map);
         const playerZones = this.getPlayerZones(layers.playerZones);
         const player = this.createPlayer(playerZones.start);
 
         this.player = player;
+        console.log({ Me: this.player });
         this.lastCheckpoint = playerZones.start;
         const enemies = this.createEnemies(
             layers.enemySpawns,
             layers.platformsColliders
         );
-        console.log({ Me: this.player });
 
         this.createEnemyColliders(enemies, {
             platformsColliders: layers.platformsColliders,
@@ -62,6 +62,8 @@ class MockScene extends BaseScene {
         this.createPlayerColliders(player, {
             colliders: {
                 platformsColliders: layers.platformsColliders,
+                projectiles: enemies.getProjectiles(),
+                enemies,
             },
         });
 
@@ -149,9 +151,9 @@ class MockScene extends BaseScene {
             }
         });
 
-        this.socket.on("updateWinners", (winnerNum) => {
+        this.socket.on("updateWinners", (numWinners) => {
             this.stageLimitText.setText(
-                `Stage Limit: ${winnerNum}/${this.stageLimit}`
+                `Stage Limit: ${numWinners}/${this.stageLimit}`
             );
         });
 
@@ -181,14 +183,14 @@ class MockScene extends BaseScene {
         // remove opponent when they leave the room (i.e. disconnected from the server)
         this.socket.on(
             "playerLeft",
-            ({ playerId, newStageLimits, winnerNum }) => {
+            ({ playerId, newStageLimits, numWinners }) => {
                 if (this.opponents[playerId]) {
                     this.opponents[playerId].destroy(); // remove opponent's game object
                     delete this.opponents[playerId]; // remove opponent's key-value pair
                     this[`opponents${playerId}`].destroy(); // remove opponent's name
-                    this.stageLimit = newStageLimits[this.stageKey];
+                    this.stageLimit -= 1;
                     this.stageLimitText.setText(
-                        `Stage Limit: ${winnerNum}/${this.stageLimit}`
+                        `Stage Limit: ${numWinners}/${this.stageLimit}`
                     );
                 }
             }
@@ -241,7 +243,6 @@ class MockScene extends BaseScene {
         const environment = map
             .createLayer("environment", [tileset3, tileset4])
             .setDepth(-4);
-
         const platforms = map.createLayer("platforms", [
             tileset1,
             tileset2,
@@ -249,7 +250,6 @@ class MockScene extends BaseScene {
             tileset4,
         ]);
         const playerZones = map.getObjectLayer("player_zones");
-
         const enemySpawns = map.getObjectLayer("enemy_spawns");
 
         platformsColliders
@@ -268,70 +268,32 @@ class MockScene extends BaseScene {
     createBG(map) {
         const bgObject = map.getObjectLayer("distance_bg").objects[0];
 
-        this.forestImageOne = this.add
-            .tileSprite(
-                bgObject.x,
-                bgObject.y,
-                this.config.width * 3,
-                bgObject.height * 1.75,
-                "bg-forest-1"
-            )
-            .setOrigin(0.5)
-            .setDepth(-10)
-            .setScale(1)
-            .setScrollFactor(0, 1);
+        this.forestBg = [
+            { key: "bg-forest-1", y: 300, depth: -10, scale: 1.3 },
+            { key: "bg-forest-2", y: 300, depth: -11, scale: 1.3 },
+            { key: "bg-forest-3", y: 300, depth: -12, scale: 1 },
+            { key: "mountain-bg", y: 200, depth: -13, scale: 1 },
+            { key: "sky-bg", y: 0, depth: -14, scale: 1 },
+        ];
 
-        this.forestImageTwo = this.add
-            .tileSprite(
-                0,
-                300,
-                this.config.width + 3000,
-                this.config.height + 800,
-                "bg-forest-2"
-            )
-            .setOrigin(0.5, 0)
-            .setDepth(-11)
-            .setScale(1)
-            .setScrollFactor(0, 1);
+        this.bgSprites = [];
 
-        this.forestImageThree = this.add
-            .tileSprite(
-                0,
-                300,
-                this.config.width + 3000,
-                this.config.height + 800,
-                "bg-forest-3"
-            )
-            .setOrigin(0.5, 0)
-            .setDepth(-12)
-            .setScale(1)
-            .setScrollFactor(0, 1);
+        this.forestBg.forEach(({ key, y, depth, scale }) => {
+            const sprite = this.add
+                .tileSprite(
+                    0,
+                    y,
+                    this.config.width + 3000,
+                    this.config.height + 1000,
+                    key
+                )
+                .setOrigin(0.5, 0)
+                .setDepth(depth)
+                .setScale(scale)
+                .setScrollFactor(0, 1);
 
-        this.mountainImage = this.add
-            .tileSprite(
-                0,
-                200,
-                this.config.width + 3000,
-                this.config.height + 800,
-                "mountain-bg"
-            )
-            .setOrigin(0.5, 0)
-            .setDepth(-13)
-            .setScale(1)
-            .setScrollFactor(0, 1);
-
-        this.skyImage = this.add
-            .tileSprite(
-                0,
-                0,
-                this.config.width + 3000,
-                this.config.height + 800,
-                "sky-bg"
-            )
-            .setOrigin(0.5, 0)
-            .setDepth(-14)
-            .setScale(1)
-            .setScrollFactor(0, 1);
+            this.bgSprites.push(sprite);
+        });
     }
 
     createSettingsButton() {
@@ -420,7 +382,10 @@ class MockScene extends BaseScene {
     }
 
     createPlayerColliders(player, { colliders }) {
-        player.addCollider(colliders.platformsColliders);
+        player
+            .addCollider(colliders.platformsColliders)
+            .addCollider(colliders.projectiles, this.onHit)
+            .addOverlap(colliders.enemies, this.onHit);
     }
 
     setupFollowupCameraOn(player) {
@@ -463,11 +428,11 @@ class MockScene extends BaseScene {
 
     handleCheckpoints(checkpoints, player) {
         checkpoints.forEach((checkpoint) => {
-            const checkpointMark = this.physics.add.sprite(
-                checkpoint.x,
-                checkpoint.y,
-                "checkpoint"
-            );
+            const checkpointMark = this.physics.add
+                .sprite(checkpoint.x, checkpoint.y, "checkpoint")
+                .setAlpha(0)
+                .setSize(5, 200)
+                .setOrigin(0.5, 1);
 
             const checkpointOverlap = this.physics.add.overlap(
                 player,
@@ -495,6 +460,14 @@ class MockScene extends BaseScene {
 
     update() {
         this.displayUsername();
+
+        if (this.bgSprites) {
+            this.bgSprites[0].tilePositionX = this.cameras.main.scrollX * 0.3;
+            this.bgSprites[1].tilePositionX = this.cameras.main.scrollX * 0.2;
+            this.bgSprites[2].tilePositionX = this.cameras.main.scrollX * 0.3;
+            this.bgSprites[3].tilePositionX = this.cameras.main.scrollX * 0.2;
+            this.bgSprites[4].tilePositionX = this.cameras.main.scrollX * 0.1;
+        }
     }
 
     displayUsername() {
@@ -512,7 +485,7 @@ class MockScene extends BaseScene {
     }
 
     setStageLimit() {
-        this.stageLimit = 2;
+        this.stageLimit = this.currentRoom.numPlayers;
     }
 }
 

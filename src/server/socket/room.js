@@ -11,7 +11,7 @@ class Room {
 
         this.stage = "stage1";
         this.stageWinners = [];
-        this.winnerNum = 0;
+        this.numWinners = 0;
     }
 
     addNewPlayer(socketId, spriteKey, username) {
@@ -68,7 +68,7 @@ class Room {
         // only add player as winner if they haven't been added yet
         if (!this.stageWinners.includes(socketId)) {
             this.stageWinners.push(socketId);
-            this.winnerNum = this.stageWinners.length;
+            this.numWinners = this.stageWinners.length;
         }
     }
 
@@ -76,12 +76,12 @@ class Room {
         const index = this.stageWinners.indexOf(socketId);
         if (index > -1) {
             this.stageWinners.splice(index, 1);
-            this.winnerNum = this.stageWinners.length;
+            this.numWinners = this.stageWinners.length;
         }
     }
 
     reachStageLimit(num) {
-        return this.winnerNum >= num;
+        return this.numWinners >= num;
     }
 
     resetStageStatus() {
@@ -90,14 +90,14 @@ class Room {
     }
 
     resetWinnerList() {
-        this.winnerNum = 0;
+        this.numWinners = 0;
         this.stageWinners = [];
     }
 
     resetAllStageStatus() {
         this.playersLoaded = 0;
         this.stageWinners = [];
-        this.winnerNum = 0;
+        this.numWinners = 0;
     }
 }
 

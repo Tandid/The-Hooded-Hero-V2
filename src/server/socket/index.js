@@ -114,7 +114,7 @@ const stageLoaded = (io, currentRoom, roomKey) => {
 const passStage = (io, currentRoom, roomKey, playerId, username) => {
     if (!currentRoom.reachStageLimit(2)) {
         currentRoom.updateWinnerList(playerId);
-        io.in(roomKey).emit("updateWinners", currentRoom.winnerNum);
+        io.in(roomKey).emit("updateWinners", currentRoom.numWinners);
         console.log(currentRoom.stageWinners);
     }
 
@@ -169,7 +169,7 @@ const handleDisconnecting = (socket, io) => {
         socket.to(roomKey).emit("playerLeft", {
             playerId: socket.id,
             newStageLimits: currentRoom.stageLimits,
-            winnerNum: currentRoom.winnerNum,
+            numWinners: currentRoom.numWinners,
         });
 
         if (
