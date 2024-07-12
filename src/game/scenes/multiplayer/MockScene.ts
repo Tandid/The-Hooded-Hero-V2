@@ -25,7 +25,7 @@ class MockScene extends BaseScene {
         this.roomKey = data.roomKey;
         this.charSpriteKey = data.charSpriteKey;
         this.username = data.username;
-        console.log({ Waiting: data });
+        console.log({ OnlinePlayScene: data });
     }
 
     create() {
@@ -151,9 +151,9 @@ class MockScene extends BaseScene {
             }
         });
 
-        this.socket.on("updateWinners", (winnerNum) => {
+        this.socket.on("updateWinners", (numWinners) => {
             this.stageLimitText.setText(
-                `Stage Limit: ${winnerNum}/${this.stageLimit}`
+                `Stage Limit: ${numWinners}/${this.stageLimit}`
             );
         });
 
@@ -183,14 +183,14 @@ class MockScene extends BaseScene {
         // remove opponent when they leave the room (i.e. disconnected from the server)
         this.socket.on(
             "playerLeft",
-            ({ playerId, newStageLimits, winnerNum }) => {
+            ({ playerId, newStageLimits, numWinners }) => {
                 if (this.opponents[playerId]) {
                     this.opponents[playerId].destroy(); // remove opponent's game object
                     delete this.opponents[playerId]; // remove opponent's key-value pair
                     this[`opponents${playerId}`].destroy(); // remove opponent's name
-                    this.stageLimit = newStageLimits[this.stageKey];
+                    this.stageLimit -= 1;
                     this.stageLimitText.setText(
-                        `Stage Limit: ${winnerNum}/${this.stageLimit}`
+                        `Stage Limit: ${numWinners}/${this.stageLimit}`
                     );
                 }
             }
@@ -485,7 +485,7 @@ class MockScene extends BaseScene {
     }
 
     setStageLimit() {
-        this.stageLimit = 2;
+        this.stageLimit = this.currentRoom.numPlayers;
     }
 }
 
