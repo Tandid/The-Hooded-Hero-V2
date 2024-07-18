@@ -1,39 +1,32 @@
 // @ts-nocheck
 
-import Phaser from "phaser";
-import OnlinePlayer from "../entities/OnlinePlayer";
+import initAnims from "../../../animations";
+import OnlinePlayer from "../../../entities/OnlinePlayer";
+import BaseScene from "../BaseScene";
 // import EventEmitter from "../events/Emitter";
 
-import initAnims from "../../../animations";
-
-class WaitingScene extends Phaser.Scene {
+class WaitingScene extends BaseScene {
     constructor(config) {
-        super("WaitingScene");
+        super("WaitingScene", config);
         this.config = config;
         this.stageKey = "lobby";
         this.opponents = {};
-        this.requiredPlayers = 4;
+        this.requiredPlayers = 1;
     }
 
     init(data) {
         this.socket = data.socket;
-        this.roomInfo = data.roomInfo;
+        this.currentRoom = data.currentRoom;
         this.roomKey = data.roomKey;
         this.charSpriteKey = data.charSpriteKey;
-        this.username = this.localStorage.getItem("username");
+        this.username = data.username;
         console.log({ Waiting: data });
     }
 
     create() {
-        const height = this.config.height;
-        this.cursorOverFx = this.sound.add("cursorOver");
-        this.cursorOverFx.volume = 0.4;
-
-        this.selectFx = this.sound.add("select");
-        this.selectFx.volume = 0.4;
+        super.create();
 
         const map = this.createMap();
-
         initAnims(this.anims);
 
         const layers = this.createLayers(map);
@@ -42,55 +35,7 @@ class WaitingScene extends Phaser.Scene {
         this.player = player;
         console.log({ Me: this.player });
 
-        this.createPlayerColliders(player, {
-            colliders: {
-                platformsColliders: layers.platformsColliders,
-            },
-        });
-
         this.createBG(map);
-        this.createHomeButton();
-        this.createSettingsButton();
-        this.setupFollowupCameraOn(player);
-        this.createRoomKey();
-
-        this.playerCounter = this.add
-            .text(
-                1200,
-                height / 5,
-                `${this.roomInfo.playerNum} player(s) in lobby`,
-                {
-                    fontFamily: "customFont",
-                    fontSize: "100px",
-                    fill: "#000",
-                }
-            )
-            .setOrigin(0.5)
-            .setDepth(2);
-
-        this.waitingForPlayers = this.add
-            .text(
-                1200,
-                height / 5 + 100,
-                `Waiting for ${
-                    this.requiredPlayers - this.roomInfo.playerNum
-                } player(s)`,
-                {
-                    fontFamily: "customFont",
-                    fontSize: "0px",
-                    fill: "#fff",
-                }
-            )
-            .setOrigin(0.5);
-
-        this.startButton = this.add
-            .text(1200, height / 5 + 200, "", {
-                fontFamily: "customFont",
-                fontSize: "200px",
-                fill: "#000",
-            })
-            .setOrigin(0.5)
-            .setDepth(2);
 
         this.usernameText = this.add
             .text(this.player.x, this.player.y, this.username, {
@@ -100,8 +45,19 @@ class WaitingScene extends Phaser.Scene {
             .setOrigin(0.5, 1)
             .setDepth(2);
 
+        this.createPlayerColliders(player, {
+            colliders: {
+                platformsColliders: layers.platformsColliders,
+            },
+        });
+
+        this.setupUI();
+
+        this.setupFollowupCameraOn(player);
+        this.createRoomKey();
+
         const countdown = this.add
-            .text(1200, height / 5 + 200, `5`, {
+            .text(1200, this.config.height / 5 + 200, `5`, {
                 fontFamily: "customFont",
                 fontSize: "0px",
                 fill: "#fff",
@@ -109,23 +65,10 @@ class WaitingScene extends Phaser.Scene {
             .setOrigin(0.5)
             .setDepth(2);
 
-        if (this.roomInfo.playerNum < this.requiredPlayers) {
-            this.waitingForPlayers.setFontSize("100px");
-        }
-
-        // sends message to randomize when first player joins lobby
-        if (this.roomInfo.playerNum === 1) {
-            this.socket.emit("randomize");
-        }
-
-        // renders start button when there are 4 or more players in lobby;
-        if (this.roomInfo.playerNum >= this.requiredPlayers) {
-            this.startButton.setText("Start");
-        }
-
-        Object.keys(this.roomInfo.players).forEach((playerId) => {
+        Object.keys(this.currentRoom.players).forEach((playerId) => {
             if (playerId !== this.socket.id) {
-                const { spriteKey, username } = this.roomInfo.players[playerId];
+                const { spriteKey, username } =
+                    this.currentRoom.players[playerId];
                 this.opponents[playerId] = new OnlinePlayer(
                     this,
                     playerZones.start.x,
@@ -152,15 +95,15 @@ class WaitingScene extends Phaser.Scene {
         });
 
         this.socket.on("newPlayerJoined", ({ playerId, playerInfo }) => {
-            if (!this.roomInfo.players[playerId]) {
-                this.roomInfo.playerNum += 1;
-                this.roomInfo.players[playerId] = playerInfo; // { username, spriteKey }
+            if (!this.currentRoom.players[playerId]) {
+                this.currentRoom.numPlayers += 1;
+                this.currentRoom.players[playerId] = playerInfo; // { username, spriteKey }
                 this.opponents[playerId] = new OnlinePlayer(
                     this,
                     playerZones.start.x,
                     playerZones.start.y,
-                    this.roomInfo.players[playerId].spriteKey,
-                    this.roomInfo.players[playerId].username,
+                    this.currentRoom.players[playerId].spriteKey,
+                    this.currentRoom.players[playerId].username,
                     this.socket,
                     false
                 );
@@ -169,26 +112,26 @@ class WaitingScene extends Phaser.Scene {
 
             console.log({ Opponent: this.opponents[playerId] });
 
-            if (this.roomInfo.playerNum === this.requiredPlayers) {
+            if (this.currentRoom.numPlayers === this.requiredPlayers) {
                 this.waitingForPlayers.setFontSize("0px");
                 this.startButton.setText("Start");
             }
 
             this.waitingForPlayers.setText(
                 `Waiting for ${
-                    this.requiredPlayers - this.roomInfo.playerNum
+                    this.requiredPlayers - this.currentRoom.numPlayers
                 } player(s)`
             );
 
             this.playerCounter.setText(
-                `${this.roomInfo.playerNum} player(s) in lobby`
+                `${this.currentRoom.numPlayers} player(s) in lobby`
             );
 
             this[`opponents${playerId}`] = this.add
                 .text(
                     this.opponents[playerId].x,
                     this.opponents[playerId].y,
-                    this.roomInfo.players[playerId].username,
+                    this.currentRoom.players[playerId].username,
                     {
                         fontSize: "40px",
                         fill: "#fff",
@@ -206,15 +149,15 @@ class WaitingScene extends Phaser.Scene {
             }
 
             // remove opponent from player list
-            if (this.roomInfo.players[playerId]) {
-                delete this.roomInfo.players[playerId];
-                this.roomInfo.playerNum -= 1;
+            if (this.currentRoom.players[playerId]) {
+                delete this.currentRoom.players[playerId];
+                this.currentRoom.numPlayers -= 1;
 
                 // show waiting message if player num becomes lower than required num for starting game
-                if (this.roomInfo.playerNum < this.requiredPlayers) {
+                if (this.currentRoom.numPlayers < this.requiredPlayers) {
                     this.waitingForPlayers.setText(
                         `Waiting for ${
-                            this.requiredPlayers - this.roomInfo.playerNum
+                            this.requiredPlayers - this.currentRoom.numPlayers
                         } player(s)`
                     );
                     this.waitingForPlayers.setFontSize("100px");
@@ -224,21 +167,63 @@ class WaitingScene extends Phaser.Scene {
 
             // update display for player num in the room
             this.playerCounter.setText(
-                `${this.roomInfo.playerNum} player(s) in lobby`
+                `${this.currentRoom.numPlayers} player(s) in lobby`
             );
         });
 
         this.socket.on("playerMoved", ({ playerId, moveState }) => {
             if (this.opponents[playerId]) {
                 this.opponents[playerId].updateOtherPlayer(moveState);
-                this[`opponents${playerId}`].setX(
-                    this.opponents[playerId].x + 90
-                );
-                this[`opponents${playerId}`].setY(
-                    this.opponents[playerId].y - 160
-                );
+                this[`opponents${playerId}`].setX(this.opponents[playerId].x);
+                this[`opponents${playerId}`].setY(this.opponents[playerId].y);
             }
         });
+
+        this.socket.on("updateCountdown", (timeLeft) => {
+            if (this.startButton) {
+                this.startButton.destroy();
+            }
+            countdown.setFontSize("100px");
+            countdown.setText(`${timeLeft}`);
+        });
+
+        this.socket.on("loadLevel", (currentRoom) => {
+            this.socket.removeAllListeners();
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+
+            this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    const nextStageKey = "MockScene";
+                    this.scene.stop("WaitingScene");
+                    this.scene.start(nextStageKey, {
+                        socket: this.socket,
+                        currentRoom: this.currentRoom,
+                        charSpriteKey: this.charSpriteKey,
+                        username: this.username,
+                    });
+                },
+            });
+        });
+    }
+
+    setupUI() {
+        this.createHomeButton();
+        this.createSettingsButton();
+        this.createControlsButton();
+        this.setupPlayerCounter();
+        this.createStartButton();
+    }
+
+    createStartButton() {
+        this.startButton = this.add
+            .text(1200, this.config.height / 5 + 200, "", {
+                fontFamily: "customFont",
+                fontSize: "200px",
+                fill: "#000",
+            })
+            .setOrigin(0.5)
+            .setDepth(2);
 
         this.startButton.setInteractive();
         this.startButton.on("pointerover", () => {
@@ -249,36 +234,49 @@ class WaitingScene extends Phaser.Scene {
         });
         this.startButton.on("pointerup", () => {
             this.input.enabled = false;
-            this.socket.emit("startTimer");
+            this.socket.emit("startCountdown");
             this.startButton.destroy();
         });
 
-        this.socket.on("timerUpdated", (timeLeft) => {
-            if (this.startButton) {
-                this.startButton.destroy();
-            }
-            countdown.setFontSize("100px");
-            countdown.setText(`${timeLeft}`);
-        });
+        // renders start button when there are 4 or more players in lobby;
+        if (this.currentRoom.numPlayers >= this.requiredPlayers) {
+            this.startButton.setText("Start");
+        }
+    }
 
-        this.socket.on("loadNextStage", (roomInfo) => {
-            this.socket.removeAllListeners();
-            this.cameras.main.fadeOut(500, 0, 0, 0);
+    setupPlayerCounter() {
+        this.playerCounter = this.add
+            .text(
+                1200,
+                this.config.height / 5,
+                `${this.currentRoom.numPlayers} player(s) in lobby`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "100px",
+                    fill: "#000",
+                }
+            )
+            .setOrigin(0.5)
+            .setDepth(2);
 
-            this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    const nextStageKey = "ComingSoonScene";
-                    this.scene.stop("WaitingScene");
-                    this.scene.start(nextStageKey, {
-                        socket: this.socket,
-                        roomInfo,
-                        charSpriteKey: this.charSpriteKey,
-                        username: this.username,
-                    });
-                },
-            });
-        });
+        this.waitingForPlayers = this.add
+            .text(
+                1200,
+                this.config.height / 5 + 100,
+                `Waiting for ${
+                    this.requiredPlayers - this.currentRoom.numPlayers
+                } player(s)`,
+                {
+                    fontFamily: "customFont",
+                    fontSize: "0px",
+                    fill: "#fff",
+                }
+            )
+            .setOrigin(0.5);
+
+        if (this.currentRoom.numPlayers < this.requiredPlayers) {
+            this.waitingForPlayers.setFontSize("100px");
+        }
     }
 
     createMap() {
@@ -397,58 +395,46 @@ class WaitingScene extends Phaser.Scene {
     }
 
     createSettingsButton() {
-        const settingsBtn = this.add
-            .image(
-                this.config.rightBottomCorner.x - 15,
-                this.config.rightBottomCorner.y - 10,
-                "settings-button"
-            )
-            .setOrigin(1)
+        this.settingsButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 50,
+            "settings-button",
+            () => {
+                this.scene.sendToBack("WaitingScene");
+                this.scene.launch("SettingsScene");
+            }
+        )
             .setScrollFactor(0)
-            .setScale(1)
-            .setInteractive();
-
-        settingsBtn.on("pointerup", () => {
-            this.scene.pause("WaitingScene");
-            this.scene.sendToBack("WaitingScene");
-            this.scene.launch("SettingsScene");
-        });
-
-        settingsBtn.on("pointerover", () => {
-            settingsBtn.setTint(0xc2c2c2);
-            this.cursorOverFx.play();
-        });
-        settingsBtn.on("pointerout", () => {
-            settingsBtn.clearTint();
-        });
+            .setScale(1.2);
     }
 
     createHomeButton() {
-        const homeBtn = this.add
-            .image(
-                this.config.rightBottomCorner.x - 15,
-                this.config.rightBottomCorner.y - 115,
-                "home-btn"
-            )
-            .setOrigin(1)
+        this.homeButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 150,
+            "home-btn",
+            () => {
+                this.selectFx.play();
+                this.scene.sendToBack("WaitingScene");
+                this.scene.launch("PauseScene");
+            }
+        )
             .setScrollFactor(0)
-            .setScale(0.9)
-            .setInteractive()
-            .setDepth(2);
+            .setScale(1.2);
+    }
 
-        homeBtn.on("pointerup", () => {
-            this.selectFx.play();
-            this.scene.pause("WaitingScene");
-            // this.scene.sendToBack("PlayScene");
-            this.scene.launch("PauseScene");
-        });
-        homeBtn.on("pointerover", () => {
-            homeBtn.setTint(0xc2c2c2);
-            this.cursorOverFx.play();
-        });
-        homeBtn.on("pointerout", () => {
-            homeBtn.clearTint();
-        });
+    createControlsButton() {
+        this.controlsButton = this.createButton(
+            this.config.rightBottomCorner.x - 50,
+            this.config.rightBottomCorner.y - 250,
+            "controls-btn",
+            () => {
+                this.scene.sendToBack("WaitingScene");
+                this.scene.launch("Controls");
+            }
+        )
+            .setScrollFactor(0)
+            .setScale(1);
     }
 
     createRoomKey() {
@@ -505,8 +491,8 @@ class WaitingScene extends Phaser.Scene {
     }
 
     displayUsername() {
-        this.usernameText.setX(this.player.x + 90);
-        this.usernameText.setY(this.player.y - 160);
+        this.usernameText.setX(this.player.x);
+        this.usernameText.setY(this.player.y - 80);
     }
 }
 

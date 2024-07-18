@@ -16,11 +16,12 @@ class PlayScene extends BaseScene {
     init() {
         this.score = 0;
         this.isPaused = false;
+        this.numOfLives = 3;
     }
 
     create({ gameStatus }) {
         super.create();
-        this.hud = new Hud(this, 0, 0);
+        this.hud = new Hud(this, 0, 0, this.numOfLives);
         this.playBgMusic();
 
         const map = this.createMap();
@@ -30,6 +31,7 @@ class PlayScene extends BaseScene {
         const playerZones = this.getPlayerZones(layers.playerZones);
         const player = this.createPlayer(playerZones.start);
         this.player = player;
+        this.lastCheckpoint = playerZones.start;
         const enemies = this.createEnemies(
             layers.enemySpawns,
             layers.platformsColliders
@@ -52,6 +54,8 @@ class PlayScene extends BaseScene {
         this.createBG(map);
         this.createUIButtons();
         this.createEndOfLevel(playerZones.end, player);
+
+        this.handleCheckpoints(playerZones.checkpoints, player);
         this.setupFollowupCameraOn(player);
 
         if (gameStatus !== "PLAYER_LOSE") {
@@ -237,10 +241,29 @@ class PlayScene extends BaseScene {
     }
 
     createGameEvents() {
+        EventEmitter.on("RESPAWN", () => {
+            if (this.numOfLives <= 0) {
+                EventEmitter.emit("PLAYER_LOSE");
+            }
+            this.numOfLives -= 1;
+            console.log(this.numOfLives);
+            this.hud.updateLives(this.numOfLives);
+
+            if (this.player && this.lastCheckpoint) {
+                this.player.initHealthBar();
+
+                this.player.setPosition(
+                    this.lastCheckpoint.x,
+                    this.lastCheckpoint.y
+                );
+            }
+        });
+
         EventEmitter.on("PLAYER_LOSE", () => {
             this.scene.stop("PlayScene");
             this.scene.launch("GameOverScene");
         });
+
         EventEmitter.on("RESTART_GAME", () => {
             this.scene.restart({ gameStatus: "PLAYER_LOSE" });
         });
@@ -318,6 +341,9 @@ class PlayScene extends BaseScene {
         return {
             start: playerZones.find((zone) => zone.name === "startZone"),
             end: playerZones.find((zone) => zone.name === "endZone"),
+            checkpoints: playerZones.filter((zone) =>
+                zone.name.startsWith("checkpoint")
+            ),
         };
     }
 
@@ -333,6 +359,28 @@ class PlayScene extends BaseScene {
 
             this.scene.stop("PlayScene");
             this.scene.launch("VictoryScene", { score: this.score });
+        });
+    }
+
+    handleCheckpoints(checkpoints, player) {
+        // Checkpoint overlap detection
+        checkpoints.forEach((checkpoint) => {
+            const checkpointMark = this.physics.add.sprite(
+                checkpoint.x,
+                checkpoint.y,
+                "checkpoint"
+            );
+
+            const checkpointOverlap = this.physics.add.overlap(
+                player,
+                checkpointMark,
+                () => {
+                    this.lastCheckpoint = checkpoint;
+                    console.log(
+                        `Player reached checkpoint: ${checkpoint.name}`
+                    );
+                }
+            );
         });
     }
 
@@ -377,7 +425,7 @@ class PlayScene extends BaseScene {
         // Check if the player's top boundary is beyond the height of the game screen
         if (this.player.getBounds().top > this.config.height) {
             // Emit the PLAYER_LOSE event
-            EventEmitter.emit("PLAYER_LOSE");
+            EventEmitter.emit("RESPAWN");
         }
     }
 }

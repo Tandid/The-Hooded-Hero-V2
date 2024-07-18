@@ -7,10 +7,10 @@ class PauseScene extends BaseScene {
 
     create() {
         super.create();
-        this.createPage();
+        this.setupUI();
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-3")
             .setOrigin(0.5)

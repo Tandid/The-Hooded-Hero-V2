@@ -1,45 +1,55 @@
 class Room {
     constructor() {
-        this.players = {};
-        this.playerNum = 0;
-        this.countdown = 5;
-        this.stageTimer = 5;
         this.isOpen = true;
-        this.stage = "stage1";
+
+        this.players = {};
+        this.numPlayers = 0;
         this.playersLoaded = 0;
+
+        this.countdown = 1;
+        this.stageTimer = 3;
+
+        this.stage = "stage1";
         this.stageWinners = [];
-        this.winnerNum = 0;
+        this.numWinners = 0;
     }
 
     addNewPlayer(socketId, spriteKey, username) {
         this.players[socketId] = { spriteKey, username };
-        this.playerNum += 1;
+        this.numPlayers += 1;
     }
 
     removePlayer(socketId) {
         if (this.players[socketId]) {
             delete this.players[socketId];
-            this.playerNum -= 1;
+            this.numPlayers -= 1;
         }
     }
 
-    updatePlayerList() {
-        // update player list based on winner list for next stage
-        Object.keys(this.players).forEach((playerId) => {
-            if (!this.stageWinners.includes(playerId)) {
-                this.removePlayer(playerId);
-            }
-        });
-    }
+    // updatePlayerList() {
+    //     // update player list based on winner list for next stage
+    //     Object.keys(this.players).forEach((playerId) => {
+    //         if (!this.stageWinners.includes(playerId)) {
+    //             this.removePlayer(playerId);
+    //         }
+    //     });
+    // }
 
-    runTimer() {
+    runCountdownTimer() {
         if (this.countdown > 0) {
             this.countdown -= 1;
         }
     }
 
-    resetTimer() {
+    openRoom() {
+        this.isOpen = true;
         this.countdown = 5;
+        this.resetStageTimer();
+        this.resetAllStageStatus();
+    }
+
+    closeRoom() {
+        this.isOpen = false;
     }
 
     runStageTimer() {
@@ -50,30 +60,15 @@ class Room {
         this.stageTimer = 5;
     }
 
-    closeRoom() {
-        this.isOpen = false;
-    }
-
-    openRoom() {
-        this.isOpen = true;
-        this.resetTimer();
-        this.resetStageTimer();
-        this.resetAllStageStatus();
-    }
-
-    checkRoomStatus() {
-        return this.isOpen;
-    }
-
     updateLoadedPlayerNum() {
         this.playersLoaded += 1;
     }
 
-    updateWinnerList(socketId) {
+    updateWinnerList(socketId, username) {
         // only add player as winner if they haven't been added yet
         if (!this.stageWinners.includes(socketId)) {
             this.stageWinners.push(socketId);
-            this.winnerNum = this.stageWinners.length;
+            this.numWinners = this.stageWinners.length;
         }
     }
 
@@ -81,12 +76,12 @@ class Room {
         const index = this.stageWinners.indexOf(socketId);
         if (index > -1) {
             this.stageWinners.splice(index, 1);
-            this.winnerNum = this.stageWinners.length;
+            this.numWinners = this.stageWinners.length;
         }
     }
 
-    reachStageLimit(stageKey) {
-        return this.winnerNum >= this.stageLimits[stageKey];
+    reachStageLimit(num) {
+        return this.numWinners >= num;
     }
 
     resetStageStatus() {
@@ -95,34 +90,27 @@ class Room {
     }
 
     resetWinnerList() {
-        this.winnerNum = 0;
+        this.numWinners = 0;
         this.stageWinners = [];
     }
 
     resetAllStageStatus() {
         this.playersLoaded = 0;
         this.stageWinners = [];
-        this.winnerNum = 0;
+        this.numWinners = 0;
     }
 }
 
-// store players info for each room:
-// gameRooms = {
-//   room1: {
-//     players: {},
-//     playerNum: 0,
-//     ...
-//   },
-//   room2: {...},
-//   ...
-// };
 const gameRooms = {};
+
 const staticRooms = [];
-const totalRoomNum = 5;
-for (let i = 1; i <= totalRoomNum; ++i) {
+
+const numStaticRooms = 5;
+
+for (let i = 1; i <= numStaticRooms; ++i) {
     gameRooms[`room${i}`] = new Room();
     staticRooms.push(gameRooms[`room${i}`]);
 }
 
-export default { Room, gameRooms, staticRooms };
+module.exports = { Room, gameRooms, staticRooms };
 

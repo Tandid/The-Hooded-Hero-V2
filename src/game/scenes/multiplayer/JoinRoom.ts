@@ -1,103 +1,34 @@
 // @ts-nocheck
 
-import { Socket } from "socket.io-client";
 import RexUIConfig from "../../../utils/RexUIConfig";
 import BaseScene from "../BaseScene";
 
-class JoinRoomScene extends BaseScene {
-    socket: Socket;
-    charSpriteKey: string;
-
-    constructor(config: any) {
-        super("JoinRoomScene", { ...config, canGoBack: true });
+class JoinCustomRoomScene extends BaseScene {
+    constructor(config) {
+        super("JoinCustomRoomScene", { ...config, canGoBack: true });
+        this.config = config;
     }
 
-    init(data: any) {
+    init(data) {
+        this.socket = data.socket;
         this.charSpriteKey = data.charSpriteKey;
+        this.username = data.username;
     }
 
     create() {
         super.create();
-        super.createBackground();
 
-        this.createPage();
-        this.handleSocketEvents();
+        this.setupUI();
+
+        const rexUIConfig = new RexUIConfig(this);
+        this.createInputTextBox(rexUIConfig);
+
+        this.createJoinRoomBtn(rexUIConfig);
+
+        this.createRoomEventListeners();
     }
 
-    handleSocketEvents() {
-        this.socket.on("roomDoesNotExist", () => {
-            this.input.enabled = true;
-            const roomDNE = this.add
-                .text(
-                    this.config.width / 2,
-                    this.config.height / 2 + 300,
-                    "This room does not exist",
-                    {
-                        fontFamily: "customFont",
-                        fontSize: "30px",
-                        fill: "#ff6666",
-                    }
-                )
-                .setOrigin(0.5);
-            const roomDNEInterval = setInterval(() => {
-                roomDNE.destroy();
-                clearInterval(roomDNEInterval);
-            }, 3000);
-        });
-
-        this.socket.on("roomClosed", () => {
-            this.input.enabled = true;
-            const roomClosedText = this.add
-                .text(
-                    this.config.width / 2,
-                    this.config.height / 2 + 300,
-                    "This room is closed",
-                    {
-                        fontFamily: "customFont",
-                        fontSize: "30px",
-                        fill: "#ff6666",
-                    }
-                )
-                .setOrigin(0.5);
-            const roomClosedInterval = setInterval(() => {
-                roomClosedText.destroy();
-                clearInterval(roomClosedInterval);
-            }, 3000);
-        });
-
-        this.socket.on("roomFull", () => {
-            this.input.enabled = true;
-            const roomFullText = this.add.text(
-                this.config.width / 2,
-                this.config.height / 2 + 300,
-                "This room is full",
-                {
-                    fontFamily: "customFont",
-                    fontSize: "30px",
-                    fill: "#ff6666",
-                }
-            );
-            const roomFullInterval = setInterval(() => {
-                roomFullText.destroy();
-                clearInterval(roomFullInterval);
-            }, 3000);
-        });
-
-        this.socket.on("roomInfo", ({ roomInfo, roomKey }) => {
-            this.socket.removeAllListeners();
-            //   this.game.music.stopAll();
-            this.scene.stop("JoinRoomScene");
-            this.scene.start("WaitingScene", {
-                socket: this.socket,
-                roomInfo,
-                roomKey,
-                charSpriteKey: this.charSpriteKey,
-                username: localStorage.getItem("username"),
-            });
-        });
-    }
-
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)
@@ -116,7 +47,38 @@ class JoinRoomScene extends BaseScene {
             )
             .setOrigin(0.5);
 
-        const rexUIConfig = new RexUIConfig(this);
+        this.createCloseButton();
+    }
+
+    createCloseButton() {
+        const closeBtn = this.add
+            .image(
+                this.config.width / 1.25 - 30,
+                this.config.height / 7 + 20,
+                "close-btn"
+            )
+            .setOrigin(0.5)
+            .setScale(0.7)
+            .setInteractive()
+            .setDepth(2);
+
+        closeBtn.on("pointerup", () => {
+            this.selectFx.play();
+            this.scene.wake("MainMenu");
+            this.scene.stop("JoinCustomRoomScene");
+        });
+
+        closeBtn.on("pointerover", () => {
+            this.cursorOverFx.play();
+            closeBtn.setTint(0xff6666);
+        });
+
+        closeBtn.on("pointerout", () => {
+            closeBtn.clearTint();
+        });
+    }
+
+    createInputTextBox(rexUIConfig) {
         rexUIConfig.createTextBox(
             this.config.width / 2,
             this.config.height / 2 - 25,
@@ -128,12 +90,9 @@ class JoinRoomScene extends BaseScene {
                 fixedHeight: 80,
             }
         );
-
-        this.createJoinButton();
-        this.createCloseButton();
     }
 
-    createJoinButton() {
+    createJoinRoomBtn(rexUIConfig) {
         const joinButton = this.add
             .text(
                 this.config.width / 2,
@@ -167,39 +126,88 @@ class JoinRoomScene extends BaseScene {
             this.socket.emit("joinRoom", {
                 roomKey: textbox._text.toUpperCase(),
                 spriteKey: this.charSpriteKey,
-                username: localStorage.getItem("username"),
+                username: this.username,
             });
         });
     }
 
-    createCloseButton() {
-        const closeBtn = this.add
-            .image(
-                this.config.width / 1.25 - 30,
-                this.config.height / 7 + 20,
-                "close-btn"
-            )
-            .setOrigin(0.5)
-            .setScale(0.7)
-            .setInteractive()
-            .setDepth(2);
-
-        closeBtn.on("pointerup", () => {
-            this.selectFx.play();
-            this.scene.wake("MainMenu");
-            this.scene.stop("JoinRoomScene");
+    createRoomEventListeners() {
+        // if user inputs a code that doesn't associate with any room, the room doesn't exist
+        this.socket.on("roomDoesNotExist", () => {
+            this.input.enabled = true;
+            const roomDNE = this.add
+                .text(
+                    this.config.width / 2,
+                    this.config.height / 2 + 300,
+                    "This room does not exist",
+                    {
+                        fontFamily: "customFont",
+                        fontSize: "30px",
+                        fill: "#ff6666",
+                    }
+                )
+                .setOrigin(0.5);
+            const roomDNEInterval = setInterval(() => {
+                roomDNE.destroy();
+                clearInterval(roomDNEInterval);
+            }, 3000);
         });
 
-        closeBtn.on("pointerover", () => {
-            this.cursorOverFx.play();
-            closeBtn.setTint(0xff6666);
+        // Room is closed
+        this.socket.on("roomClosed", () => {
+            this.input.enabled = true;
+            const roomClosedText = this.add
+                .text(
+                    this.config.width / 2,
+                    this.config.height / 2 + 300,
+                    "This room is closed",
+                    {
+                        fontFamily: "customFont",
+                        fontSize: "30px",
+                        fill: "#ff6666",
+                    }
+                )
+                .setOrigin(0.5);
+            const roomClosedInterval = setInterval(() => {
+                roomClosedText.destroy();
+                clearInterval(roomClosedInterval);
+            }, 3000);
         });
 
-        closeBtn.on("pointerout", () => {
-            closeBtn.clearTint();
+        // Room is full
+        this.socket.on("roomFull", () => {
+            this.input.enabled = true;
+            const roomFullText = this.add.text(
+                this.config.width / 2,
+                this.config.height / 2 + 300,
+                "This room is full",
+                {
+                    fontFamily: "customFont",
+                    fontSize: "30px",
+                    fill: "#ff6666",
+                }
+            );
+            const roomFullInterval = setInterval(() => {
+                roomFullText.destroy();
+                clearInterval(roomFullInterval);
+            }, 3000);
+        });
+
+        // Room code success, go to the next scene
+        this.socket.on("roomReady", ({ currentRoom, roomKey }) => {
+            this.socket.removeAllListeners();
+            //   this.game.music.stopAll();
+            this.scene.stop("JoinCustomRoomScene");
+            this.scene.start("WaitingScene", {
+                socket: this.socket,
+                currentRoom,
+                roomKey,
+                charSpriteKey: this.charSpriteKey,
+                username: this.username,
+            });
         });
     }
 }
 
-export default JoinRoomScene;
+export default JoinCustomRoomScene;
 

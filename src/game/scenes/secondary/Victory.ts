@@ -22,10 +22,10 @@ class VictoryScene extends BaseScene {
 
         this.victory = this.sound.add("win", { volume: 0.1 }).play();
 
-        this.createPage();
+        this.setupUI();
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-1")
             .setOrigin(0.5)

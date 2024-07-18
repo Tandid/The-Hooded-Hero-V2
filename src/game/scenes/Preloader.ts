@@ -1,4 +1,6 @@
 import { GameObjects, Scene } from "phaser";
+import io, { Socket } from "socket.io-client";
+
 import { generateRandomHint } from "../../utils/helpers";
 // Preloader Assets
 import { preloadAudio } from "../preloaders/preloadAudio";
@@ -18,18 +20,22 @@ export default class Preloader extends Scene {
     start: number;
     fontFamily: string;
     loadingText: GameObjects.Text;
+    socket: Socket;
 
     constructor(config: any) {
         super("Preloader");
         this.config = config;
         this.fontFamily = "customFont";
         this.start = this.config.width / 10;
+        this.socket = io("http://localhost:3000");
     }
 
     // Init and create are similar, init starts before preload, while create starts after
     init() {
-        this.createPage();
+        this.setupUI();
         generateRandomHint(this, this.config.width, this.config.height);
+
+        localStorage.setItem("username", "Tandid"); // !! Delete later, this is for testing purposes
     }
 
     // Preload all assets here
@@ -55,7 +61,7 @@ export default class Preloader extends Scene {
         this.load.on("complete", this.loadingComplete, this);
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "logo")
             .setOrigin(0.5)
@@ -104,7 +110,7 @@ export default class Preloader extends Scene {
         this.registry.set("unlocked-levels", 1);
         console.log("Registry contents:", this.registry.getAll());
 
-        this.scene.start("PlayScene");
+        this.scene.start("MainMenu", { socket: this.socket });
     }
 }
 

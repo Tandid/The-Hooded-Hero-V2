@@ -25,7 +25,7 @@ export default class SettingsScene extends BaseScene {
 
         this.createInputBlock(); // Prevents click events behind the overlay from happening
 
-        this.createPage();
+        this.setupUI();
 
         this.createMusicController();
         this.createMuteButton();
@@ -54,7 +54,7 @@ export default class SettingsScene extends BaseScene {
         );
     }
 
-    createPage() {
+    setupUI() {
         this.add
             .image(this.config.width / 2, this.config.height / 2, "panel-2")
             .setOrigin(0.5)

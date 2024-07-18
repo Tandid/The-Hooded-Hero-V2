@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 
 class Hud extends Phaser.GameObjects.Container {
-    constructor(scene, x, y) {
+    constructor(scene, x, y, numOfLives) {
         super(scene, x, y);
 
         scene.add.existing(this);
@@ -17,8 +17,12 @@ class Hud extends Phaser.GameObjects.Container {
         this.setScrollFactor(0);
         this.fontSize = 50;
 
+        this.lives = numOfLives; // Initial number of lives
+        this.hearts = [];
+
         this.createPlayerIcon(leftTopCorner);
         this.setupList();
+        this.createLives(leftTopCorner);
     }
 
     createPlayerIcon(leftTopCorner) {
@@ -75,6 +79,37 @@ class Hud extends Phaser.GameObjects.Container {
     updateScoreboard(score) {
         const [scoreImage, scoreText] = this.getByName("scoreBoard").list;
         scoreText.setText(score);
+    }
+
+    createLives(leftTopCorner) {
+        for (let i = 0; i < this.lives; i++) {
+            const emptyHeart = this.scene.add
+                .image(
+                    leftTopCorner.x + 230 + i * 80,
+                    leftTopCorner.y + 120,
+                    "heart-empty"
+                )
+                .setScale(0.7)
+                .setScrollFactor(0);
+
+            const fullHeart = this.scene.add
+                .image(
+                    leftTopCorner.x + 230 + i * 80,
+                    leftTopCorner.y + 120,
+                    "heart-fill"
+                )
+                .setScale(0.7)
+                .setScrollFactor(0);
+
+            this.hearts.push({ emptyHeart, fullHeart });
+        }
+    }
+
+    updateLives(lives) {
+        this.lives = lives;
+        this.hearts.forEach((heart, index) => {
+            heart.fullHeart.setVisible(index < this.lives);
+        });
     }
 }
 

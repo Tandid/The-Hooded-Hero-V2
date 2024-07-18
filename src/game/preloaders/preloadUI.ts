@@ -18,6 +18,8 @@ export function preloadUI(scene: Phaser.Scene) {
     scene.load.image("star", "ui/Icons/icon_big_star.png");
     scene.load.image("star-full", "ui/Stage/star_full.png");
     scene.load.image("star-shadow", "ui/Stage/star_shadow.png");
+    scene.load.image("heart-empty", "ui/Status/heart_empty.png");
+    scene.load.image("heart-fill", "ui/Status/heart_fill.png");
     scene.load.image("thunderbolt", "ui/Icons/icon_big_energy.png");
     scene.load.image("profile", "ui/Icons/icon_small_profile.png");
     scene.load.image("settings-button", "ui/Icons/icon_big_setting.png");
@@ -27,6 +29,7 @@ export function preloadUI(scene: Phaser.Scene) {
     scene.load.image("small-left", "ui/Icons/icon_small_left.png");
     scene.load.image("controls-btn", "ui/Icons/icon_big_book.png");
     scene.load.image("contacts-btn", "ui/Icons/icon_small_message.png");
+    scene.load.image("trophy", "ui/Status/trophy.svg");
 
     scene.load.image("next-btn", "ui/Icons/icon_small_next.png");
     scene.load.image("prev-btn", "ui/Icons/icon_small_prev.png");
