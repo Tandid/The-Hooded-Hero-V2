@@ -67,25 +67,25 @@ export default class SettingsScene extends BaseScene {
                 "panel-4"
             )
             .setOrigin(0.5)
-            .setScale(1.3, 0.5);
+            .setScale(1.3, 0.75);
+
+        // this.add
+        //     .image(
+        //         this.config.width / 2,
+        //         this.config.height / 2 + 50,
+        //         "panel-4"
+        //     )
+        //     .setOrigin(0.5)
+        //     .setScale(1.3, 0.5);
 
         this.add
             .image(
                 this.config.width / 2,
-                this.config.height / 2 + 50,
+                this.config.height / 2 + 100,
                 "panel-4"
             )
             .setOrigin(0.5)
-            .setScale(1.3, 0.5);
-
-        this.add
-            .image(
-                this.config.width / 2,
-                this.config.height / 2 + 150,
-                "panel-4"
-            )
-            .setOrigin(0.5)
-            .setScale(0.75, 0.5);
+            .setScale(0.75, 0.75);
 
         this.add
             .image(
@@ -117,19 +117,20 @@ export default class SettingsScene extends BaseScene {
             )
             .setOrigin(0.5)
             .setScale(0.8);
-        this.add
-            .image(
-                this.config.width / 3 + 50,
-                this.config.height / 2 + 50,
-                "sound-btn-on"
-            )
-            .setOrigin(0.5)
-            .setScale(0.8);
+
+        // this.add
+        //     .image(
+        //         this.config.width / 3 + 50,
+        //         this.config.height / 2 + 50,
+        //         "sound-btn-on"
+        //     )
+        //     .setOrigin(0.5)
+        //     .setScale(0.8);
 
         this.add
             .image(
-                this.config.width / 2 - 100,
-                this.config.height / 2 + 150,
+                this.config.width / 2 - 75,
+                this.config.height / 2 + 100,
                 "mute-btn-on"
             )
             .setOrigin(0.5)
@@ -156,7 +157,7 @@ export default class SettingsScene extends BaseScene {
     createMuteButton() {
         this.createButton(
             this.config.width / 2 + 50,
-            this.config.height / 2 + 150,
+            this.config.height / 2 + 100,
             "switch-off-bg",
             () => {
                 this.selectFx.play();
@@ -178,7 +179,7 @@ export default class SettingsScene extends BaseScene {
             this.muteStateImage = this.add
                 .image(
                     this.config.width / 2,
-                    this.config.height / 2 + 150,
+                    this.config.height / 2 + 100,
                     imageKey
                 )
                 .setOrigin(0.5)
@@ -188,7 +189,7 @@ export default class SettingsScene extends BaseScene {
             this.muteStateImage = this.add
                 .image(
                     this.config.width / 2 + 100,
-                    this.config.height / 2 + 150,
+                    this.config.height / 2 + 100,
                     imageKey
                 )
                 .setOrigin(0.5)
@@ -213,7 +214,7 @@ export default class SettingsScene extends BaseScene {
             this.selectFx.play();
             this.decreaseVolume();
             this.game.canvas.classList.add("custom-cursor");
-        }).setScale(0.5);
+        }).setScale(0.75);
     }
 
     createIncrementBtn(width: number, height: number) {
@@ -221,7 +222,7 @@ export default class SettingsScene extends BaseScene {
             this.selectFx.play();
             this.increaseVolume();
             this.game.canvas.classList.add("custom-cursor");
-        }).setScale(0.5);
+        }).setScale(0.75);
     }
 
     // Volume bar creation
@@ -243,7 +244,7 @@ export default class SettingsScene extends BaseScene {
         return this.add
             .image(width, height, "yellow-bar")
             .setOrigin(0.5)
-            .setScale(0.7);
+            .setScale(0.9);
     }
 
     // Volume control methods
