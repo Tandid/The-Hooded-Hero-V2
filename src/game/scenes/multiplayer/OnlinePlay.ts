@@ -6,9 +6,9 @@ import EventEmitter from "../../../events/Emitter";
 import Enemies from "../../../groups/Enemies";
 import BaseScene from "../BaseScene";
 
-class MockScene extends BaseScene {
+class OnlinePlayScene extends BaseScene {
     constructor(config) {
-        super("MockScene", config);
+        super("OnlinePlayScene", config);
         this.config = config;
         this.stageKey = "level_online";
         this.opponents = {};
@@ -311,7 +311,7 @@ class MockScene extends BaseScene {
             this.config.rightBottomCorner.y - 50,
             "settings-button",
             () => {
-                this.scene.sendToBack("MockScene");
+                this.scene.sendToBack("OnlinePlayScene");
                 this.scene.launch("SettingsScene");
             }
         )
@@ -326,7 +326,7 @@ class MockScene extends BaseScene {
             "home-btn",
             () => {
                 this.selectFx.play();
-                this.scene.sendToBack("MockScene");
+                this.scene.sendToBack("OnlinePlayScene");
                 this.scene.launch("PauseScene");
             }
         )
@@ -340,7 +340,7 @@ class MockScene extends BaseScene {
             this.config.rightBottomCorner.y - 250,
             "controls-btn",
             () => {
-                this.scene.sendToBack("MockScene");
+                this.scene.sendToBack("OnlinePlayScene");
                 this.scene.launch("Controls");
             }
         )
@@ -498,5 +498,5 @@ class MockScene extends BaseScene {
     }
 }
 
-export default MockScene;
+export default OnlinePlayScene;
 

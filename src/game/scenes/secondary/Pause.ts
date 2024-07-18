@@ -41,7 +41,7 @@ class PauseScene extends BaseScene {
             () => {
                 this.scene.stop("PlayScene");
                 this.scene.stop("WaitingScene");
-                this.scene.stop("MockScene");
+                this.scene.stop("OnlinePlayScene");
                 this.scene.start("MainMenu");
             }
         );
@@ -62,8 +62,8 @@ class PauseScene extends BaseScene {
                     ? this.scene.resume("WaitingScene")
                     : "";
 
-                this.scene.isPaused("MockScene") === true
-                    ? this.scene.resume("MockScene")
+                this.scene.isPaused("OnlinePlayScene") === true
+                    ? this.scene.resume("OnlinePlayScene")
                     : "";
             }
         );

@@ -197,7 +197,7 @@ class WaitingScene extends BaseScene {
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
-                    const nextStageKey = "MockScene";
+                    const nextStageKey = "OnlinePlayScene";
                     this.scene.stop("WaitingScene");
                     this.scene.start(nextStageKey, {
                         socket: this.socket,
