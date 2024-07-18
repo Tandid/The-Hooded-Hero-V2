@@ -90,6 +90,7 @@ class Hud extends Phaser.GameObjects.Container {
                     "heart-empty"
                 )
                 .setScale(0.7)
+                .setDepth(2)
                 .setScrollFactor(0);
 
             const fullHeart = this.scene.add
@@ -99,6 +100,7 @@ class Hud extends Phaser.GameObjects.Container {
                     "heart-fill"
                 )
                 .setScale(0.7)
+                .setDepth(2)
                 .setScrollFactor(0);
 
             this.hearts.push({ emptyHeart, fullHeart });
