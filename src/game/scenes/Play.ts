@@ -17,6 +17,7 @@ class PlayScene extends BaseScene {
         this.score = 0;
         this.isPaused = false;
         this.numOfLives = 3;
+        this.isRespawning = false; // Add this flag
     }
 
     create({ gameStatus }) {
@@ -242,20 +243,20 @@ class PlayScene extends BaseScene {
 
     createGameEvents() {
         EventEmitter.on("RESPAWN", () => {
+            if (this.isRespawning) return; // If already respawning, do nothing
+
+            this.isRespawning = true; // Set the flag to true to indicate respawning
+
             if (this.numOfLives <= 0) {
                 EventEmitter.emit("PLAYER_LOSE");
-            }
-            this.numOfLives -= 1;
-            console.log(this.numOfLives);
-            this.hud.updateLives(this.numOfLives);
+            } else {
+                this.numOfLives -= 1;
+                console.log(this.numOfLives);
+                this.hud.updateLives(this.numOfLives);
 
-            if (this.player && this.lastCheckpoint) {
-                this.player.initHealthBar();
-
-                this.player.setPosition(
-                    this.lastCheckpoint.x,
-                    this.lastCheckpoint.y
-                );
+                if (this.player && this.lastCheckpoint) {
+                    this.handlePlayerRespawn();
+                }
             }
         });
 
@@ -267,6 +268,67 @@ class PlayScene extends BaseScene {
         EventEmitter.on("RESTART_GAME", () => {
             this.scene.restart({ gameStatus: "PLAYER_LOSE" });
         });
+    }
+
+    handlePlayerRespawn() {
+        // Disable player visibility and physics
+        this.setPlayerInvisible();
+
+        // Create and manage countdown text
+        this.createCountdownText();
+
+        // Start countdown
+        this.startCountdown(() => {
+            this.respawnPlayer();
+        });
+    }
+
+    setPlayerInvisible() {
+        this.player.setVisible(false);
+        this.player.body.enable = false;
+    }
+
+    createCountdownText() {
+        this.countdownText = this.add
+            .text(
+                this.config.width / 2,
+                this.config.height / 2,
+                "Respawning in 3",
+                { fontSize: "100px", fill: "#fff" }
+            )
+            .setOrigin(0.5, 0.5)
+            .setScrollFactor(0);
+    }
+
+    startCountdown(callback) {
+        let countdown = 3;
+
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                countdown--;
+                if (countdown > 0) {
+                    this.countdownText.setText(`Respawning in ${countdown}`);
+                } else {
+                    this.time.delayedCall(1000, () => {
+                        callback();
+                    });
+                    this.countdownText.destroy();
+                }
+            },
+            repeat: 2,
+        });
+    }
+
+    respawnPlayer() {
+        // Recreate the player at the last checkpoint
+        this.player
+            .setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)
+            .setVisible(true)
+            .initHealthBar();
+
+        this.player.body.enable = true;
+        this.isRespawning = false; // Reset the flag after respawning
     }
 
     createCollectables(collectableLayer) {
@@ -418,7 +480,8 @@ class PlayScene extends BaseScene {
     }
 
     checkGameStatus() {
-        if (this.isPaused) {
+        if (this.isPaused || this.isRespawning) {
+            // Add check for isRespawning flag
             return;
         }
 

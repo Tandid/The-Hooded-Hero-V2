@@ -76,8 +76,8 @@ class HealthBar {
         }
 
         // Update the health text position and value
-        this.healthText.setText(`${this.value}`);
-        this.healthText.setPosition(x + 100, y - 140);
+        this.healthText.setText(`${this.value}/100`);
+        this.healthText.setPosition(x - 150, y - 140);
 
         return this.bar.setScrollFactor(0, 0).setScale(scale);
     }
