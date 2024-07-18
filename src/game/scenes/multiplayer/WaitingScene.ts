@@ -60,7 +60,7 @@ class WaitingScene extends BaseScene {
         this.createRoomKey();
 
         const countdown = this.add
-            .text(1200, this.config.height / 5 + 200, `5`, {
+            .text(this.config.width, this.config.height / 5 + 200, `5`, {
                 fontFamily: "customFont",
                 fontSize: "0px",
                 fill: "#fff",
@@ -225,7 +225,7 @@ class WaitingScene extends BaseScene {
 
     createStartButton() {
         this.startButton = this.createButton(
-            this.config.width / 2 - 100,
+            this.config.width / 2,
             this.config.height / 2 - 350,
             "play-btn",
             () => {
@@ -247,7 +247,7 @@ class WaitingScene extends BaseScene {
     setupPlayerCounter() {
         this.playerCounter = this.add
             .text(
-                1200,
+                this.config.width,
                 this.config.height / 5,
                 `${this.currentRoom.numPlayers} player(s) in lobby`,
                 {
@@ -261,7 +261,7 @@ class WaitingScene extends BaseScene {
 
         this.waitingForPlayers = this.add
             .text(
-                1200,
+                this.config.width,
                 this.config.height / 5 + 100,
                 `Waiting for ${
                     this.requiredPlayers - this.currentRoom.numPlayers
