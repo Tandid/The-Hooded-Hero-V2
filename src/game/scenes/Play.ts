@@ -338,7 +338,7 @@ class PlayScene extends BaseScene {
     }
 
     createCollectables(collectableLayer) {
-        const collectables = new Collectables(this).setDepth(-1);
+        const collectables = new Collectables(this);
         collectables.addFromLayer(collectableLayer);
         collectables.playAnimation("coin-spin");
         return collectables;
