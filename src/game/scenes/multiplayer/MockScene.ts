@@ -31,6 +31,8 @@ class MockScene extends BaseScene {
     create() {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
 
+        this.input.keyboard.enabled = false;
+
         this.cameras.main.on("camerafadeincomplete", () => {
             this.socket.emit("stageLoaded");
         });
@@ -67,6 +69,7 @@ class MockScene extends BaseScene {
             },
         });
 
+        this.playBgMusic();
         this.createBG(map);
         this.createEndOfLevel(playerZones.end, player);
 
@@ -139,6 +142,7 @@ class MockScene extends BaseScene {
         this.socket.on("startStage", () => {
             this.playerCountdown.setText("GO!");
             this.stageStart = true;
+            this.input.keyboard.enabled = true; // Enable keyboard input
             this.time.delayedCall(1000, () => this.playerCountdown.destroy());
         });
 
@@ -195,6 +199,11 @@ class MockScene extends BaseScene {
                 }
             }
         );
+    }
+
+    playBgMusic() {
+        this.sound.stopAll();
+        this.onlineBGM.play();
     }
 
     setupUI() {

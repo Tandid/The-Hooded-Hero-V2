@@ -22,7 +22,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
     initProperties(key) {
         // Determine speed and maximum distance based on the projectile type
         this.speed = key === "arrow" ? 1500 : 500;
-        this.maxDistance = key === "arrow" ? 2000 : 4000;
+        this.maxDistance = key === "arrow" ? 5000 : 4000;
 
         // Set body size if the projectile is not an arrow
         if (key !== "arrow") {

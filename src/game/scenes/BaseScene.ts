@@ -17,6 +17,8 @@ export default class BaseScene extends Scene {
     forestBGM: any;
     caveBGM: any;
     bossBGM: any;
+    onlineBGM: any;
+    sakuraBGM: any;
 
     screenCenter: Array<number>;
     fontSize: number;
@@ -95,6 +97,14 @@ export default class BaseScene extends Scene {
             loop: true,
             volume: 0.04,
         });
+        this.onlineBGM = this.sound.add("online-theme", {
+            loop: true,
+            volume: 0.04,
+        });
+        this.sakuraBGM = this.sound.add("sakura-theme", {
+            loop: true,
+            volume: 0.04,
+        });
     }
 
     createLeaves() {
@@ -156,7 +166,7 @@ export default class BaseScene extends Scene {
                     menuItem.text,
                     this.fontOptions
                 )
-                .setOrigin(0.5, 1);
+                .setOrigin(0.5, 0.5);
             lastMenuPositionY += this.lineHeight;
             setupMenuEvents(menuItem);
         });

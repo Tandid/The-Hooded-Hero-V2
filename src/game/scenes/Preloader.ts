@@ -35,7 +35,7 @@ export default class Preloader extends Scene {
         this.setupUI();
         generateRandomHint(this, this.config.width, this.config.height);
 
-        localStorage.setItem("username", "Tandid"); // !! Delete later, this is for testing purposes
+        // localStorage.setItem("username", "Tandid"); // !! Delete later, this is for testing purposes
     }
 
     // Preload all assets here
@@ -110,7 +110,7 @@ export default class Preloader extends Scene {
         this.registry.set("unlocked-levels", 1);
         console.log("Registry contents:", this.registry.getAll());
 
-        this.scene.start("MainMenu", { socket: this.socket });
+        this.scene.start("SignupScene", { socket: this.socket });
     }
 }
 

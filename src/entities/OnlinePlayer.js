@@ -58,6 +58,7 @@ class OnlinePlayer extends Phaser.Physics.Arcade.Sprite {
 
         this.body.setGravityY(this.gravity);
         this.setCollideWorldBounds(true);
+        this.body.setMaxVelocityY(1000);
         // this.setOrigin(0.5, 1);
     }
 

@@ -23,6 +23,7 @@ class Mage extends Enemy {
         this.setFlipX(!this.flipX);
 
         this.setSize(120, 170);
+        this.setVelocityX(0);
     }
 
     update(time, delta) {

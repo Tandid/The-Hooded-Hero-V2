@@ -17,6 +17,12 @@ class SignupScene extends BaseScene {
         };
     }
 
+    init(data) {
+        this.socket = data.socket;
+        console.log("Signup", data);
+        console.log(this.socket);
+    }
+
     create() {
         super.create();
         this.cameras.main.fadeIn(500, 0, 0, 0);
@@ -122,7 +128,7 @@ class SignupScene extends BaseScene {
             localStorage.setItem("username", this.state.savedText);
             console.log(localStorage.getItem("username"));
 
-            this.scene.start("MainMenu");
+            this.scene.start("MainMenu", { socket: this.socket });
         } else {
             const feedbackText = this.add
                 .text(

@@ -365,11 +365,11 @@ class PlayScene extends BaseScene {
     handleCheckpoints(checkpoints, player) {
         // Checkpoint overlap detection
         checkpoints.forEach((checkpoint) => {
-            const checkpointMark = this.physics.add.sprite(
-                checkpoint.x,
-                checkpoint.y,
-                "checkpoint"
-            );
+            const checkpointMark = this.physics.add
+                .sprite(checkpoint.x, checkpoint.y, "checkpoint")
+                .setAlpha(0)
+                .setSize(5, 200)
+                .setOrigin(0.5, 1);
 
             const checkpointOverlap = this.physics.add.overlap(
                 player,

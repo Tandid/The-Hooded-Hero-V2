@@ -62,7 +62,7 @@ class LevelSelect extends BaseScene {
     createLevelSelections() {
         const levels = this.registry.get("unlocked-levels");
 
-        let row = 70;
+        let row = 100;
         for (let i = 1; i <= 3; i++) {
             this.add
                 .image(
