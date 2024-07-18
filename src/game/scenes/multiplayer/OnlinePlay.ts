@@ -134,12 +134,14 @@ class OnlinePlayScene extends BaseScene {
 
         // update stage count down timer
         this.socket.on("stageTimerUpdated", (time) => {
+            this.countdownFx.play();
             this.playerCountdown.setFontSize("100px");
             this.playerCountdown.setText(`${time}`);
         });
 
         // all players start the stage at the same time
         this.socket.on("startStage", () => {
+            this.goFx.play();
             this.playerCountdown.setText("GO!");
             this.stageStart = true;
             this.input.keyboard.enabled = true; // Enable keyboard input

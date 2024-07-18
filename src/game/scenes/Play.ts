@@ -296,8 +296,8 @@ class PlayScene extends BaseScene {
             .text(
                 this.config.width / 2,
                 this.config.height / 2,
-                "Respawning in 3",
-                { fontSize: "100px", fill: "#fff" }
+                "Respawning in ... 3",
+                { fontSize: "50px", fill: "#fff" }
             )
             .setOrigin(0.5, 0.5)
             .setScrollFactor(0);
@@ -309,9 +309,12 @@ class PlayScene extends BaseScene {
         this.time.addEvent({
             delay: 1000,
             callback: () => {
+                this.countdownFx.play();
                 countdown--;
                 if (countdown > 0) {
-                    this.countdownText.setText(`Respawning in ${countdown}`);
+                    this.countdownText.setText(
+                        `Respawning in ... ${countdown}`
+                    );
                 } else {
                     this.time.delayedCall(1000, () => {
                         callback();

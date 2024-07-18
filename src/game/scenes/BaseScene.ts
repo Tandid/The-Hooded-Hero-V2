@@ -12,6 +12,8 @@ export default class BaseScene extends Scene {
     fluteFx: any;
     collectFx: any;
     failFx: any;
+    countdownFx: any;
+    goFx: any;
 
     // Music Themes
     menuBGM: any;
@@ -80,6 +82,8 @@ export default class BaseScene extends Scene {
         this.fluteFx = this.sound.add("flute", { volume: 0.4 });
         this.collectFx = this.sound.add("coin-pickup", { volume: 0.05 });
         this.failFx = this.sound.add("fail", { volume: 0.4 });
+        this.countdownFx = this.sound.add("countdown", { volume: 0.4 });
+        this.goFx = this.sound.add("go", { volume: 0.4 });
     }
 
     addMusicThemes() {
