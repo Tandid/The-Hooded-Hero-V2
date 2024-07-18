@@ -271,6 +271,9 @@ class PlayScene extends BaseScene {
     }
 
     handlePlayerRespawn() {
+        // Play the fail sound effect
+        this.failFx.play();
+
         // Disable player visibility and physics
         this.setPlayerInvisible();
 

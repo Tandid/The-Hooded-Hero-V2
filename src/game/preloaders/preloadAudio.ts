@@ -22,5 +22,6 @@ export function preloadAudio(scene: Phaser.Scene) {
     scene.load.audio("select", "music/select.wav");
     scene.load.audio("lose", "music/lose.wav");
     scene.load.audio("win", "music/win.wav");
+    scene.load.audio("fail", "music/fail.wav");
 }
 
