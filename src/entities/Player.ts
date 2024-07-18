@@ -99,6 +99,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Method to initialize the health bar for the player
     initHealthBar() {
+        // If healthbar already exists, destroy the health bar and text
+        this.hp && this.hp.destroy();
+
         // Set initial health value and create a health bar instance
         this.health = 100;
         this.hp = new HealthBar(
@@ -356,6 +359,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         // Trigger PLAYER_LOSE event if player health drops to zero
         if (this.health <= 0) {
+            // this.play("player-die", true);
             EventEmitter.emit("RESPAWN");
             return;
         } else {

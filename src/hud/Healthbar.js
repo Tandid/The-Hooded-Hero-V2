@@ -26,7 +26,7 @@ class HealthBar {
             })
             .setOrigin(0.5)
             .setScrollFactor(0)
-            .setDepth(1); // Set depth to ensure it's above the bar
+            .setDepth(1);
 
         this.draw(this.x, this.y, this.scale);
     }
@@ -80,6 +80,12 @@ class HealthBar {
         this.healthText.setPosition(x + 100, y - 140);
 
         return this.bar.setScrollFactor(0, 0).setScale(scale);
+    }
+
+    destroy() {
+        // Destroy the bar and text objects
+        this.bar.destroy();
+        this.healthText.destroy();
     }
 }
 
