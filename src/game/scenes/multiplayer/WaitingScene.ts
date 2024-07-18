@@ -11,7 +11,7 @@ class WaitingScene extends BaseScene {
         this.config = config;
         this.stageKey = "lobby";
         this.opponents = {};
-        this.requiredPlayers = 1;
+        this.requiredPlayers = 2;
     }
 
     init(data) {
@@ -60,7 +60,7 @@ class WaitingScene extends BaseScene {
         this.createRoomKey();
 
         const countdown = this.add
-            .text(this.config.width, this.config.height / 5 + 200, `5`, {
+            .text(this.config.width, this.config.height / 5 + 200, `3`, {
                 fontFamily: "customFont",
                 fontSize: "0px",
                 fill: "#fff",
@@ -186,6 +186,7 @@ class WaitingScene extends BaseScene {
             if (this.startButton) {
                 this.startButton.destroy();
             }
+            this.countdownFx.play();
             countdown.setFontSize("100px");
             countdown.setText(`${timeLeft}`);
         });
@@ -197,7 +198,7 @@ class WaitingScene extends BaseScene {
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
-                    const nextStageKey = "MockScene";
+                    const nextStageKey = "OnlinePlayScene";
                     this.scene.stop("WaitingScene");
                     this.scene.start(nextStageKey, {
                         socket: this.socket,

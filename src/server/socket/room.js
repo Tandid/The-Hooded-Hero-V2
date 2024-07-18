@@ -6,7 +6,7 @@ class Room {
         this.numPlayers = 0;
         this.playersLoaded = 0;
 
-        this.countdown = 1;
+        this.countdown = 3;
         this.stageTimer = 3;
 
         this.stage = "stage1";

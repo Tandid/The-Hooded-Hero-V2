@@ -21,8 +21,8 @@ class Hud extends Phaser.GameObjects.Container {
         this.hearts = [];
 
         this.createPlayerIcon(leftTopCorner);
-        this.setupList();
         this.createLives(leftTopCorner);
+        this.createScoreboard(rightTopCorner);
     }
 
     createPlayerIcon(leftTopCorner) {
@@ -45,40 +45,33 @@ class Hud extends Phaser.GameObjects.Container {
         return playerIcon;
     }
 
-    setupList() {
-        const scoreBoard = this.createScoreboard();
-        this.add([scoreBoard]);
-
-        let lineHeight = 0;
-        this.list.forEach((item) => {
-            item.setPosition(item.x, item.y + lineHeight);
-            lineHeight += 20;
-        });
-        console.log(this.list);
-    }
-
-    createScoreboard() {
+    createScoreboard(rightTopCorner) {
         const scoreImage = this.scene.add
-            .image(40, 5, "coin")
-            .setOrigin(1.5, 0)
+            .image(rightTopCorner.x - 175, rightTopCorner.y + 75, "coin")
+            .setOrigin(0.5)
             .setScale(1);
 
-        const scoreText = this.scene.add.text(15, 20, "0", {
-            fontSize: `${this.fontSize}px`,
-            fill: "#fff",
-        });
+        this.scoreText = this.scene.add.text(
+            rightTopCorner.x - 100,
+            rightTopCorner.y + 50,
+            "0",
+            {
+                fontSize: `${this.fontSize}px`,
+                fill: "#fff",
+            }
+        );
 
         const scoreBoard = this.scene.add.container(0, 0, [
             scoreImage,
-            scoreText,
+            this.scoreText,
         ]);
-        scoreBoard.setName("scoreBoard");
+
+        scoreBoard.setDepth(2).setScrollFactor(0).setName("scoreBoard");
         return scoreBoard;
     }
 
     updateScoreboard(score) {
-        const [scoreImage, scoreText] = this.getByName("scoreBoard").list;
-        scoreText.setText(score);
+        this.scoreText.setText(score);
     }
 
     createLives(leftTopCorner) {
@@ -90,6 +83,7 @@ class Hud extends Phaser.GameObjects.Container {
                     "heart-empty"
                 )
                 .setScale(0.7)
+                .setDepth(2)
                 .setScrollFactor(0);
 
             const fullHeart = this.scene.add
@@ -99,6 +93,7 @@ class Hud extends Phaser.GameObjects.Container {
                     "heart-fill"
                 )
                 .setScale(0.7)
+                .setDepth(2)
                 .setScrollFactor(0);
 
             this.hearts.push({ emptyHeart, fullHeart });

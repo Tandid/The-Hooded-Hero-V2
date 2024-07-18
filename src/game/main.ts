@@ -21,7 +21,7 @@ import PlayScene from "./scenes/Play";
 // Multiplayer Scenes
 import HeroSelectScene from "./scenes/multiplayer/HeroSelect";
 import JoinCustomRoomScene from "./scenes/multiplayer/JoinRoom";
-import MockScene from "./scenes/multiplayer/MockScene";
+import OnlinePlayScene from "./scenes/multiplayer/OnlinePlay";
 import RankingScene from "./scenes/multiplayer/Rankings";
 import RoomSelectScene from "./scenes/multiplayer/RoomSelect";
 import WaitingScene from "./scenes/multiplayer/WaitingScene";
@@ -82,7 +82,7 @@ const Scenes = [
     PauseScene,
     PlayScene,
     WaitingScene,
-    MockScene,
+    OnlinePlayScene,
     RankingScene,
 ];
 
