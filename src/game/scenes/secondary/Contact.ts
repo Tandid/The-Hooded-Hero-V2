@@ -49,32 +49,32 @@ export default class Contact extends BaseScene {
             .setColor("#D9B48FFF");
 
         this.add
-            .text(this.config.width / 1.75, 220, "https://github.com/Tandid", {
+            .text(this.config.width / 3, 250, "https://github.com/Tandid", {
                 fontFamily: "customFont",
                 fontSize: "40px",
             })
-            .setOrigin(0.5, 0.5)
+            .setOrigin(0, 0.5)
             .setColor("0x000");
 
         this.add
             .text(
-                this.config.width / 1.75 + 20,
-                320,
+                this.config.width / 3,
+                350,
                 "https://www.linkedin.com/in/tandidalam/",
                 {
                     fontFamily: "customFont",
                     fontSize: "40px",
                 }
             )
-            .setOrigin(0.5, 0.5)
+            .setOrigin(0, 0.5)
             .setColor("0x000");
 
         this.add
-            .text(this.config.width / 1.75, 420, "tandid.alam@gmail.com", {
+            .text(this.config.width / 3, 450, "tandid.alam@gmail.com", {
                 fontFamily: "customFont",
                 fontSize: "40px",
             })
-            .setOrigin(0.5, 0.5)
+            .setOrigin(0, 0.5)
             .setColor("0x000");
 
         this.createCloseButton();
@@ -116,7 +116,7 @@ export default class Contact extends BaseScene {
 
     createGithubButton() {
         const githubBtn = this.add
-            .image(this.config.width / 4, 220, "github")
+            .image(this.config.width / 4, 250, "github")
             .setOrigin(0.5)
             .setScale(0.15)
             .setDepth(2)
@@ -141,7 +141,7 @@ export default class Contact extends BaseScene {
 
     createLinkedInButton() {
         const linkedinBtn = this.add
-            .image(this.config.width / 4, 320, "linkedin")
+            .image(this.config.width / 4, 350, "linkedin")
             .setOrigin(0.5)
             .setScale(0.15)
             .setDepth(2)
@@ -166,7 +166,7 @@ export default class Contact extends BaseScene {
 
     createEmailButton() {
         const emailBtn = this.add
-            .image(this.config.width / 4, 420, "gmail")
+            .image(this.config.width / 4, 450, "gmail")
             .setOrigin(0.5)
             .setScale(0.15)
             .setDepth(2)
