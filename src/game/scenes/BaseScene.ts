@@ -17,6 +17,8 @@ export default class BaseScene extends Scene {
     forestBGM: any;
     caveBGM: any;
     bossBGM: any;
+    onlineBGM: any;
+    sakuraBGM: any;
 
     screenCenter: Array<number>;
     fontSize: number;
@@ -90,6 +92,14 @@ export default class BaseScene extends Scene {
             volume: 0.04,
         });
         this.bossBGM = this.sound.add("boss-theme", {
+            loop: true,
+            volume: 0.04,
+        });
+        this.onlineBGM = this.sound.add("online-theme", {
+            loop: true,
+            volume: 0.04,
+        });
+        this.sakuraBGM = this.sound.add("sakura-theme", {
             loop: true,
             volume: 0.04,
         });

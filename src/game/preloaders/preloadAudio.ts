@@ -5,6 +5,8 @@ export function preloadAudio(scene: Phaser.Scene) {
     scene.load.audio("forest-theme", "music/forest_theme.wav");
     scene.load.audio("cave-theme", "music/cave_theme.wav");
     scene.load.audio("boss-theme", "music/boss_theme.wav");
+    scene.load.audio("online-theme", "music/online_theme.wav");
+    scene.load.audio("sakura-theme", "music/sakura_theme.wav");
 
     // SOUND EFFECTS
     scene.load.audio("projectile-launch", "music/projectile_launch.wav");
