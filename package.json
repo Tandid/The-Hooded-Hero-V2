@@ -23,7 +23,7 @@
     ],
     "scripts": {
         "dev": "next dev -p 8080",
-        "build": "next build",
+        "build": "next build && npm run server",
         "server": "node src/server/index.js"
     },
     "dependencies": {
