@@ -117,7 +117,7 @@ class WaitingScene extends BaseScene {
 
             if (this.currentRoom.numPlayers === this.requiredPlayers) {
                 this.waitingForPlayers.setFontSize("0px");
-                this.startButton.setText("Start");
+                this.startButton.setVisible(true); // Show the start button
             }
 
             this.waitingForPlayers.setText(
@@ -164,7 +164,7 @@ class WaitingScene extends BaseScene {
                         } player(s)`
                     );
                     this.waitingForPlayers.setFontSize("100px");
-                    this.startButton.setText("");
+                    this.startButton.setVisible(false);
                 }
             }
 
@@ -224,31 +224,23 @@ class WaitingScene extends BaseScene {
     }
 
     createStartButton() {
-        this.startButton = this.add
-            .text(1200, this.config.height / 5 + 200, "", {
-                fontFamily: "customFont",
-                fontSize: "200px",
-                fill: "#000",
-            })
-            .setOrigin(0.5)
-            .setDepth(2);
+        this.startButton = this.createButton(
+            this.config.width / 2 - 100,
+            this.config.height / 2 - 350,
+            "play-btn",
+            () => {
+                this.input.enabled = false;
+                this.socket.emit("startCountdown");
+                this.startButton.destroy();
+            }
+        )
+            .setScrollFactor(0)
+            .setScale(2);
 
-        this.startButton.setInteractive();
-        this.startButton.on("pointerover", () => {
-            this.startButton.setFill("#fff");
-        });
-        this.startButton.on("pointerout", () => {
-            this.startButton.setFill("#000");
-        });
-        this.startButton.on("pointerup", () => {
-            this.input.enabled = false;
-            this.socket.emit("startCountdown");
-            this.startButton.destroy();
-        });
-
-        // renders start button when there are 4 or more players in lobby;
         if (this.currentRoom.numPlayers >= this.requiredPlayers) {
-            this.startButton.setText("Start");
+            this.startButton.setVisible(true);
+        } else {
+            this.startButton.setVisible(false);
         }
     }
 
