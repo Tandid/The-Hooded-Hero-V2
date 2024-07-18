@@ -67,6 +67,7 @@ class MockScene extends BaseScene {
             },
         });
 
+        this.playBgMusic();
         this.createBG(map);
         this.createEndOfLevel(playerZones.end, player);
 
@@ -195,6 +196,11 @@ class MockScene extends BaseScene {
                 }
             }
         );
+    }
+
+    playBgMusic() {
+        this.sound.stopAll();
+        this.onlineBGM.play();
     }
 
     setupUI() {
