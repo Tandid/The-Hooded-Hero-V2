@@ -66,6 +66,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.body.setGravityY(this.gravity); // Set vertical gravity
         this.setCollideWorldBounds(true); // Enable collision with world bounds
         this.setOrigin(0.5, 0.5); // Set sprite origin for correct positioning
+        this.body.setMaxVelocityY(1000);
     }
 
     // Method to initialize sound effects for player actions
