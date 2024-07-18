@@ -40,7 +40,8 @@ class PauseScene extends BaseScene {
             "yes-btn",
             () => {
                 this.scene.stop("PlayScene");
-                // this.scene.stop("WaitingScene");
+                this.scene.stop("WaitingScene");
+                this.scene.stop("MockScene");
                 this.scene.start("MainMenu");
             }
         );
@@ -56,9 +57,14 @@ class PauseScene extends BaseScene {
                 this.scene.isPaused("PlayScene") === true
                     ? this.scene.resume("PlayScene")
                     : "";
-                // this.scene.isPaused("WaitingScene") === true
-                //     ? this.scene.resume("WaitingScene")
-                //     : "";
+
+                this.scene.isPaused("WaitingScene") === true
+                    ? this.scene.resume("WaitingScene")
+                    : "";
+
+                this.scene.isPaused("MockScene") === true
+                    ? this.scene.resume("MockScene")
+                    : "";
             }
         );
     }

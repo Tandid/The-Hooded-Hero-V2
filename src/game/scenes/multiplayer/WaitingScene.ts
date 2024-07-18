@@ -24,6 +24,8 @@ class WaitingScene extends BaseScene {
     }
 
     create() {
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
+
         super.create();
 
         const map = this.createMap();
@@ -35,6 +37,7 @@ class WaitingScene extends BaseScene {
         this.player = player;
         console.log({ Me: this.player });
 
+        this.playBgMusic();
         this.createBG(map);
 
         this.usernameText = this.add
@@ -213,6 +216,11 @@ class WaitingScene extends BaseScene {
         this.createControlsButton();
         this.setupPlayerCounter();
         this.createStartButton();
+    }
+
+    playBgMusic() {
+        this.sound.stopAll();
+        this.sakuraBGM.play();
     }
 
     createStartButton() {

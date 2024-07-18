@@ -221,13 +221,21 @@ export default class RoomSelectScene extends BaseScene {
         // Player will go to stage scene afer receiving room info from server
         this.socket.on("roomReady", ({ currentRoom, roomKey }) => {
             this.socket.removeAllListeners();
-            this.scene.stop("RoomSelectScene");
-            this.scene.start("WaitingScene", {
-                socket: this.socket,
-                currentRoom,
-                roomKey,
-                charSpriteKey: this.charSpriteKey,
-                username: this.username,
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+
+            this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    const nextStageKey = "MockScene";
+                    this.scene.stop("RoomSelectScene");
+                    this.scene.start("WaitingScene", {
+                        socket: this.socket,
+                        currentRoom,
+                        roomKey,
+                        charSpriteKey: this.charSpriteKey,
+                        username: this.username,
+                    });
+                },
             });
         });
     }
