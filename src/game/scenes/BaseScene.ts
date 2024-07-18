@@ -166,7 +166,7 @@ export default class BaseScene extends Scene {
                     menuItem.text,
                     this.fontOptions
                 )
-                .setOrigin(0.5, 1);
+                .setOrigin(0.5, 0.5);
             lastMenuPositionY += this.lineHeight;
             setupMenuEvents(menuItem);
         });
