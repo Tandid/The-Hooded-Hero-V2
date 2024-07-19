@@ -8,6 +8,16 @@ https://the-hooded-hero.vercel.app/ is A 2D platformer game where users can choo
 
 Typescript, Next, PhaserJS, and WebSockets
 
+## How to Run Locally
+
+-   Install all dependencies using `npm install`
+
+-   Create a build file using`npm run build`
+
+-   Start the production environment using `npm start`
+
+-   Start the server simultaneously by opening a separate terminal and running `npm run server`
+
 ## Initial Screen
 
 -   Main Menu Screen where users can choose between Story Mode, Multiplayer or Level Selection. Top right paper button leads to contacts, whereas the book icon on the bottom show controls and settings for adjusting volume.
@@ -37,6 +47,12 @@ Typescript, Next, PhaserJS, and WebSockets
 <img src="https://res.cloudinary.com/dgxqotorm/image/upload/v1721350170/level_1_ak5lmy.png" alt="Level 1" width="600">
 </p>
 
+-   Level Design (Created using Tiled)
+
+<p align="center">
+<img src="https://res.cloudinary.com/dgxqotorm/image/upload/v1721367254/Screenshot_2024-07-19_at_1.32.08_AM_zkboo9.png" alt="Level 1" width="1000">
+</p>
+
 ### Level 2 - Cave
 
 -   Enemy Variants: Bat, Skeleton Archer, Skeleton Shield, Skeleton Spear
@@ -45,12 +61,24 @@ Typescript, Next, PhaserJS, and WebSockets
 <img src="https://res.cloudinary.com/dgxqotorm/image/upload/v1721350171/level_2_txs0f0.png" alt="Level 2" width="600">
 </p>
 
+-   Level Design (Created using Tiled)
+
+<p align="center">
+<img src="https://res.cloudinary.com/dgxqotorm/image/upload/v1721367620/Screenshot_2024-07-19_at_1.37.50_AM_y5zhv6.png" alt="Level 1" width="1000">
+</p>
+
 ### Level 3 - Cave & Boss Battle
 
 -   Enemy Variants: Skeleton Mage, Crossbow, Skeleton Boss
 
 <p align="center">
 <img src="https://res.cloudinary.com/dgxqotorm/image/upload/v1721350172/level_3_domw7a.png" alt="Level 3" width="600">
+</p>
+
+-   Level Design (Created using Tiled)
+
+<p align="center">
+<img src="https://res.cloudinary.com/dgxqotorm/image/upload/v1721367619/Screenshot_2024-07-19_at_1.38.32_AM_svuxkf.png" alt="Level 1" width="1000">
 </p>
 
 ## Multiplayer
@@ -99,13 +127,9 @@ Typescript, Next, PhaserJS, and WebSockets
 <img src="https://res.cloudinary.com/dgxqotorm/image/upload/v1721350174/online_nlffyw.png" alt="Online" width="600">
 </p>
 
-## How to Run Locally
+-   Level Design (Created using Tiled)
 
--   Install all dependencies using `npm install`
-
--   Create a build file using`npm run build`
-
--   Start the production environment using `npm start`
-
--   Start the server simultaneously by opening a separate terminal and running `npm run server`
+<p align="center">
+<img src="https://res.cloudinary.com/dgxqotorm/image/upload/v1721367621/Screenshot_2024-07-19_at_1.38.50_AM_zyugcp.png" alt="Online" width="1000">
+</p>
 
