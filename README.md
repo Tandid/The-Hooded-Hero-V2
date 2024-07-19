@@ -27,3 +27,8 @@ The Hooded Hero was created using Javascript, Node, Express, Phaser.js and WebSo
 ![WaitingRoom](https://res.cloudinary.com/dgxqotorm/image/upload/v1721349039/waitingRoom_t9kh4e.png)
 ![Settings](https://res.cloudinary.com/dgxqotorm/image/upload/v1721349038/settings_mrkjvm.png)
 
+![Level_1](https://res.cloudinary.com/dgxqotorm/image/upload/v1721350170/level_1_ak5lmy.png)
+![Level_2](https://res.cloudinary.com/dgxqotorm/image/upload/v1721350171/level_2_txs0f0.png)
+![Level_3](https://res.cloudinary.com/dgxqotorm/image/upload/v1721350172/level_3_domw7a.png)
+![Online](https://res.cloudinary.com/dgxqotorm/image/upload/v1721350174/online_nlffyw.png)
+
