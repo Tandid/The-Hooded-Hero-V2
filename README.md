@@ -12,13 +12,13 @@ The Hooded Hero was created using Javascript, Node, Express, Phaser.js and WebSo
 
 -   Main Menu Screen where users can choose between Story Mode, Multiplayer or Level Selection. Top right paper button leads to contacts, whereas the book icon on the bottom show controls and settings for adjusting volume.
 
-<![Demo 1](https://github.com/Tandid/The-Hooded-Hero-V2/blob/playScene/public/assets/main_menu.png)
+![Demo 1](https://github.com/Tandid/The-Hooded-Hero-V2/blob/playScene/public/assets/main_menu.png)
 
 -   Controls
 
-<![Demo 2](https://github.com/Tandid/The-Hooded-Hero-V2/blob/playScene/public/assets/controls.png)
+![Demo 2](https://github.com/Tandid/The-Hooded-Hero-V2/blob/playScene/public/assets/controls.png)
 
 -   Players go through a story mode with three levels and a final boss at the end. These levels consist of physics engines which involve raycasting, collisions, as well as the use of hitboxes and projectiles.
 
-<![Demo 3](https://github.com/Tandid/The-Hooded-Hero-V2/blob/playScene/public/assets/hoodedhero.gif)
+![Demo 3](https://res.cloudinary.com/dgxqotorm/image/upload/v1721349041/multiplayer_qqe9ra.png)
 
