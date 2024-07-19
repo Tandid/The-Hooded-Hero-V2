@@ -2,7 +2,10 @@
 
 <img align="left" src="https://github.com/Tandid/The-Hooded-Hero-V2/blob/playScene/public/assets/logo2.png" width=100px> 
 https://the-hooded-hero.vercel.app/ is A 2D platformer game where users can choose to go through a story mode with several stages or play with friends online to see who can reach the end of the level the fastest!
+
 <br/>
+
+-   Note: This is the latest version of the app. My older version of the app can be found here in this repo: https://github.com/Tandid/The-Hooded-Hero
 
 ## Tech Stack
 
